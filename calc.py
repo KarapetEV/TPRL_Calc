@@ -1,29 +1,29 @@
 import sys
-from calc_window import *
+import calc_window
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
 
 
-class Window(QtWidgets.QWidget):
+class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
-        self.ui = Ui_AppWindow()
-        self.ui.setupUi(self)
-        self.ui.ugtSlider.valueChanged.connect(self.change_ugt_level)
+        self.setupUi(self)
+        self.btn_set_params.clicked.connect(self.on_clicked)
+        self.ugtSlider.valueChanged.connect(self.change_ugt_level)
 
     def change_ugt_level(self):
         labels_ugt = {
-            self.ui.label_ugt0: 0,
-            self.ui.label_ugt1: 1,
-            self.ui.label_ugt2: 2,
-            self.ui.label_ugt3: 3,
-            self.ui.label_ugt4: 4,
-            self.ui.label_ugt5: 5,
-            self.ui.label_ugt6: 6,
-            self.ui.label_ugt7: 7,
-            self.ui.label_ugt8: 8,
-            self.ui.label_ugt9: 9,
+            self.label_ugt0: 0,
+            self.label_ugt1: 1,
+            self.label_ugt2: 2,
+            self.label_ugt3: 3,
+            self.label_ugt4: 4,
+            self.label_ugt5: 5,
+            self.label_ugt6: 6,
+            self.label_ugt7: 7,
+            self.label_ugt8: 8,
+            self.label_ugt9: 9,
         }
-        size = self.ui.ugtSlider.value()
+        size = self.ugtSlider.value()
         for k, v in labels_ugt.items():
             font = QtGui.QFont()
             if v == size:
@@ -35,15 +35,12 @@ class Window(QtWidgets.QWidget):
                 k.setFont(font)
                 k.setEnabled(False)
 
-        self.setupUi(self)
-        self.set_params.clicked.connect(self.on_clicked)
-
     def on_clicked(self):
-        text = self.set_params.text()
+        text = self.btn_set_params.text()
         if text == "Установить параметры":
-            self.set_params.setText("Параметры установлены")
+            self.btn_set_params.setText("Параметры установлены")
         else:
-            self.set_params.setText("Установить параметры")
+            self.btn_set_params.setText("Установить параметры")
 
 
 if __name__ == '__main__':
