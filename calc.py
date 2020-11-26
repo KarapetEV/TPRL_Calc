@@ -13,6 +13,5 @@ if __name__ == '__main__':
     window = Window()                   # Создаем экземпляр класса
     window.setWindowTitle('TRL Calculator')
     window.setWindowIcon(QtGui.QIcon('rjd.png'))
-    # window.resize(300,70)
     window.show()
     sys.exit(app.exec_())
