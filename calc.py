@@ -35,12 +35,21 @@ class Window(QtWidgets.QWidget):
                 k.setFont(font)
                 k.setEnabled(False)
 
+        self.setupUi(self)
+        self.set_params.clicked.connect(self.on_clicked)
+
+    def on_clicked(self):
+        text = self.set_params.text()
+        if text == "Установить параметры":
+            self.set_params.setText("Параметры установлены")
+        else:
+            self.set_params.setText("Установить параметры")
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = Window()                   # Создаем экземпляр класса
     window.setWindowTitle('TRL Calculator')
     window.setWindowIcon(QtGui.QIcon('rjd.png'))
-    # window.resize(300,70)
     window.show()
     sys.exit(app.exec_())
