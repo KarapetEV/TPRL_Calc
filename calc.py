@@ -1,10 +1,11 @@
 # Тут будет крутой калькулятор
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
+import ui_firstForm
 
-class Window(QtWidgets.QWidget):
+class Window(QtWidgets.QWidget, ui_firstForm.Ui_FormParams):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
-        uic.loadUi("firstForm.ui", self)
+        self.setupUi(self)
 
 if __name__ == '__main__':
     import sys
