@@ -7,8 +7,9 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.setupUi(self)
-        self.btn_set_params.clicked.connect(self.on_clicked)
+        self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
+        self.btn_calculate.clicked.connect(self.calculate)
 
     def change_ugt_level(self):
         labels_ugt = {
@@ -35,12 +36,17 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 k.setFont(font)
                 k.setEnabled(False)
 
-    def on_clicked(self):
+    def set_params(self):
         text = self.btn_set_params.text()
         if text == "Установить параметры":
             self.btn_set_params.setText("Параметры установлены")
         else:
             self.btn_set_params.setText("Установить параметры")
+        self.tabWidget.setCurrentIndex(1)
+
+    def calculate(self):
+        self.tabWidget.setCurrentIndex(0)
+        self.frame_results.setEnabled(True)
 
 
 if __name__ == '__main__':
