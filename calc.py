@@ -37,12 +37,24 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 k.setEnabled(False)
 
     def set_params(self):
-        text = self.btn_set_params.text()
-        if text == "Установить параметры":
-            self.btn_set_params.setText("Параметры установлены")
-        else:
-            self.btn_set_params.setText("Установить параметры")
+        # text = self.btn_set_params.text()
+        # if text == "Установить параметры":
+        #     self.btn_set_params.setText("Параметры установлены")
+        # else:
+        #     self.btn_set_params.setText("Установить параметры")
         self.tabWidget.setCurrentIndex(1)
+        self.get_params()
+        self.frame_calc_params.setEnabled(False)
+
+    def get_params(self):
+        self.check_calc_trl.setChecked(self.check_trl.isChecked())
+        self.check_calc_mrl.setChecked(self.check_mrl.isChecked())
+        self.check_calc_erl.setChecked(self.check_erl.isChecked())
+        self.check_calc_orl.setChecked(self.check_orl.isChecked())
+        self.check_calc_crl.setChecked(self.check_crl.isChecked())
+        self.radio_calc_hard.setChecked(self.radio_hard.isChecked())
+        self.radio_calc_soft.setChecked(self.radio_soft.isChecked())
+        self.radio_calc_both.setChecked(self.radio_both.isChecked())
 
     def calculate(self):
         self.tabWidget.setCurrentIndex(0)
