@@ -1,6 +1,7 @@
 import sys
 import calc_window
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
+import pandas as pd
 
 
 class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
@@ -42,6 +43,10 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.frame_calc_params.setEnabled(False)
 
     def get_params(self):
+
+        params = []
+        rad = []
+
         self.check_calc_trl.setChecked(self.check_trl.isChecked())
         self.check_calc_mrl.setChecked(self.check_mrl.isChecked())
         self.check_calc_erl.setChecked(self.check_erl.isChecked())
@@ -50,6 +55,29 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.radio_calc_hard.setChecked(self.radio_hard.isChecked())
         self.radio_calc_soft.setChecked(self.radio_soft.isChecked())
         self.radio_calc_both.setChecked(self.radio_both.isChecked())
+
+        if self.check_calc_trl.isChecked():
+            params.append('T')
+        if self.check_calc_mrl.isChecked():
+            params.append('M')
+        if self.check_calc_erl.isChecked():
+            params.append('E')
+        if self.check_calc_orl.isChecked():
+            params.append('O')
+        if self.check_calc_crl.isChecked():
+            params.append('C')
+        if self.radio_calc_hard.isChecked():
+            rad.append('H')
+        if self.radio_calc_soft.isChecked():
+            rad.append('S')
+        if self.radio_calc_both.isChecked():
+            rad.append('B')
+        print('Тип -', rad)
+        print('Параметры -', params)
+        data = pd.read_excel('Tasks.xlsx')
+        df = data.loc[(data['Тип'].isin(rad)) & (data['Параметр'].isin(params))]
+        print(df)
+
 
     def calculate(self):
         self.tabWidget.setCurrentIndex(0)
