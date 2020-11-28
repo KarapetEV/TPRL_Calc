@@ -325,7 +325,6 @@ class Ui_AppWindow(object):
         self.tabWidget.addTab(self.tab_params, "")
         self.tab_calc = QtWidgets.QWidget()
         self.tab_calc.setObjectName("tab_calc")
-        self.tab_calc.setEnabled(False)
         self.frame_calc_params = QtWidgets.QFrame(self.tab_calc)
         self.frame_calc_params.setGeometry(QtCore.QRect(5, 5, 650, 140))
         self.frame_calc_params.setFrameShape(QtWidgets.QFrame.StyledPanel)

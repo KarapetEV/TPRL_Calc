@@ -38,6 +38,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 k.setEnabled(False)
 
     def set_params(self):
+        self.tabWidget.setCurrentIndex(1)
         self.get_params()
         self.frame_calc_params.setEnabled(False)
 
@@ -47,6 +48,15 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         rad = []
         tasks_list = []
         type = ''
+
+        self.check_calc_trl.setChecked(self.check_trl.isChecked())
+        self.check_calc_mrl.setChecked(self.check_mrl.isChecked())
+        self.check_calc_erl.setChecked(self.check_erl.isChecked())
+        self.check_calc_orl.setChecked(self.check_orl.isChecked())
+        self.check_calc_crl.setChecked(self.check_crl.isChecked())
+        self.radio_calc_hard.setChecked(self.radio_hard.isChecked())
+        self.radio_calc_soft.setChecked(self.radio_soft.isChecked())
+        self.radio_calc_both.setChecked(self.radio_both.isChecked())
 
         if self.check_calc_trl.isChecked():
             params.append('T')
@@ -64,18 +74,6 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
             rad.append('S')
         if not self.radio_calc_both.isChecked():
             rad.append('B')
-        if len(params) > 0:
-            self.tabWidget.setCurrentIndex(1)
-            self.tab_calc.setEnabled(True)
-        self.check_calc_trl.setChecked(self.check_trl.isChecked())
-        self.check_calc_mrl.setChecked(self.check_mrl.isChecked())
-        self.check_calc_erl.setChecked(self.check_erl.isChecked())
-        self.check_calc_orl.setChecked(self.check_orl.isChecked())
-        self.check_calc_crl.setChecked(self.check_crl.isChecked())
-        self.radio_calc_hard.setChecked(self.radio_hard.isChecked())
-        self.radio_calc_soft.setChecked(self.radio_soft.isChecked())
-        self.radio_calc_both.setChecked(self.radio_both.isChecked())
-
 
         print('Тип -', rad)
         print('Параметры -', params)
