@@ -37,11 +37,6 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 k.setEnabled(False)
 
     def set_params(self):
-        # text = self.btn_set_params.text()
-        # if text == "Установить параметры":
-        #     self.btn_set_params.setText("Параметры установлены")
-        # else:
-        #     self.btn_set_params.setText("Установить параметры")
         self.tabWidget.setCurrentIndex(1)
         self.get_params()
         self.frame_calc_params.setEnabled(False)
