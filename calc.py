@@ -104,6 +104,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
             row_children = tasks[i][1]
             item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
             self.treeWidget.topLevelItem(i).setText(0, row_parent)
+            self.treeWidget.expandAll()
             for j in range(len(row_children)):
                 item_1 = QtWidgets.QTreeWidgetItem(item_0)
                 item_1.setCheckState(0, QtCore.Qt.Unchecked)
