@@ -46,6 +46,8 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
 
         params = []
         rad = []
+        tasks_list = []
+        type = ''
 
         self.check_calc_trl.setChecked(self.check_trl.isChecked())
         self.check_calc_mrl.setChecked(self.check_mrl.isChecked())
@@ -66,18 +68,46 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
             params.append('O')
         if self.check_calc_crl.isChecked():
             params.append('C')
-        if self.radio_calc_hard.isChecked():
+        if not self.radio_calc_hard.isChecked():
             rad.append('H')
-        if self.radio_calc_soft.isChecked():
+        if not self.radio_calc_soft.isChecked():
             rad.append('S')
-        if self.radio_calc_both.isChecked():
+        if not self.radio_calc_both.isChecked():
             rad.append('B')
+
         print('Тип -', rad)
         print('Параметры -', params)
-        data = pd.read_excel('Tasks.xlsx')
-        df = data.loc[(data['Тип'].isin(rad)) & (data['Параметр'].isin(params))]
-        print(df)
+        data = pd.read_excel('Tasks.xlsx', index_col='Тип')
+        data.drop(rad, inplace=True)
+        for el in params:
+            task = self.check_params(data, el)
+            tasks_list.append(task)
+        self.create_row(tasks_list)
 
+        # df = data.loc[(data['Тип'].isin(rad)) & (data['Параметр'].isin(params))]
+        # print(df)
+
+    def check_params(self, df, param):
+        row_parent = ''
+        tasks = []
+        for i, j in df.iterrows():
+            if j[1] == param:
+                if isinstance(j[2], str) and j[2] != '':
+                    row_parent = j[2]
+                tasks.append(j[3])
+        params = [row_parent, tasks]
+        return params
+
+    def create_row(self, tasks):
+        for i in range(len(tasks)):
+            row_parent = tasks[i][0]
+            row_children = tasks[i][1]
+            item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
+            self.treeWidget.topLevelItem(i).setText(0, row_parent)
+            for j in range(len(row_children)):
+                item_1 = QtWidgets.QTreeWidgetItem(item_0)
+                item_1.setCheckState(0, QtCore.Qt.Unchecked)
+                self.treeWidget.topLevelItem(i).child(j).setText(0, row_children[j])
 
     def calculate(self):
         self.tabWidget.setCurrentIndex(0)
