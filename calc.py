@@ -38,7 +38,15 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 k.setEnabled(False)
 
     def reset_params(self):
-        pass
+        self.check_calc_trl.setChecked(False)
+        self.check_calc_mrl.setChecked(False)
+        self.check_calc_erl.setChecked(False)
+        self.check_calc_orl.setChecked(False)
+        self.check_calc_crl.setChecked(False)
+        self.radio_calc_hard.setChecked(False)
+        self.radio_calc_soft.setChecked(False)
+        self.radio_calc_both.setChecked(False)
+        self.treeWidget.clear()
 
     def set_params(self):
         self.reset_params()
@@ -88,9 +96,6 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
             tasks_list.append(task)
         self.create_row(tasks_list)
 
-        # df = data.loc[(data['Тип'].isin(rad)) & (data['Параметр'].isin(params))]
-        # print(df)
-
     def check_params(self, df, param):
         row_parent = ''
         tasks = []
@@ -113,6 +118,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
             for j in range(len(row_children)):
                 item_1 = QtWidgets.QTreeWidgetItem(item_0)
                 item_1.setCheckState(1, QtCore.Qt.Unchecked)
+                item_1.setToolTip(1, row_children[j])
                 self.treeWidget.topLevelItem(i).child(j).setText(0, tasks[i][0])
                 self.treeWidget.topLevelItem(i).child(j).setText(1, row_children[j])
 
