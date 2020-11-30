@@ -11,6 +11,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
         self.btn_calculate.clicked.connect(self.calculate)
+        self.params = []
 
     def change_ugt_level(self):
         labels_ugt = {
@@ -47,6 +48,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.radio_calc_soft.setChecked(False)
         self.radio_calc_both.setChecked(False)
         self.treeWidget.clear()
+        self.params = []
 
     def set_params(self):
         self.reset_params()
@@ -56,7 +58,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
 
     def get_params(self):
 
-        params = []
+
         rad = []
         tasks_list = []
         type = ''
@@ -71,15 +73,15 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.radio_calc_both.setChecked(self.radio_both.isChecked())
 
         if self.check_calc_trl.isChecked():
-            params.append('TRL')
+            self.params.append('TRL')
         if self.check_calc_mrl.isChecked():
-            params.append('MRL')
+            self.params.append('MRL')
         if self.check_calc_erl.isChecked():
-            params.append('ERL')
+            self.params.append('ERL')
         if self.check_calc_orl.isChecked():
-            params.append('ORL')
+            self.params.append('ORL')
         if self.check_calc_crl.isChecked():
-            params.append('CRL')
+            self.params.append('CRL')
         if not self.radio_calc_hard.isChecked():
             rad.append('H')
         if not self.radio_calc_soft.isChecked():
@@ -88,10 +90,10 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
             rad.append('B')
 
         print('Тип -', rad)
-        print('Параметры -', params)
+        print('Параметры -', self.params)
         data = pd.read_excel('Tasks.xlsx', index_col='Тип')
         data.drop(rad, inplace=True)
-        for el in params:
+        for el in self.params:
             task = self.check_params(data, el)
             tasks_list.append(task)
         self.create_row(tasks_list)
