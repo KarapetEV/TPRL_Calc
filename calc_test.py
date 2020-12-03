@@ -11,6 +11,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
         self.btn_calculate.clicked.connect(self.calculate)
+        self.treeWidget.itemClicked.connect(self.onItemClicked)
         self.params = []
 
     def change_ugt_level(self):
@@ -129,6 +130,13 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
     def calculate(self):
         self.tabWidget.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
+
+    @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem, int)
+    def onItemClicked(self, item, col):
+        if item.checkState(col) == QtCore.Qt.Unchecked:
+            item.setCheckState(col, QtCore.Qt.Checked)
+        else:
+            item.setCheckState(col, QtCore.Qt.Unchecked)
 
 
 if __name__ == '__main__':
