@@ -97,6 +97,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
             item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
             self.treeWidget.topLevelItem(i).setText(0, 'Уровень {}'.format(key[0]))
             self.treeWidget.expandAll()
+
             count = 0
             for j, v in enumerate(key[1].items()):
                 for idx in range(len(v[1])):
@@ -133,10 +134,16 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem, int)
     def onItemClicked(self, item, col):
-        if item.checkState(col) == QtCore.Qt.Unchecked:
-            item.setCheckState(col, QtCore.Qt.Checked)
+        if item.childCount() > 0:
+            if item.isExpanded():
+                item.setExpanded(False)
+            else:
+                item.setExpanded(True)
         else:
-            item.setCheckState(col, QtCore.Qt.Unchecked)
+            if item.checkState(col) == QtCore.Qt.Unchecked:
+                item.setCheckState(col, QtCore.Qt.Checked)
+            else:
+                item.setCheckState(col, QtCore.Qt.Unchecked)
 
 
 if __name__ == '__main__':
