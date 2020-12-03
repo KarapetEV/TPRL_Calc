@@ -11,6 +11,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
         self.btn_calculate.clicked.connect(self.calculate)
+        self.treeWidget.itemClicked.connect(self.onItemClicked)
         self.params = []
 
     def change_ugt_level(self):
@@ -58,7 +59,6 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
 
     def get_params(self):
 
-
         rad = []
         tasks_list = []
         type = ''
@@ -89,44 +89,60 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         if not self.radio_calc_both.isChecked():
             rad.append('B')
 
-        print('Тип -', rad)
-        print('Параметры -', self.params)
-        data = pd.read_excel('Tasks.xlsx', index_col='Тип')
-        data.drop(rad, inplace=True)
-        for el in self.params:
-            task = self.check_params(data, el)
-            tasks_list.append(task)
-        self.create_row(tasks_list)
+        data = pd.read_excel('Tasks1.xlsx', index_col='Тип')
+        df = data.drop(rad)
+        val = self.make_level_dict(df, self.params)
 
-    def check_params(self, df, param):
-        row_parent = ''
-        tasks = []
-        for i, j in df.iterrows():
-            if j[1] == param[0]:
-                if isinstance(j[2], str) and j[2] != '':
-                    row_parent = j[2]
-                tasks.append(j[3])
-        params = [param, row_parent, tasks]
-        return params
-
-    def create_row(self, tasks):
-        for i in range(len(tasks)):
-            row_parent = tasks[i][1]
-            row_children = tasks[i][2]
+        for i, key in enumerate(val.items()):
             item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
-            self.treeWidget.topLevelItem(i).setText(0, tasks[i][0])
-            self.treeWidget.topLevelItem(i).setText(1, row_parent)
+            self.treeWidget.topLevelItem(i).setText(0, 'Уровень {}'.format(key[0]))
             self.treeWidget.expandAll()
-            for j in range(len(row_children)):
-                item_1 = QtWidgets.QTreeWidgetItem(item_0)
-                item_1.setCheckState(1, QtCore.Qt.Unchecked)
-                item_1.setToolTip(1, row_children[j])
-                self.treeWidget.topLevelItem(i).child(j).setText(0, tasks[i][0])
-                self.treeWidget.topLevelItem(i).child(j).setText(1, row_children[j])
+
+            count = 0
+            for j, v in enumerate(key[1].items()):
+                for idx in range(len(v[1])):
+                    item_1 = QtWidgets.QTreeWidgetItem(item_0)
+                    item_1.setCheckState(1, QtCore.Qt.Unchecked)
+                    self.treeWidget.topLevelItem(i).child(count).setText(0, v[0])
+                    self.treeWidget.topLevelItem(i).child(count).setText(1, v[1][idx])
+                    count += 1
+
+    def make_params_dict(self, df, params):
+        d_2 = {}
+        for row in range(df['Параметр'].shape[0]):
+            for p in params:
+                if df['Параметр'][row] == p:
+                    if df['Параметр'][row] not in d_2:
+                        d_2[df['Параметр'][row]] = [df['Задача'][row]]
+                    else:
+                        d_2[df['Параметр'][row]].append(df['Задача'][row])
+        return d_2
+
+    def make_level_dict(self, df, params):
+        d_1 = {}
+        for level in df['Уровень'].unique():
+            if level not in d_1:
+                x = [str(level)]
+                d = df.loc[df['Уровень'].isin(x)]
+                d_1[x[0]] = self.make_params_dict(d, params)
+        return d_1
 
     def calculate(self):
         self.tabWidget.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
+
+    @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem, int)
+    def onItemClicked(self, item, col):
+        if item.childCount() > 0:
+            if item.isExpanded():
+                item.setExpanded(False)
+            else:
+                item.setExpanded(True)
+        else:
+            if item.checkState(col) == QtCore.Qt.Unchecked:
+                item.setCheckState(col, QtCore.Qt.Checked)
+            else:
+                item.setCheckState(col, QtCore.Qt.Unchecked)
 
 
 if __name__ == '__main__':
