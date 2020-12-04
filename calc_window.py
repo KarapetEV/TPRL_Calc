@@ -405,7 +405,7 @@ class Ui_AppWindow(object):
     def retranslateUi(self, AppWindow):
         _translate = QtCore.QCoreApplication.translate
         AppWindow.setWindowTitle(_translate("AppWindow", "Form"))
-        self.labelCalc.setText(_translate("AppWindow", "Калькулятор уровня готовности технологий для оценки зрелости инновационного продукта/технологии к внедрению в ОАО «РЖД»"))
+        self.labelCalc.setText(_translate("AppWindow", "Расчёт уровня зрелости инновационного продукта/технологии к внедрению в ОАО «РЖД»"))
         self.frame_params.setTitle(_translate("AppWindow", "Параметры оценки"))
         self.check_trl.setText(_translate("AppWindow", "Технологическая готовность (TRL)"))
         self.check_mrl.setText(_translate("AppWindow", "Производственная готовность (MRL)"))
