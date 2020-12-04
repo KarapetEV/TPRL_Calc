@@ -11,8 +11,9 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.tabWidget.setTabEnabled(1, False)
         self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
-        self.btn_calculate.clicked.connect(self.calculate)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
+        self.btn_calculate.clicked.connect(self.calculate)
+        self.btn_reset_tasks.clicked.connect(self.reset_tasks)
         self.params = []
         self.rad = []
 
@@ -52,6 +53,15 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.radio_calc_both.setChecked(False)
         self.treeWidget.clear()
         self.params = []
+
+    def reset_tasks(self):
+        levels_count = self.treeWidget.topLevelItemCount()
+        for i in range(levels_count):
+            level = self.treeWidget.topLevelItem(i)
+            childs_count = level.childCount()
+            for j in range(childs_count):
+                task = level.child(j)
+                task.setCheckState(1, QtCore.Qt.Unchecked)
 
     def set_params(self):
         self.reset_params()
