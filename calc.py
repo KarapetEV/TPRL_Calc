@@ -103,6 +103,8 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 for idx in range(len(v[1])):
                     item_1 = QtWidgets.QTreeWidgetItem(item_0)
                     item_1.setCheckState(1, QtCore.Qt.Unchecked)
+                    item_1.setFlags(QtCore.Qt.ItemIsUserCheckable)
+                    item_1.setFlags(QtCore.Qt.ItemIsEnabled)
                     self.treeWidget.topLevelItem(i).child(count).setText(0, v[0])
                     self.treeWidget.topLevelItem(i).child(count).setText(1, v[1][idx])
                     count += 1
