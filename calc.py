@@ -172,14 +172,29 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                     summary += 1
                 elif 0 < values[iter_value] < 1:
                     summary += values[iter_value]
-                    self.d3[key] = summary
+                    self.d3[key] = str(summary)
                     break
                 else:
-                    self.d3[key] = summary
+                    self.d3[key] = str(summary)
                     break
         print(self.d3)
         self.tabWidget.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
+        self.take_results(self.d3)
+
+    def take_results(self, res):
+
+        for k_res, v_res in res.items():
+            if k_res == 'TRL':
+                self.label_trl_result.setText(v_res)
+            elif k_res == 'MRL':
+                self.label_mrl_result.setText(v_res)
+            elif k_res == 'ERL':
+                self.label_erl_result.setText(v_res)
+            elif k_res == 'ORL':
+                self.label_orl_result.setText(v_res)
+            elif k_res == 'CRL':
+                self.label_crl_result.setText(v_res)
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):
