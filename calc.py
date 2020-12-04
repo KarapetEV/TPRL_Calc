@@ -8,11 +8,13 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.setupUi(self)
+        self.tabWidget.setTabEnabled(1, False)
         self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
         self.btn_calculate.clicked.connect(self.calculate)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
         self.params = []
+        self.rad = []
 
     def change_ugt_level(self):
         labels_ugt = {
@@ -53,15 +55,16 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
 
     def set_params(self):
         self.reset_params()
-        self.tabWidget.setCurrentIndex(1)
         self.get_params()
-        self.frame_calc_params.setEnabled(False)
+        if len(self.params) == 0:
+            QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
+        else:
+            self.tabWidget.setTabEnabled(1, True)
+            self.tabWidget.setCurrentIndex(1)
+            self.frame_calc_params.setEnabled(False)
+            self.create_rows()
 
     def get_params(self):
-
-        rad = []
-        tasks_list = []
-        type = ''
 
         self.check_calc_trl.setChecked(self.check_trl.isChecked())
         self.check_calc_mrl.setChecked(self.check_mrl.isChecked())
@@ -83,14 +86,16 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         if self.check_calc_crl.isChecked():
             self.params.append('CRL')
         if not self.radio_calc_hard.isChecked():
-            rad.append('H')
+            self.rad.append('H')
         if not self.radio_calc_soft.isChecked():
-            rad.append('S')
+            self.rad.append('S')
         if not self.radio_calc_both.isChecked():
-            rad.append('B')
+            self.rad.append('B')
+
+    def create_rows(self):
 
         data = pd.read_excel('Tasks1.xlsx', index_col='Тип')
-        df = data.drop(rad)
+        df = data.drop(self.rad)
         val = self.make_level_dict(df, self.params)
 
         for i, key in enumerate(val.items()):
