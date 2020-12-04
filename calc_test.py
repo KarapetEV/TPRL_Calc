@@ -8,11 +8,13 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.setupUi(self)
+        self.tabWidget.setTabEnabled(1, False)
         self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
         self.btn_calculate.clicked.connect(self.calculate)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
         self.params = []
+        self.rad = []
 
     def change_ugt_level(self):
         labels_ugt = {
@@ -53,15 +55,16 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
 
     def set_params(self):
         self.reset_params()
-        self.tabWidget.setCurrentIndex(1)
         self.get_params()
-        self.frame_calc_params.setEnabled(False)
+        if len(self.params) == 0:
+            QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
+        else:
+            self.tabWidget.setTabEnabled(1, True)
+            self.tabWidget.setCurrentIndex(1)
+            self.frame_calc_params.setEnabled(False)
+            self.create_rows()
 
     def get_params(self):
-
-        rad = []
-        tasks_list = []
-        type = ''
 
         self.check_calc_trl.setChecked(self.check_trl.isChecked())
         self.check_calc_mrl.setChecked(self.check_mrl.isChecked())
@@ -83,14 +86,16 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         if self.check_calc_crl.isChecked():
             self.params.append('CRL')
         if not self.radio_calc_hard.isChecked():
-            rad.append('H')
+            self.rad.append('H')
         if not self.radio_calc_soft.isChecked():
-            rad.append('S')
+            self.rad.append('S')
         if not self.radio_calc_both.isChecked():
-            rad.append('B')
+            self.rad.append('B')
+
+    def create_rows(self):
 
         data = pd.read_excel('Tasks1.xlsx', index_col='Тип')
-        df = data.drop(rad)
+        df = data.drop(self.rad)
         val = self.make_level_dict(df, self.params)
 
         for i, key in enumerate(val.items()):
@@ -129,10 +134,91 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 d_1[x[0]] = self.make_params_dict(d, params)
         return d_1
 
-
     def calculate(self):
+        d1 = {}
+        self.d3 = {}
+        levels = self.treeWidget.topLevelItemCount()
+        for level in range(levels):
+            l1 = []
+            childs = self.treeWidget.topLevelItem(level).childCount()
+            topLevelItemText = self.treeWidget.topLevelItem(level).text(0)
+            print(self.treeWidget.topLevelItem(level).text(0))
+            d2 = {}
+            for kid in range(childs):
+                p = self.treeWidget.topLevelItem(level).child(kid).text(0)
+                ch_item = self.treeWidget.topLevelItem(level).child(kid)
+                if p not in d2:
+                    l2 = []
+                    if ch_item.checkState(1) == QtCore.Qt.Checked:
+                        l2.append(1)
+                    else:
+                        l2.append(0)
+                    d2[p] = l2
+                else:
+                    if ch_item.checkState(1) == QtCore.Qt.Checked:
+                        d2[p].append(1)
+                    else:
+                        d2[p].append(0)
+
+            for k, v in d2.items():
+                v = round(sum(v) / len(v), 1)
+                d2[k] = v
+                if k not in self.d3:
+                    self.d3[k] = [v]
+                else:
+                    self.d3[k].append(v)
+            if level not in d1:
+                d1[topLevelItemText] = d2
+
+        for key, values in self.d3.items():
+            summary = 0
+            for iter_value in range(len(values)):
+                if values[iter_value] == 1:
+                    summary += 1
+                elif 0 < values[iter_value] < 1:
+                    summary += values[iter_value]
+                    self.d3[key] = str(summary)
+                    break
+                else:
+                    self.d3[key] = str(summary)
+                    break
+        print('До обработки',self.d3)
+        x = float(max(self.d3.values()))
+        y = float(min(self.d3.values()))
+        if x - y > 2:
+            for iter_k, iter_v in self.d3.items():
+                iter_v = float(iter_v)
+                if iter_v == x:
+                    self.d3[iter_k] = str(round(iter_v - 1, 1))
+        print('После обработки',self.d3)
         self.tabWidget.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
+        self.take_results(self.d3)
+        self.write_res_for_graph(self.d3)
+
+    def take_results(self, res):
+
+        for k_res, v_res in res.items():
+            if k_res == 'TRL':
+                self.label_trl_result.setText(v_res)
+            elif k_res == 'MRL':
+                self.label_mrl_result.setText(v_res)
+            elif k_res == 'ERL':
+                self.label_erl_result.setText(v_res)
+            elif k_res == 'ORL':
+                self.label_orl_result.setText(v_res)
+            elif k_res == 'CRL':
+                self.label_crl_result.setText(v_res)
+
+    def write_res_for_graph(self, res1):
+        self.d4 = res1
+        all_params = ['TRL', 'MRL', 'ERL', 'ORL', 'CRL']
+        for one_param in all_params:
+            if one_param not in self.d4:
+                self.d4[one_param] = '0'
+        for d4_k, d4_v in self.d4.items():
+            self.d4[d4_k] = float(d4_v)
+        print('Для построения графика', self.d4)
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):
