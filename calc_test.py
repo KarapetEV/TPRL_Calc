@@ -103,6 +103,8 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 for idx in range(len(v[1])):
                     item_1 = QtWidgets.QTreeWidgetItem(item_0)
                     item_1.setCheckState(1, QtCore.Qt.Unchecked)
+                    item_1.setFlags(QtCore.Qt.ItemIsUserCheckable)
+                    item_1.setFlags(QtCore.Qt.ItemIsEnabled)
                     self.treeWidget.topLevelItem(i).child(count).setText(0, v[0])
                     self.treeWidget.topLevelItem(i).child(count).setText(1, v[1][idx])
                     count += 1
@@ -132,18 +134,18 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.tabWidget.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
 
-    @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem, int)
-    def onItemClicked(self, item, col):
+    @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
+    def onItemClicked(self, item):
         if item.childCount() > 0:
             if item.isExpanded():
                 item.setExpanded(False)
             else:
                 item.setExpanded(True)
         else:
-            if item.checkState(col) == QtCore.Qt.Unchecked:
-                item.setCheckState(col, QtCore.Qt.Checked)
+            if item.checkState(1) == QtCore.Qt.Unchecked:
+                item.setCheckState(1, QtCore.Qt.Checked)
             else:
-                item.setCheckState(col, QtCore.Qt.Unchecked)
+                item.setCheckState(1, QtCore.Qt.Unchecked)
 
 
 if __name__ == '__main__':
