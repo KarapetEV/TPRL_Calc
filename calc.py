@@ -130,6 +130,54 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         return d_1
 
     def calculate(self):
+        d1 = {}
+        self.d3 = {}
+        levels = self.treeWidget.topLevelItemCount()
+        for level in range(levels):
+            l1 = []
+            childs = self.treeWidget.topLevelItem(level).childCount()
+            topLevelItemText = self.treeWidget.topLevelItem(level).text(0)
+            print(self.treeWidget.topLevelItem(level).text(0))
+            d2 = {}
+            for kid in range(childs):
+                p = self.treeWidget.topLevelItem(level).child(kid).text(0)
+                ch_item = self.treeWidget.topLevelItem(level).child(kid)
+                if p not in d2:
+                    l2 = []
+                    if ch_item.checkState(1) == QtCore.Qt.Checked:
+                        l2.append(1)
+                    else:
+                        l2.append(0)
+                    d2[p] = l2
+                else:
+                    if ch_item.checkState(1) == QtCore.Qt.Checked:
+                        d2[p].append(1)
+                    else:
+                        d2[p].append(0)
+
+            for k, v in d2.items():
+                v = round(sum(v) / len(v), 1)
+                d2[k] = v
+                if k not in self.d3:
+                    self.d3[k] = [v]
+                else:
+                    self.d3[k].append(v)
+            if level not in d1:
+                d1[topLevelItemText] = d2
+
+        for key, values in self.d3.items():
+            summary = 0
+            for iter_value in range(len(values)):
+                if values[iter_value] == 1:
+                    summary += 1
+                elif 0 < values[iter_value] < 1:
+                    summary += values[iter_value]
+                    self.d3[key] = summary
+                    break
+                else:
+                    self.d3[key] = summary
+                    break
+        print(self.d3)
         self.tabWidget.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
 
