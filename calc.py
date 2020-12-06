@@ -193,7 +193,15 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 else:
                     self.d3[key] = str(summary)
                     break
-        print(self.d3)
+        print('До обработки', self.d3)
+        x = float(max(self.d3.values()))
+        y = float(min(self.d3.values()))
+        if x - y > 2:
+            for iter_k, iter_v in self.d3.items():
+                iter_v = float(iter_v)
+                if iter_v == x:
+                    self.d3[iter_k] = str(round(iter_v - 1, 1))
+        print('После обработки', self.d3)
         self.tabWidget.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
         self.take_results(self.d3)
