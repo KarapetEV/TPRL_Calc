@@ -2,6 +2,7 @@ import sys
 import calc_window
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
 import pandas as pd
+from chart import create_chart
 
 
 class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
@@ -116,13 +117,13 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
             count = 0
             for j, v in enumerate(key[1].items()):
                 for idx in range(len(v[1])):
-                    item_1 = QtWidgets.QTreeWidgetItem(item_0)
+                    item_1 = QtWidgets.QTreeWidgetItem(item_0, [v[0], v[1][idx]])
                     item_1.setCheckState(1, QtCore.Qt.Unchecked)
                     item_1.setFlags(QtCore.Qt.ItemIsUserCheckable)
                     item_1.setFlags(QtCore.Qt.ItemIsEnabled)
-                    self.treeWidget.topLevelItem(i).child(count).setText(0, v[0])
-                    self.treeWidget.topLevelItem(i).child(count).setText(1, v[1][idx])
-                    count += 1
+                    # self.treeWidget.topLevelItem(i).child(count).setText(0, v[0])
+                    # self.treeWidget.topLevelItem(i).child(count).setText(1, v[1][idx])
+                    # count += 1
 
     def make_params_dict(self, df, params):
         d_2 = {}
@@ -196,6 +197,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.tabWidget.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
         self.take_results(self.d3)
+        create_chart(self.d3, self.frame_graph)
 
     def take_results(self, res):
 
