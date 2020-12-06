@@ -22,7 +22,6 @@ def create_chart(data, frame):
     plt.subplot(polar=True)
     plt.plot(label_placement, results)
     lines, labels = plt.thetagrids(np.degrees(label_placement), labels=params)
-    fig.legend()
     plotWidget = FigureCanvas(fig)
     lay = QtWidgets.QVBoxLayout(frame)
     lay.setContentsMargins(0, 0, 0, 0)
