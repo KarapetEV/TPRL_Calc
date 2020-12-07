@@ -18,7 +18,7 @@ def create_chart(data, frame):
             results.append(0.0)
 
     label_placement = np.linspace(start=0.1*np.pi, stop=1.7*np.pi, num=len(results))
-    fig = plt.figure(figsize=(6,6))
+    fig = plt.figure(figsize=(6, 6), facecolor='#f3f3f3')
     plt.subplot(polar=True)
     plt.plot(label_placement, results)
     lines, labels = plt.thetagrids(np.degrees(label_placement), labels=params)
