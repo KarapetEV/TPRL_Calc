@@ -42,10 +42,6 @@ QTreeWidget	{
 	color: #000;
 }
 
-QTreeWidget#headerItem	{
-	font-weight: bold;
-}
-
 QPushButton	{
 	background: #f24437;
   	background-image: -webkit-linear-gradient(top, #f24437, #c62d1f);
@@ -77,4 +73,12 @@ QPushButton:hover	{
   	background-image: linear-gradient(to bottom, #c62d1f, #f24437);
   	color: #ffffff;
   	text-decoration: none;
+}
+
+QLabel	{
+	padding: 0px 0px 0px 0px;
+}
+
+QHeaderView::section	{
+
 }
