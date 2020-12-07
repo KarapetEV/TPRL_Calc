@@ -155,7 +155,6 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
             l1 = []
             childs = self.treeWidget.topLevelItem(level).childCount()
             topLevelItemText = self.treeWidget.topLevelItem(level).text(0)
-            print(self.treeWidget.topLevelItem(level).text(0))
             d2 = {}
             for kid in range(childs):
                 p = self.treeWidget.topLevelItem(level).child(kid).text(0)
@@ -182,7 +181,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                     self.d3[k].append(v)
             if level not in d1:
                 d1[topLevelItemText] = d2
-
+        print(self.d3)
         for key, values in self.d3.items():
             summary = 0
             for iter_value in range(len(values)):
