@@ -5,6 +5,32 @@ import pandas as pd
 from chart import create_chart
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
+class My_Delegate(QtGui.QStyledItemDelegate):
+    def __init__(self, parent=None):
+        QtGui.QStyledItemDelegate.__init__(self, parent)
+        self.parent = parent
+    def paint(self, painter, option, index):
+        text = index.model().data(index)
+        index.model().setData(index, option.rect.width(), QtCore.Qt.UserRole + 1)
+        document = QtGui.QTextDocument() # #print "dir(document)", dir(document)
+        document.setHtml(text)
+        document.setTextWidth(option.rect.width())  #keeps text from spilling over into adjacent rect
+        painter.save()
+        painter.translate(option.rect.x(), option.rect.y())
+        document.drawContents(painter)  #draw the document with the painter
+        painter.restore()
+
+    def sizeHint(self, option, index):
+        # Size should depend on number of lines wrapped
+        text = index.model().data(index)
+        document = QtGui.QTextDocument()
+        document.setHtml(text)
+        width = index.model().data(index, QtCore.Qt.UserRole + 1)
+        if not width:
+            width = 20
+        document.setTextWidth(width)
+        return QtCore.QSize(document.size().width(), document.size().height())
+
 
 class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
     def __init__(self, parent=None):
@@ -57,7 +83,6 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.treeWidget.clear()
         self.params = []
         self.rad = []
-
     def reset_tasks(self):
         levels_count = self.treeWidget.topLevelItemCount()
         for i in range(levels_count):
@@ -122,14 +147,21 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 for idx in range(len(v[1])):
                     item_1 = QtWidgets.QTreeWidgetItem(item_0)
                     self.new_label = QtWidgets.QLabel(v[1][idx])
-                    self.new_label.setStyleSheet("background-color: #cccccc")
                     self.new_label.setWordWrap(True)
+                    self.new_label.setStyleSheet('''background: #cccccc; 
+                                                    color: #000044; 
+                                                    margin-left: 10px;
+                                                    font-size: 13px;''')
                     item_1.setCheckState(1, QtCore.Qt.Unchecked)
                     item_1.setFlags(QtCore.Qt.ItemIsUserCheckable)
                     item_1.setFlags(QtCore.Qt.ItemIsEnabled)
                     self.treeWidget.topLevelItem(i).child(count).setText(0, v[0])
                     self.treeWidget.setItemWidget(item_1, 1, self.new_label)
                     count += 1
+        delegate = My_Delegate()
+        self.treeWidget.setItemDelegateForColumn(2, delegate)
+
+
             # for j, v in enumerate(key[1].items()):
             #     for idx in range(len(v[1])):
             #         item_1 = QtWidgets.QTreeWidgetItem(item_0, [v[0], self.wrap_text(item_0, v[1][idx])])
@@ -137,8 +169,8 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
             #         item_1.setFlags(QtCore.Qt.ItemIsUserCheckable)
             #         item_1.setFlags(QtCore.Qt.ItemIsEnabled)
 
-    # def wrap_text(self, item, text):
-    #     label = QtWidgets.QLabel(text)
+    # def create_label(self, item):
+    #     item = QtWidgets.QLabel(text)
     #     label.setWordWrap(True)
     #     return self.treeWidget.setItemWidget(item, 1, label)
 
