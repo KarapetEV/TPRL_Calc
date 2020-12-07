@@ -7,6 +7,11 @@ QWidget	{
 	color: #e21a1a;
 }
 
+QTabWidget	{
+	font-size: 14px;
+}
+
+
 #frame_title	{
 	background-color: #e21a1a;
 }
@@ -19,6 +24,14 @@ QWidget	{
 #labelCalc	{
 	background-color: #e21a1a;
 	color: #ffffff;
+}
+
+QCheckBox	{
+	font-size: 13px;
+}
+
+QRadioButton	{
+	font-size: 13px;
 }
 
 QTreeWidget	{
@@ -41,9 +54,9 @@ QPushButton	{
   	border-radius: 4px;
   	font-family: Arial;
   	color: #f8e7e9;
-  	font-size: 12px;
+  	font-size: 14px;
   	font-weight: bold;
-  	padding: 10px 20px 10px 20px;
+  	padding: 5px 10px 5px 10px;
   	text-decoration: none;
 }
 
