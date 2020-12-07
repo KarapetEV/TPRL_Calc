@@ -56,6 +56,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.radio_calc_both.setChecked(False)
         self.treeWidget.clear()
         self.params = []
+        self.rad = []
 
     def reset_tasks(self):
         levels_count = self.treeWidget.topLevelItemCount()

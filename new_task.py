@@ -56,6 +56,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.radio_calc_both.setChecked(False)
         self.treeWidget.clear()
         self.params = []
+        self.rad = []
 
     def reset_tasks(self):
         levels_count = self.treeWidget.topLevelItemCount()
@@ -121,7 +122,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 for idx in range(len(v[1])):
                     item_1 = QtWidgets.QTreeWidgetItem(item_0)
                     self.new_label = QtWidgets.QLabel(v[1][idx])
-                    # self.new_label.se
+                    self.new_label.setStyleSheet("background-color: #cccccc")
                     self.new_label.setWordWrap(True)
                     item_1.setCheckState(1, QtCore.Qt.Unchecked)
                     item_1.setFlags(QtCore.Qt.ItemIsUserCheckable)
