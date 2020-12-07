@@ -1,0 +1,63 @@
+QMainWindow	{
+	border-radius: 2px;
+}
+
+QWidget	{
+	background-color: #f3f3f3;
+	color: #e21a1a;
+}
+
+#frame_title	{
+	background-color: #e21a1a;
+}
+
+#logo	{
+	background-image: url(./img/rzd_logo.png);
+	background-position: center;
+}
+
+#labelCalc	{
+	background-color: #e21a1a;
+	color: #ffffff;
+}
+
+QTreeWidget	{
+	background-color: #cccccc;
+	border: 2px solid grey;
+	border-radius: 4px;
+	color: #000044;
+	font-size: 13px;
+}
+
+QPushButton	{
+	background: #f24437;
+  	background-image: -webkit-linear-gradient(top, #f24437, #c62d1f);
+  	background-image: -moz-linear-gradient(top, #f24437, #c62d1f);
+  	background-image: -ms-linear-gradient(top, #f24437, #c62d1f);
+  	background-image: -o-linear-gradient(top, #f24437, #c62d1f);
+  	background-image: linear-gradient(to bottom, #f24437, #c62d1f);
+  	-webkit-border-radius: 2;
+  	-moz-border-radius: 2;
+  	border-radius: 4px;
+  	font-family: Arial;
+  	color: #f8e7e9;
+  	font-size: 12px;
+  	font-weight: bold;
+  	padding: 10px 20px 10px 20px;
+  	text-decoration: none;
+}
+
+QPushButton:pressed	{
+	background-color: #e31b1a;
+}
+
+QPushButton:hover	{
+	background: #c62d1f;
+  	background-image: -webkit-linear-gradient(top, #c62d1f, #f24437);
+  	background-image: -moz-linear-gradient(top, #c62d1f, #f24437);
+  	background-image: -ms-linear-gradient(top, #c62d1f, #f24437);
+  	background-image: -o-linear-gradient(top, #c62d1f, #f24437);
+  	background-image: linear-gradient(to bottom, #c62d1f, #f24437);
+  	color: #ffffff;
+  	text-decoration: none;
+}

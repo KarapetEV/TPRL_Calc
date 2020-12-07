@@ -1,14 +1,16 @@
-import sys
+import sys, os
 import calc_window
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
 import pandas as pd
 from chart import create_chart
 
+style = os.path.join(os.path.dirname(__file__), 'style.css')
 
 class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.setupUi(self)
+        self.setStyleSheet(open(style).read())
         self.tabWidget.setTabEnabled(1, False)
         self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
@@ -239,6 +241,6 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = Window()                   # Создаем экземпляр класса
     window.setWindowTitle('TRL Calculator')
-    window.setWindowIcon(QtGui.QIcon('rjd.png'))
+    window.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
     window.show()
     sys.exit(app.exec_())
