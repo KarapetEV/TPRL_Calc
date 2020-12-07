@@ -80,7 +80,6 @@ class Window(QtWidgets.QWidget, app_gui.Ui_AppWindow):
             self.create_rows()
 
     def get_params(self):
-
         self.check_calc_trl.setChecked(self.check_trl.isChecked())
         self.check_calc_mrl.setChecked(self.check_mrl.isChecked())
         self.check_calc_erl.setChecked(self.check_erl.isChecked())
@@ -112,14 +111,17 @@ class Window(QtWidgets.QWidget, app_gui.Ui_AppWindow):
         data = pd.read_excel('Tasks1.xlsx', index_col='Тип')
         df = data.drop(self.rad)
         val = self.make_level_dict(df, self.params)
-        count = 1
+
         item_color = ''
 
         for i, key in enumerate(val.items()):
+            font = QtGui.QFont()
+            font.setBold(True)
             item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
+            item_0.setFont(0, font)
             self.treeWidget.topLevelItem(i).setText(0, 'Уровень {}'.format(key[0]))
             self.treeWidget.expandAll()
-
+            count = 1
             for j, v in enumerate(key[1].items()):
 
                 for idx in range(len(v[1])):

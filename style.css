@@ -8,9 +8,9 @@ QWidget	{
 }
 
 QTabWidget	{
+	font-weight: bold;
 	font-size: 14px;
 }
-
 
 #frame_title	{
 	background-color: #e21a1a;
@@ -35,11 +35,15 @@ QRadioButton	{
 }
 
 QTreeWidget	{
-	background-color: #ff9494;
-	border: 2px solid grey;
+	background-color: #fce6e6;
+	border: 1px solid grey;
 	border-radius: 4px;
 	font-size: 13px;
 	color: #000;
+}
+
+QTreeWidget#headerItem	{
+	font-weight: bold;
 }
 
 QPushButton	{

@@ -17,7 +17,7 @@ class Ui_AppWindow(object):
         self.logo.setScaledContents(True)
         self.logo.setObjectName("logo")
         self.labelCalc = QtWidgets.QLabel(self.frame_title)
-        self.labelCalc.setGeometry(QtCore.QRect(140, 10, 590, 70))
+        self.labelCalc.setGeometry(QtCore.QRect(100, 0, 670, 90))
         font = QtGui.QFont()
         font.setPointSize(14)
         font.setBold(True)
