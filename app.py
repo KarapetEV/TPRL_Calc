@@ -112,13 +112,8 @@ class Window(QtWidgets.QWidget, app_gui.Ui_AppWindow):
         data = pd.read_excel('Tasks1.xlsx', index_col='Тип')
         df = data.drop(self.rad)
         val = self.make_level_dict(df, self.params)
-        item_colors = {
-            'TRL': '#dbdbff',
-            'MRL': '#b0ffed',
-            'ERL': '#ffeeb0',
-            'ORL': '#ffb0c2',
-            'CRL': '#ceffb0'
-        }
+        count = 1
+        item_color = ''
 
         for i, key in enumerate(val.items()):
             item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
@@ -126,7 +121,7 @@ class Window(QtWidgets.QWidget, app_gui.Ui_AppWindow):
             self.treeWidget.expandAll()
 
             for j, v in enumerate(key[1].items()):
-                count = 0
+
                 for idx in range(len(v[1])):
                     item_1 = QtWidgets.QTreeWidgetItem(item_0, [v[0], v[1][idx]])
                     item_1.setCheckState(1, QtCore.Qt.Unchecked)
@@ -134,9 +129,14 @@ class Window(QtWidgets.QWidget, app_gui.Ui_AppWindow):
                     item_1.setFlags(QtCore.Qt.ItemIsEnabled)
                     # self.treeWidget.topLevelItem(i).child(count).setText(0, v[0])
                     # self.treeWidget.topLevelItem(i).child(count).setText(1, v[1][idx])
-                    item_1.setBackground(0, QtGui.QColor(item_colors[v[0]]))
-                    item_1.setBackground(1, QtGui.QColor(item_colors[v[0]]))
 
+                    if count % 2 == 0:
+                        item_color = '#c2c2c2'
+                    else:
+                        item_color = '#f5f5f5'
+                    item_1.setBackground(0, QtGui.QColor(item_color))
+                    item_1.setBackground(1, QtGui.QColor(item_color))
+                count += 1
 
     def make_params_dict(self, df, params):
         d_2 = {}

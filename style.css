@@ -35,11 +35,11 @@ QRadioButton	{
 }
 
 QTreeWidget	{
-	background-color: #cccccc;
+	background-color: #ff9494;
 	border: 2px solid grey;
 	border-radius: 4px;
-	color: #000044;
 	font-size: 13px;
+	color: #000;
 }
 
 QPushButton	{
