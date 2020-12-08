@@ -231,23 +231,22 @@ class Window(QtWidgets.QWidget, app_gui.Ui_AppWindow):
 
     def show_results(self, res):
         summa = 0
-        for k in res.values():
-            summa += float(k)
+
+        for k_res, v_res in res.items():
+            summa += float(v_res)
+            if k_res == 'TRL':
+                self.label_trl_result.setText(v_res)
+            elif k_res == 'MRL':
+                self.label_mrl_result.setText(v_res)
+            elif k_res == 'ERL':
+                self.label_erl_result.setText(v_res)
+            elif k_res == 'ORL':
+                self.label_orl_result.setText(v_res)
+            elif k_res == 'CRL':
+                self.label_crl_result.setText(v_res)
         average_f = float(summa / 5)
         average_i = int(average_f)
         self.ugtSlider.setValue(average_i)
-
-        # for k_res, v_res in res.items():
-        #     if k_res == 'TRL':
-        #         self.label_trl_result.setText(v_res)
-        #     elif k_res == 'MRL':
-        #         self.label_mrl_result.setText(v_res)
-        #     elif k_res == 'ERL':
-        #         self.label_erl_result.setText(v_res)
-        #     elif k_res == 'ORL':
-        #         self.label_orl_result.setText(v_res)
-        #     elif k_res == 'CRL':
-        #         self.label_crl_result.setText(v_res)
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):
