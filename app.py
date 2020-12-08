@@ -36,14 +36,22 @@ class Window(QtWidgets.QWidget, app_gui.Ui_AppWindow):
         }
         size = self.ugtSlider.value()
         for k, v in labels_ugt.items():
-            font = QtGui.QFont()
             if v == size:
-                font.setPointSize(16)
-                k.setFont(font)
+                print(k.font().toString())
+                k.setStyleSheet('''
+                                background-color: #e21a1a;
+                                font-family: MS Shell Dlg;
+                                color: #ffffff;
+                                font-size: 24px;
+                                ''')
                 k.setEnabled(True)
             else:
-                font.setPointSize(12)
-                k.setFont(font)
+                k.setStyleSheet('''
+                                background-color: #f3f3f3;
+                                font-family: MS Shell Dlg;
+                                color: #e21a1a;
+                                font-size: 18px;
+                                ''')
                 k.setEnabled(False)
 
     def reset_params(self):
@@ -218,11 +226,17 @@ class Window(QtWidgets.QWidget, app_gui.Ui_AppWindow):
         print('После обработки', self.d3)
         self.tabWidget.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
-        self.take_results(self.d3)
+        self.show_results(self.d3)
         create_chart(self.d3, self.frame_graph)
 
-    def take_results(self, res):
-        pass
+    def show_results(self, res):
+        summa = 0
+        for k in res.values():
+            summa += float(k)
+        average_f = float(summa / 5)
+        average_i = int(average_f)
+        self.ugtSlider.setValue(average_i)
+
         # for k_res, v_res in res.items():
         #     if k_res == 'TRL':
         #         self.label_trl_result.setText(v_res)
