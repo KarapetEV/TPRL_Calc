@@ -148,10 +148,11 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                     item_1 = QtWidgets.QTreeWidgetItem(item_0)
                     self.new_label = QtWidgets.QLabel(v[1][idx])
                     self.new_label.setWordWrap(True)
-                    self.new_label.setStyleSheet('''background: #cccccc; 
-                                                    color: #000044; 
+                    self.new_label.setStyleSheet('''background: #cccccc;
+                                                    color: #000044;
                                                     margin-left: 10px;
                                                     font-size: 13px;''')
+                    self.new_label.setMaximumHeight(32)
                     item_1.setCheckState(1, QtCore.Qt.Unchecked)
                     item_1.setFlags(QtCore.Qt.ItemIsUserCheckable)
                     item_1.setFlags(QtCore.Qt.ItemIsEnabled)
