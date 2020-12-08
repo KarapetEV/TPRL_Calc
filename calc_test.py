@@ -161,8 +161,6 @@ class Window(QtWidgets.QWidget, app_gui.Ui_AppWindow):
                     item_1.setFlags(QtCore.Qt.ItemIsEnabled)
                     self.treeWidget.setItemWidget(item_1, 1, textEdit)
                     textEdit.td_size_sig.connect(lambda size: item_1.setSizeHint(2, size))
-                    # self.treeWidget.topLevelItem(i).child(count).setText(0, v[0])
-                    # self.treeWidget.topLevelItem(i).child(count).setText(1, v[1][idx])
 
                     if count % 2 == 0:
                         item_color = '#c2c2c2'
