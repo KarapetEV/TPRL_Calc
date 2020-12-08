@@ -37,7 +37,6 @@ class Window(QtWidgets.QWidget, app_gui.Ui_AppWindow):
         size = self.ugtSlider.value()
         for k, v in labels_ugt.items():
             if v == size:
-                print(k.font().toString())
                 k.setStyleSheet('''
                                 background-color: #e21a1a;
                                 font-family: MS Shell Dlg;
