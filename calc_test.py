@@ -1,18 +1,43 @@
-import sys
-import calc_window
+import sys, os
+import app_gui
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
 import pandas as pd
+from chart import create_chart
+from PyQt5.QtCore import pyqtSignal, QSize
 
+style = os.path.join(os.path.dirname(__file__), 'style.css')
+class AdjusttableTextEdit(QtWidgets.QTextEdit):
+    td_size_sig = pyqtSignal(QSize)
+    def __init__(self, parent=None):
+        super(AdjusttableTextEdit, self).__init__(parent)
 
-class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
+        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.textChanged.connect(self.resizeTextEdit)
+        self.document().documentLayout().documentSizeChanged.connect(self.resizeTextEdit)
+
+    def resizeTextEdit(self):
+        docheight = self.document().size().height()
+        margin = self.document().documentMargin()
+        self.setMinimumHeight(docheight + margin)
+        self.setMaximumHeight(docheight + margin)
+        return
+    def resizeEvent(self, e):
+        super(AdjusttableTextEdit, self).resizeEvent(e)
+        self.td_size_sig.emit(QSize(self.sizeHint().width(), self.maximumHeight()))
+        return
+
+class Window(QtWidgets.QWidget, app_gui.Ui_AppWindow):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.setupUi(self)
+        self.setStyleSheet(open(style).read())
         self.tabWidget.setTabEnabled(1, False)
         self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
-        self.btn_calculate.clicked.connect(self.calculate)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
+        self.btn_calculate.clicked.connect(self.calculate)
+        self.btn_reset_tasks.clicked.connect(self.reset_tasks)
         self.params = []
         self.rad = []
 
@@ -31,14 +56,22 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         }
         size = self.ugtSlider.value()
         for k, v in labels_ugt.items():
-            font = QtGui.QFont()
             if v == size:
-                font.setPointSize(16)
-                k.setFont(font)
+                print(k.font().toString())
+                k.setStyleSheet('''
+                                background-color: #e21a1a;
+                                font-family: MS Shell Dlg;
+                                color: #ffffff;
+                                font-size: 24px;
+                                ''')
                 k.setEnabled(True)
             else:
-                font.setPointSize(12)
-                k.setFont(font)
+                k.setStyleSheet('''
+                                background-color: #f3f3f3;
+                                font-family: MS Shell Dlg;
+                                color: #e21a1a;
+                                font-size: 18px;
+                                ''')
                 k.setEnabled(False)
 
     def reset_params(self):
@@ -52,6 +85,16 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         self.radio_calc_both.setChecked(False)
         self.treeWidget.clear()
         self.params = []
+        self.rad = []
+
+    def reset_tasks(self):
+        levels_count = self.treeWidget.topLevelItemCount()
+        for i in range(levels_count):
+            level = self.treeWidget.topLevelItem(i)
+            childs_count = level.childCount()
+            for j in range(childs_count):
+                task = level.child(j)
+                task.setCheckState(1, QtCore.Qt.Unchecked)
 
     def set_params(self):
         self.reset_params()
@@ -65,7 +108,6 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
             self.create_rows()
 
     def get_params(self):
-
         self.check_calc_trl.setChecked(self.check_trl.isChecked())
         self.check_calc_mrl.setChecked(self.check_mrl.isChecked())
         self.check_calc_erl.setChecked(self.check_erl.isChecked())
@@ -98,21 +140,47 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
         df = data.drop(self.rad)
         val = self.make_level_dict(df, self.params)
 
+        item_color = ''
+
         for i, key in enumerate(val.items()):
+            font = QtGui.QFont()
+            font.setBold(True)
             item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
+            item_0.setFont(0, font)
             self.treeWidget.topLevelItem(i).setText(0, 'Уровень {}'.format(key[0]))
             self.treeWidget.expandAll()
-
-            count = 0
+            count = 1
             for j, v in enumerate(key[1].items()):
+
                 for idx in range(len(v[1])):
-                    item_1 = QtWidgets.QTreeWidgetItem(item_0)
+                    textEdit = AdjusttableTextEdit()
+                    textEdit.setText(v[1][idx])
+                    item_1 = QtWidgets.QTreeWidgetItem(item_0, [v[0], ""])
                     item_1.setCheckState(1, QtCore.Qt.Unchecked)
                     item_1.setFlags(QtCore.Qt.ItemIsUserCheckable)
                     item_1.setFlags(QtCore.Qt.ItemIsEnabled)
-                    self.treeWidget.topLevelItem(i).child(count).setText(0, v[0])
-                    self.treeWidget.topLevelItem(i).child(count).setText(1, v[1][idx])
-                    count += 1
+                    self.treeWidget.setItemWidget(item_1, 1, textEdit)
+                    textEdit.td_size_sig.connect(lambda size: item_1.setSizeHint(2, size))
+                    # self.treeWidget.topLevelItem(i).child(count).setText(0, v[0])
+                    # self.treeWidget.topLevelItem(i).child(count).setText(1, v[1][idx])
+
+                    if count % 2 == 0:
+                        item_color = '#c2c2c2'
+                        textEdit.setStyleSheet('''background-color: #c2c2c2;
+                                                border: 0;
+                                                font-size: 13px;
+                                                color: #000;
+                                                ''')
+                    else:
+                        item_color = '#f5f5f5'
+                        textEdit.setStyleSheet('''background-color: #f5f5f5;
+                                                border: 0;
+                                                font-size: 13px;
+                                                color: #000;
+                                                ''')
+                    item_1.setBackground(0, QtGui.QColor(item_color))
+                    item_1.setBackground(1, QtGui.QColor(item_color))
+                count += 1
 
     def make_params_dict(self, df, params):
         d_2 = {}
@@ -142,7 +210,6 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
             l1 = []
             childs = self.treeWidget.topLevelItem(level).childCount()
             topLevelItemText = self.treeWidget.topLevelItem(level).text(0)
-            print(self.treeWidget.topLevelItem(level).text(0))
             d2 = {}
             for kid in range(childs):
                 p = self.treeWidget.topLevelItem(level).child(kid).text(0)
@@ -169,7 +236,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                     self.d3[k].append(v)
             if level not in d1:
                 d1[topLevelItemText] = d2
-
+        print(self.d3)
         for key, values in self.d3.items():
             summary = 0
             for iter_value in range(len(values)):
@@ -182,7 +249,7 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 else:
                     self.d3[key] = str(summary)
                     break
-        print('До обработки',self.d3)
+        print('До обработки', self.d3)
         x = float(max(self.d3.values()))
         y = float(min(self.d3.values()))
         if x - y > 2:
@@ -190,35 +257,31 @@ class Window(QtWidgets.QWidget, calc_window.Ui_AppWindow):
                 iter_v = float(iter_v)
                 if iter_v == x:
                     self.d3[iter_k] = str(round(iter_v - 1, 1))
-        print('После обработки',self.d3)
+        print('После обработки', self.d3)
         self.tabWidget.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
-        self.take_results(self.d3)
-        self.write_res_for_graph(self.d3)
+        self.show_results(self.d3)
+        create_chart(self.d3, self.frame_graph)
 
-    def take_results(self, res):
+    def show_results(self, res):
+        summa = 0
+        for k in res.values():
+            summa += float(k)
+        average_f = float(summa / 5)
+        average_i = int(average_f)
+        self.ugtSlider.setValue(average_i)
 
-        for k_res, v_res in res.items():
-            if k_res == 'TRL':
-                self.label_trl_result.setText(v_res)
-            elif k_res == 'MRL':
-                self.label_mrl_result.setText(v_res)
-            elif k_res == 'ERL':
-                self.label_erl_result.setText(v_res)
-            elif k_res == 'ORL':
-                self.label_orl_result.setText(v_res)
-            elif k_res == 'CRL':
-                self.label_crl_result.setText(v_res)
-
-    def write_res_for_graph(self, res1):
-        self.d4 = res1
-        all_params = ['TRL', 'MRL', 'ERL', 'ORL', 'CRL']
-        for one_param in all_params:
-            if one_param not in self.d4:
-                self.d4[one_param] = '0'
-        for d4_k, d4_v in self.d4.items():
-            self.d4[d4_k] = float(d4_v)
-        print('Для построения графика', self.d4)
+        # for k_res, v_res in res.items():
+        #     if k_res == 'TRL':
+        #         self.label_trl_result.setText(v_res)
+        #     elif k_res == 'MRL':
+        #         self.label_mrl_result.setText(v_res)
+        #     elif k_res == 'ERL':
+        #         self.label_erl_result.setText(v_res)
+        #     elif k_res == 'ORL':
+        #         self.label_orl_result.setText(v_res)
+        #     elif k_res == 'CRL':
+        #         self.label_crl_result.setText(v_res)
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):
@@ -238,6 +301,6 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = Window()                   # Создаем экземпляр класса
     window.setWindowTitle('TRL Calculator')
-    window.setWindowIcon(QtGui.QIcon('rjd.png'))
+    window.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
     window.show()
     sys.exit(app.exec_())
