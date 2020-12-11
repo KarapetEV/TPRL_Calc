@@ -15,7 +15,13 @@ QTabWidget	{
 #frame_title	{
 	background-color: #e21a1a;
 }
-
+#frame_manual   {
+    background-color:#f3f3f3;
+}
+#labelManual    {
+    background-color: #f3f3f3;
+    color: #000;
+}
 #logo	{
 	background-image: url(./img/rzd_logo.png);
 	background-position: center;
@@ -23,7 +29,7 @@ QTabWidget	{
 
 #labelCalc	{
 	background-color: #e21a1a;
-	color: #ffffff;
+	color: white;
 }
 
 QCheckBox	{
@@ -33,7 +39,6 @@ QCheckBox	{
 QRadioButton	{
 	font-size: 13px;
 }
-
 QTreeWidget	{
 	background-color: #fce6e6;
 	border: 1px solid grey;
@@ -41,6 +46,7 @@ QTreeWidget	{
 	font-size: 13px;
 	color: #000;
 }
+
 
 QPushButton	{
 	background: #f24437;
