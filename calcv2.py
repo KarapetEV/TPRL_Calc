@@ -76,17 +76,17 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 k.setEnabled(False)
 
     def reset_params(self):
-        self.res_check_trl.setChecked(False)
-        self.res_check_mrl.setChecked(False)
-        self.res_check_erl.setChecked(False)
-        self.res_check_orl.setChecked(False)
-        self.res_check_crl.setChecked(False)
+        # self.res_check_trl.setChecked(False)
+        # self.res_check_mrl.setChecked(False)
+        # self.res_check_erl.setChecked(False)
+        # self.res_check_orl.setChecked(False)
+        # self.res_check_crl.setChecked(False)
         # self.radio_calc_hard.setChecked(False)
         # self.radio_calc_soft.setChecked(False)
         # self.radio_calc_both.setChecked(False)
         self.treeWidget.clear()
         self.params = []
-        self.rad = []
+        # self.rad = []
 
     def reset_tasks(self):
         levels_count = self.treeWidget.topLevelItemCount()
@@ -103,31 +103,31 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         if len(self.params) == 0:
             QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
         else:
-            self.tabWidget.setTabEnabled(1, True)
-            self.tabWidget.setCurrentIndex(1)
+            # self.tabWidget.setTabEnabled(1, True)
+            # self.tabWidget.setCurrentIndex(1)
             # self.frame_check_params.setEnabled(False)
-            self.group_check_params.setEnabled(False)
+            # self.group_check_params.setEnabled(False)
             self.create_rows()
 
     def get_params(self):
-        self.res_check_trl.setChecked(self.check_trl.isChecked())
-        self.res_check_mrl.setChecked(self.check_mrl.isChecked())
-        self.res_check_erl.setChecked(self.check_erl.isChecked())
-        self.res_check_orl.setChecked(self.check_orl.isChecked())
-        self.res_check_crl.setChecked(self.check_crl.isChecked())
+        # self.res_check_trl.setChecked(self.check_trl.isChecked())
+        # self.res_check_mrl.setChecked(self.check_mrl.isChecked())
+        # self.res_check_erl.setChecked(self.check_erl.isChecked())
+        # self.res_check_orl.setChecked(self.check_orl.isChecked())
+        # self.res_check_crl.setChecked(self.check_crl.isChecked())
         # self.radio_calc_hard.setChecked(self.radio_hard.isChecked())
         # self.radio_calc_soft.setChecked(self.radio_soft.isChecked())
         # self.radio_calc_both.setChecked(self.radio_both.isChecked())
 
-        if self.res_check_trl.isChecked():
+        if self.check_trl.isChecked():
             self.params.append('TRL')
-        if self.res_check_mrl.isChecked():
+        if self.check_mrl.isChecked():
             self.params.append('MRL')
-        if self.res_check_erl.isChecked():
+        if self.check_erl.isChecked():
             self.params.append('ERL')
-        if self.res_check_orl.isChecked():
+        if self.check_orl.isChecked():
             self.params.append('ORL')
-        if self.res_check_crl.isChecked():
+        if self.check_crl.isChecked():
             self.params.append('CRL')
         # if not self.radio_calc_hard.isChecked():
         #     self.rad.append('H')
@@ -204,6 +204,8 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         return d_1
 
     def calculate(self):
+        self.tabWidget.setTabEnabled(1, True)
+        self.tabWidget.setCurrentIndex(1)
         d1 = {}
         self.d3 = {}
         levels = self.treeWidget.topLevelItemCount()
@@ -259,7 +261,8 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 if iter_v == x:
                     self.d3[iter_k] = str(round(iter_v - 1, 1))
         print('После обработки', self.d3)
-        self.tabWidget.setCurrentIndex(0)
+        # self.tabWidget.setTabEnabled(1, True)
+        # self.tabWidget.setCurrentIndex(1)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
         # create_chart(self.d3, self.frame_graph)
