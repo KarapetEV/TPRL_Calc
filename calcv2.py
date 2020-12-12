@@ -28,19 +28,57 @@ class AdjusttableTextEdit(QtWidgets.QTextEdit):
         self.td_size_sig.emit(QSize(self.sizeHint().width(), self.maximumHeight()))
         return
 
+
+class ProjectDialog(QtWidgets.QDialog):
+    enter_data = pyqtSignal(str, str)
+
+    def __init__(self, parent=None):
+        super(ProjectDialog, self).__init__(parent)
+        self.setWindowTitle('Ввод данных')
+        desktop = QtWidgets.QApplication.desktop()
+        x = int(desktop.width()/2) - 150
+        y = int(desktop.height()/2) - 50
+        self.setGeometry(x, y, 300, 100)
+        self.line_project_num = QtWidgets.QLineEdit()
+        self.line_project_num.setPlaceholderText('Введите номер проекта...')
+        self.line_expert = QtWidgets.QLineEdit()
+        self.line_expert.setPlaceholderText('Введите ФИО эксперта...')
+        self.btn_ok = QtWidgets.QPushButton('OK')
+        self.form = QtWidgets.QFormLayout()
+        self.form.setSpacing(20)
+        self.form.addRow("&Номер проекта:", self.line_project_num)
+        self.form.addRow("&ФИО эксперта:", self.line_expert)
+        self.form.addRow(self.btn_ok)
+        self.setLayout(self.form)
+
+        self.btn_ok.clicked.connect(self.send_data)
+
+    def send_data(self):
+        if not self.line_project_num.text() or not self.line_expert.text():
+            QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Введите номер проекта и ФИО эксперта!')
+        else:
+            self.enter_data.emit(self.line_project_num.text(), self.line_expert.text())
+            # self.main.expert_name = self.label_expert_name.text()
+            # self.main.project_num = self.line_project_num.text()
+            self.close()
+
+
 class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
+        self.project_dialog = ProjectDialog(self)
         self.tabWidget.setTabEnabled(1, False)
         self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
-        self.btn_calculate.clicked.connect(self.calculate)
+        self.btn_calculate.clicked.connect(self.show_dialog)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
         self.params = []
-        self.rad = []
+        self.project_dialog.enter_data[str, str].connect(self.calculate)
+        self.project_num = ''
+        self.expert_name = ''
 
     def change_ugt_level(self):
         labels_ugt = {
@@ -59,11 +97,14 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         for k, v in labels_ugt.items():
             if v == size:
                 print(k.font().toString())
+                x = k.x() - 10
+                y = k.y() - 2
+                k.setGeometry(QtCore.QRect(x, y, 33, 30))
                 k.setStyleSheet('''
                                 background-color: #e21a1a;
                                 font-family: MS Shell Dlg;
                                 color: #ffffff;
-                                font-size: 24px;
+                                font-size: 30px;
                                 ''')
                 k.setEnabled(True)
             else:
@@ -203,7 +244,9 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 d_1[x[0]] = self.make_params_dict(d, params)
         return d_1
 
-    def calculate(self):
+    def calculate(self, num, name):
+        self.label_project_num.setText(num)
+        self.label_expert_name.setText(name)
         self.tabWidget.setTabEnabled(1, True)
         self.tabWidget.setCurrentIndex(1)
         d1 = {}
@@ -282,6 +325,10 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 self.label_crl_result.setText(v_res)
         itog = float(min(res.values()))
         self.ugtSlider.setValue(int(itog))
+
+    def show_dialog(self):
+        self.project_dialog.show()
+        # self.calculate()
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):
