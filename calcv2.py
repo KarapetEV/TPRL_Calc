@@ -34,24 +34,56 @@ class ProjectDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
         super(ProjectDialog, self).__init__(parent)
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setStyleSheet('''
+                           border-radius: 5px;
+                           border: 1px solid red;
+                           ''')
         self.setWindowTitle('Ввод данных')
         desktop = QtWidgets.QApplication.desktop()
         x = int(desktop.width()/2) - 150
-        y = int(desktop.height()/2) - 50
-        self.setGeometry(x, y, 300, 100)
+        y = int(desktop.height()/2) - 80
+        self.setGeometry(x, y, 350, 100)
         self.line_project_num = QtWidgets.QLineEdit()
+        self.line_project_num.setStyleSheet('''
+                                            border: 1px solid red;
+                                            font-size: 14px;
+                                            ''')
+        self.line_project_num.setMaximumWidth(300)
         self.line_project_num.setPlaceholderText('Введите номер проекта...')
         self.line_expert = QtWidgets.QLineEdit()
+        self.line_expert.setStyleSheet('''
+                                       border: 1px solid red;
+                                       font-size: 14px;
+                                       ''')
+        self.line_expert.setMaximumWidth(300)
         self.line_expert.setPlaceholderText('Введите ФИО эксперта...')
         self.btn_ok = QtWidgets.QPushButton('OK')
+        self.btn_cancel = QtWidgets.QPushButton('Отмена')
+        self.hbox = QtWidgets.QHBoxLayout()
+        self.hbox.addWidget(self.btn_ok)
+        self.hbox.addWidget(self.btn_cancel)
         self.form = QtWidgets.QFormLayout()
         self.form.setSpacing(20)
         self.form.addRow("&Номер проекта:", self.line_project_num)
         self.form.addRow("&ФИО эксперта:", self.line_expert)
-        self.form.addRow(self.btn_ok)
+        self.form.addRow(self.hbox)
+        self.form.labelForField(self.line_project_num).setStyleSheet('''
+                                                                     border: none;
+                                                                     font-size: 14px;
+                                                                     font-weight: bold;
+                                                                     ''')
+        self.form.labelForField(self.line_expert).setStyleSheet('''
+                                                                border: none;
+                                                                font-size: 14px;
+                                                                font-weight: bold;
+                                                                ''')
         self.setLayout(self.form)
 
+
+
         self.btn_ok.clicked.connect(self.send_data)
+        self.btn_cancel.clicked.connect(self.close)
 
     def send_data(self):
         if not self.line_project_num.text() or not self.line_expert.text():
