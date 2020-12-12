@@ -274,7 +274,7 @@ class Ui_AppWindow(object):
         self.label_ugt9.setAlignment(QtCore.Qt.AlignCenter)
         self.label_ugt9.setObjectName("label_ugt9")
         self.ugtSlider = QtWidgets.QSlider(self.frame_results)
-        self.ugtSlider.setEnabled(True)
+        self.ugtSlider.setEnabled(False)
         self.ugtSlider.setGeometry(QtCore.QRect(90, 167, 250, 22))
         font = QtGui.QFont()
         font.setBold(True)

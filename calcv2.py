@@ -139,8 +139,8 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
     def create_rows(self):
 
         data = pd.read_excel('Tasks.xlsx', index_col='Тип')
-        df = data.drop(self.rad)
-        val = self.make_level_dict(df, self.params)
+        # df = data.drop(self.rad)
+        val = self.make_level_dict(data, self.params)
 
         item_color = ''
 
@@ -280,9 +280,8 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 self.label_orl_result.setText(v_res)
             elif k_res == 'CRL':
                 self.label_crl_result.setText(v_res)
-        itog = min(res.values())
-        print(itog)
-        self.ugtSlider.setValue(itog)
+        itog = float(min(res.values()))
+        self.ugtSlider.setValue(int(itog))
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):
