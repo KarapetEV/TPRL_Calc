@@ -105,7 +105,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
-        self.btn_calculate.clicked.connect(self.show_dialog)
+        self.btn_calculate.clicked.connect(self.project_dialog.show)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
         self.params = []
         self.project_dialog.enter_data[str, str].connect(self.calculate)
@@ -336,11 +336,9 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 if iter_v == x:
                     self.d3[iter_k] = str(round(iter_v - 1, 1))
         print('После обработки', self.d3)
-        # self.tabWidget.setTabEnabled(1, True)
-        # self.tabWidget.setCurrentIndex(1)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
-        # create_chart(self.d3, self.frame_graph)
+        create_chart(self.d3, self.frame_graph)
 
     def show_results(self, res):
 
@@ -357,10 +355,6 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 self.label_crl_result.setText(v_res)
         itog = float(min(res.values()))
         self.ugtSlider.setValue(int(itog))
-
-    def show_dialog(self):
-        self.project_dialog.show()
-        # self.calculate()
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):
