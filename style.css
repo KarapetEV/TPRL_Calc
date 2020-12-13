@@ -15,13 +15,7 @@ QTabWidget	{
 #frame_title	{
 	background-color: #e21a1a;
 }
-#frame_manual   {
-    background-color:#f3f3f3;
-}
-#labelManual    {
-    background-color: #f3f3f3;
-    color: #000;
-}
+
 #logo	{
 	background-image: url(./img/rzd_logo.png);
 	background-position: center;
@@ -29,7 +23,15 @@ QTabWidget	{
 
 #labelCalc	{
 	background-color: #e21a1a;
-	color: white;
+	color: #ffffff;
+}
+
+#label_project_num	{
+	text-decoration: underline;
+}
+
+#label_expert_name	{
+	text-decoration: underline;
 }
 
 QCheckBox	{
@@ -46,7 +48,6 @@ QTreeWidget	{
 	font-size: 13px;
 	color: #000;
 }
-
 
 QPushButton	{
 	background: #f24437;
