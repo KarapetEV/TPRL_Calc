@@ -96,6 +96,9 @@ class ProjectDialog(QtWidgets.QDialog):
 
 
 class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
+
+    parameters = ['TRL', 'MRL', 'ERL', 'ORL', 'CRL']
+
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.setupUi(self)
@@ -329,18 +332,24 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 else:
                     self.d3[key] = str(summary)
                     break
+        for param in Window.parameters:
+            if param not in self.d3.keys():
+                self.d3[param] = '0.0'
         print('До обработки', self.d3)
-        x = float(max(self.d3.values()))
-        y = float(min(self.d3.values()))
-        if x - y > 2:
-            for iter_k, iter_v in self.d3.items():
-                iter_v = float(iter_v)
-                if iter_v == x:
-                    self.d3[iter_k] = str(round(iter_v - 1, 1))
+        # x = float(max(self.d3.values()))
+        # y = float(min(self.d3.values()))
+        # if x - y > 2:
+        #     for iter_k, iter_v in self.d3.items():
+        #         iter_v = float(iter_v)
+        #         if iter_v == x:
+        #             self.d3[iter_k] = str(round(iter_v - 1, 1))
+        for iter_k, iter_v in self.d3.items():
+            iter_v = float(iter_v)
+
         print('После обработки', self.d3)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
-        create_chart(self.d3, self.frame_graph)
+        create_chart(self.d3, self.lay)
 
     def show_results(self, res):
 

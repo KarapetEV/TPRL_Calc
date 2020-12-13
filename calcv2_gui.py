@@ -397,6 +397,8 @@ class Ui_AppWindow(object):
         self.frame_graph.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_graph.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_graph.setObjectName("frame_graph")
+        self.lay = QtWidgets.QVBoxLayout(self.frame_graph)
+        self.lay.setContentsMargins(0, 0, 0, 0)
         self.line_horizontal = QtWidgets.QFrame(self.tab_results)
         self.line_horizontal.setGeometry(QtCore.QRect(0, 302, 770, 2))
         self.line_horizontal.setFrameShape(QtWidgets.QFrame.HLine)

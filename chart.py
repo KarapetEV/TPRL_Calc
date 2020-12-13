@@ -8,14 +8,14 @@ from pyqtgraph import PlotWidget, plot
 import pyqtgraph as pg
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
-def create_chart(data, frame):
+def create_chart(data, lay):
+    for i in reversed(range(lay.count())):
+        lay.itemAt(i).widget().deleteLater()
     params = ['TRL', 'MRL', 'ERL', 'ORL', 'CRL']
     results = []
     for el in params:
-        if el in data:
-            results.append(float(data[el]))
-        else:
-            results.append(0.0)
+        results.append(float(data[el]))
+
     results = np.append(results, results[0])
     fig = plt.figure(figsize=(10, 10), facecolor='#f3f3f3')
     plt.subplot(polar=True)
@@ -28,7 +28,5 @@ def create_chart(data, frame):
     plt.plot(theta, results)
     plt.fill(theta, results, 'b', alpha=0.1)
     plotWidget = FigureCanvas(fig)
-    lay = QtWidgets.QVBoxLayout(frame)
-    lay.setContentsMargins(0, 0, 0, 0)
     lay.addWidget(plotWidget, QtCore.Qt.AlignVCenter)
 
