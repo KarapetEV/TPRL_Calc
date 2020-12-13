@@ -181,6 +181,8 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
             # self.frame_check_params.setEnabled(False)
             # self.group_check_params.setEnabled(False)
             self.create_rows()
+            self.btn_calculate.setEnabled(True)
+            self.btn_reset_tasks.setEnabled(True)
 
     def get_params(self):
         # self.res_check_trl.setChecked(self.check_trl.isChecked())
