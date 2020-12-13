@@ -117,30 +117,32 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
 
     def change_ugt_level(self):
         labels_ugt = {
-            self.label_ugt0: 0,
-            self.label_ugt1: 1,
-            self.label_ugt2: 2,
-            self.label_ugt3: 3,
-            self.label_ugt4: 4,
-            self.label_ugt5: 5,
-            self.label_ugt6: 6,
-            self.label_ugt7: 7,
-            self.label_ugt8: 8,
-            self.label_ugt9: 9,
+            self.label_ugt0: [0, 90],
+            self.label_ugt1: [1, 114],
+            self.label_ugt2: [2, 142],
+            self.label_ugt3: [3, 169],
+            self.label_ugt4: [4, 193],
+            self.label_ugt5: [5, 221],
+            self.label_ugt6: [6, 248],
+            self.label_ugt7: [7, 274],
+            self.label_ugt8: [8, 300],
+            self.label_ugt9: [9, 328],
         }
+        result_style = ('''
+                        background-color: #e21a1a;
+                        font-family: MS Shell Dlg;
+                        color: #ffffff;
+                        font-size: 30px;
+                        ''')
+        self.default_labels(labels_ugt)
         size = self.ugtSlider.value()
         for k, v in labels_ugt.items():
-            if v == size:
+            if v[0] == size:
                 print(k.font().toString())
                 x = k.x() - 10
-                y = k.y() - 2
+                y = k.y() - 5
                 k.setGeometry(QtCore.QRect(x, y, 33, 30))
-                k.setStyleSheet('''
-                                background-color: #e21a1a;
-                                font-family: MS Shell Dlg;
-                                color: #ffffff;
-                                font-size: 30px;
-                                ''')
+                k.setStyleSheet(result_style)
                 k.setEnabled(True)
             else:
                 k.setStyleSheet('''
@@ -150,6 +152,10 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                                 font-size: 18px;
                                 ''')
                 k.setEnabled(False)
+
+    def default_labels(self, labels):
+        for k, v in labels.items():
+            k.setGeometry(v[1], 140, 15, 23)
 
     def reset_params(self):
         # self.res_check_trl.setChecked(False)
@@ -365,7 +371,11 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
             elif k_res == 'CRL':
                 self.label_crl_result.setText(v_res)
         itog = float(min(res.values()))
-        self.ugtSlider.setValue(int(itog))
+        if int(itog) == 0:
+            self.ugtSlider.setValue(1)
+            self.ugtSlider.setValue(0)
+        else:
+            self.ugtSlider.setValue(int(itog))
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):
