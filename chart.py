@@ -22,6 +22,7 @@ def create_chart(data, lay):
     theta = np.linspace(start=0, stop=2*np.pi, num=len(results))
     ax = fig.add_subplot(111, projection='polar')
     ax.set(facecolor='#f3f3f3')
+    ax.set_theta_offset(np.pi/2)
     ax.set_ylim(0, 9)
     ax.set_yticks(np.arange(0, 10, 1.0))
     lines, labels = plt.thetagrids(range(0, 360, int(360 / len(params))), (params))
