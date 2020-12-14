@@ -404,8 +404,32 @@ class Ui_AppWindow(object):
         self.line_horizontal.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_horizontal.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_horizontal.setObjectName("line_horizontal")
-        self.text_results = QtWidgets.QTextEdit(self.tab_results)
-        self.text_results.setGeometry(QtCore.QRect(5, 306, 755, 320))
+        #-----------------------Frame_TPRL_results----------------------
+        self.frame_tprl_results = QtWidgets.QFrame(self.tab_results)
+        self.frame_tprl_results.setGeometry(QtCore.QRect(5, 306, 755, 320))
+        self.frame_tprl_results.setFrameShape(QtWidgets.QFrame.StyledPanel)
+        self.frame_tprl_results.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.frame_tprl_results.setObjectName('frame_tprl_results')
+        #----------------------TPRL_Text_results-----------------------
+        self.text_tprl = QtWidgets.QTextEdit(self.frame_tprl_results)
+        self.text_tprl.setGeometry(QtCore.QRect(5, 5, 755, 55))
+        self.text_tprl.setStyleSheet('''background-color: #f3f3f3;
+                                        font-size: 18px; 
+                                        border: 0;''')
+
+        self.text_tprl.setReadOnly(True)
+        self.text_tprl.setObjectName('text_tprl')
+        #-------------------------Other_text_results------------------------------
+        self.text_other = QtWidgets.QTextEdit(self.frame_tprl_results)
+        self.text_other.setGeometry(QtCore.QRect(60, 60, 730, 200))
+        self.text_other.setStyleSheet('''background-color: #f3f3f3;
+                                                font-size: 16px; 
+                                                border: 0;''')
+
+        self.text_other.setReadOnly(True)
+        self.text_other.setObjectName('text_other')
+        # self.text_results = QtWidgets.QTextEdit(self.tab_results)
+        # self.text_results.setGeometry(QtCore.QRect(5, 306, 755, 320))
         #-----------------------------------------------------------
         # self.frame_check_params = QtWidgets.QFrame(self.tab_results)
         # self.frame_check_params.setGeometry(QtCore.QRect(0, 0, 770, 140))

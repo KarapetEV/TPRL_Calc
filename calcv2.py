@@ -287,6 +287,41 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 d_1[x[0]] = self.make_params_dict(d, params)
         return d_1
 
+    def create_text_rows(self, text_levels):
+        self.text_other.setText("")
+        for key, values in text_levels.items():
+            if key == 'TPRL':
+                self.text_tprl.setText(values)
+        text_levels.pop('TPRL')
+
+        count_rows = 1
+        for k, v in text_levels.items():
+            if count_rows % 2 == 0:
+                self.text_other.setTextBackgroundColor(QtGui.QColor('#c2c2c2'))
+            else:
+                self.text_other.setTextBackgroundColor(QtGui.QColor('#f3f3f3'))
+            self.text_other.append(f'{v}')
+            count_rows += 1
+    def make_text_dict(self, op_data, diction):
+        new_text_dict = {}
+        for key, value in diction.items():
+            for rank in range(op_data['Уровень'].shape[0]):
+                if (key == 'TPRL') & (value == '0'):
+                    new_text_dict['TPRL'] = 'Уровень зрелости инновационного проекта/технологии  = 0'
+                elif op_data['Уровень'][rank] == int(float(value)):
+                    new_text_dict[key] = op_data[key][rank]
+        return new_text_dict
+
+    def make_text(self):
+        op_data = pd.read_excel('Levels.xlsx')
+        text_dict = {'TPRL': str(self.ugtSlider.value())}
+        print(text_dict)
+        text_dict.update(self.d3)
+        print(text_dict)
+        text_levels = self.make_text_dict(op_data, text_dict)
+        print(text_levels)
+        self.create_text_rows(text_levels)
+
     def calculate(self, num, name):
         self.label_project_num.setText(num)
         self.label_expert_name.setText(name)
@@ -340,7 +375,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                     break
         for param in Window.parameters:
             if param not in self.d3.keys():
-                self.d3[param] = '0.0'
+                self.d3[param] = '0'
         print('До обработки', self.d3)
         # x = float(max(self.d3.values()))
         # y = float(min(self.d3.values()))
@@ -356,6 +391,9 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
         create_chart(self.d3, self.lay)
+        self.make_text()
+
+
 
     def show_results(self, res):
 
@@ -376,6 +414,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
             self.ugtSlider.setValue(0)
         else:
             self.ugtSlider.setValue(int(itog))
+
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):
