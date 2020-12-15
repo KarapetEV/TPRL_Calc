@@ -87,5 +87,6 @@ QLabel	{
 }
 
 QHeaderView::section	{
-
+	font-size: 14px;
+	font-weight: bold;
 }
