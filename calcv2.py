@@ -329,6 +329,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         self.tabWidget.setCurrentIndex(1)
         d1 = {}
         self.d3 = {}
+        l2 = []
         levels = self.treeWidget.topLevelItemCount()
         for level in range(levels):
             l1 = []
@@ -338,6 +339,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
             for kid in range(childs):
                 p = self.treeWidget.topLevelItem(level).child(kid).text(0)
                 ch_item = self.treeWidget.topLevelItem(level).child(kid)
+
                 if p not in d2:
                     l2 = []
                     if ch_item.checkState(1) == QtCore.Qt.Checked:
@@ -350,7 +352,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                         d2[p].append(1)
                     else:
                         d2[p].append(0)
-
+            print(d2)
             for k, v in d2.items():
                 v = round(sum(v) / len(v), 1)
                 d2[k] = v
@@ -368,11 +370,12 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                     summary += 1
                 elif 0 < values[iter_value] < 1:
                     summary += values[iter_value]
-                    self.d3[key] = str(summary)
+                    # self.d3[key] = str(summary)
                     break
                 else:
-                    self.d3[key] = str(summary)
+                    # self.d3[key] = str(summary)
                     break
+            self.d3[key] = str(summary)
         for param in Window.parameters:
             if param not in self.d3.keys():
                 self.d3[param] = '0'
@@ -386,7 +389,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         #             self.d3[iter_k] = str(round(iter_v - 1, 1))
         for iter_k, iter_v in self.d3.items():
             iter_v = float(iter_v)
-
+            # self.d3[iter_k] = iter_v
         print('После обработки', self.d3)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
