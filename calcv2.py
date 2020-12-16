@@ -33,7 +33,6 @@ class ProjectDialog(QtWidgets.QDialog):
     enter_data = pyqtSignal(str, str)
 
     def __init__(self, parent=None):
-        print('запуск диалога')
         super(ProjectDialog, self).__init__(parent)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setStyleSheet('''
@@ -41,9 +40,6 @@ class ProjectDialog(QtWidgets.QDialog):
                            border: 1px solid red;
                            ''')
         self.setWindowTitle('Ввод данных')
-        # desktop = QtWidgets.QApplication.desktop()
-        # x = int(desktop.width()/2) - 150
-        # y = int(desktop.height()/2) - 80
         x = self.parent().x() + int(self.parent().width() / 2) - 175
         y = self.parent().y() + int(self.parent().height() / 2) - 50
         self.setGeometry(x, y, 350, 100)
@@ -109,7 +105,6 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         self.btn_calculate.clicked.connect(self.create_dialog)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
         self.params = []
-        # self.project_dialog.enter_data[str, str].connect(self.calculate)
         self.project_num = ''
         self.expert_name = ''
 
@@ -141,7 +136,6 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         size = self.ugtSlider.value()
         for k, v in labels_ugt.items():
             if v[0] == size:
-                # print(k.font().toString())
                 x = k.x() - 10
                 y = k.y() - 5
                 k.setGeometry(QtCore.QRect(x, y, 33, 30))
@@ -271,12 +265,9 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
 
         count_rows = 1
         for k, v in text_levels.items():
-            # if count_rows % 2 == 0:
-            #     self.text_other.setTextBackgroundColor(QtGui.QColor('#c2c2c2'))
-            # else:
-            #     self.text_other.setTextBackgroundColor(QtGui.QColor('#f3f3f3'))
+
             self.text_other.append(f'{v}')
-            self.text_other.append('-'*115)
+            self.text_other.append('-'*112)
             count_rows += 1
 
     def make_text_dict(self, op_data, diction):
@@ -326,7 +317,6 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                         d2[p].append(1)
                     else:
                         d2[p].append(0)
-            # print(d2)
             for k, v in d2.items():
                 v = round(sum(v) / len(v), 1)
                 d2[k] = v
@@ -336,7 +326,6 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                     self.d3[k].append(v)
             if level not in d1:
                 d1[topLevelItemText] = d2
-        # print(self.d3)
         for key, values in self.d3.items():
             summary = 0
             for iter_value in range(len(values)):
@@ -344,27 +333,15 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                     summary += 1
                 elif 0 < values[iter_value] < 1:
                     summary += values[iter_value]
-                    # self.d3[key] = str(summary)
                     break
                 else:
-                    # self.d3[key] = str(summary)
                     break
             self.d3[key] = str(summary)
         for param in Window.parameters:
             if param not in self.d3.keys():
                 self.d3[param] = '0'
-        # print('До обработки', self.d3)
-        # x = float(max(self.d3.values()))
-        # y = float(min(self.d3.values()))
-        # if x - y > 2:
-        #     for iter_k, iter_v in self.d3.items():
-        #         iter_v = float(iter_v)
-        #         if iter_v == x:
-        #             self.d3[iter_k] = str(round(iter_v - 1, 1))
         for iter_k, iter_v in self.d3.items():
             iter_v = float(iter_v)
-            # self.d3[iter_k] = iter_v
-        # print('После обработки', self.d3)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
         create_chart(self.d3, self.lay)
