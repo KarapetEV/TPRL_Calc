@@ -97,7 +97,6 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         QtWidgets.QWidget.__init__(self, parent)
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
-        # self.project_dialog = ProjectDialog(self)
         self.tabWidget.setTabEnabled(1, False)
         self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
