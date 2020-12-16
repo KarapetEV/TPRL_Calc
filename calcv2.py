@@ -33,6 +33,7 @@ class ProjectDialog(QtWidgets.QDialog):
     enter_data = pyqtSignal(str, str)
 
     def __init__(self, parent=None):
+        print('запуск диалога')
         super(ProjectDialog, self).__init__(parent)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setStyleSheet('''
@@ -40,9 +41,11 @@ class ProjectDialog(QtWidgets.QDialog):
                            border: 1px solid red;
                            ''')
         self.setWindowTitle('Ввод данных')
-        desktop = QtWidgets.QApplication.desktop()
-        x = int(desktop.width()/2) - 150
-        y = int(desktop.height()/2) - 80
+        # desktop = QtWidgets.QApplication.desktop()
+        # x = int(desktop.width()/2) - 150
+        # y = int(desktop.height()/2) - 80
+        x = self.parent().x() + int(self.parent().width() / 2) - 175
+        y = self.parent().y() + int(self.parent().height() / 2) - 50
         self.setGeometry(x, y, 350, 100)
         self.line_project_num = QtWidgets.QLineEdit()
         self.line_project_num.setStyleSheet('''
@@ -79,19 +82,14 @@ class ProjectDialog(QtWidgets.QDialog):
                                                                 font-weight: bold;
                                                                 ''')
         self.setLayout(self.form)
-
-
-
         self.btn_ok.clicked.connect(self.send_data)
         self.btn_cancel.clicked.connect(self.close)
 
     def send_data(self):
         if not self.line_project_num.text() or not self.line_expert.text():
-            QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Введите номер проекта и ФИО эксперта!')
+            pass
         else:
             self.enter_data.emit(self.line_project_num.text(), self.line_expert.text())
-            # self.main.expert_name = self.label_expert_name.text()
-            # self.main.project_num = self.line_project_num.text()
             self.close()
 
 
@@ -103,17 +101,22 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         QtWidgets.QWidget.__init__(self, parent)
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
-        self.project_dialog = ProjectDialog(self)
+        # self.project_dialog = ProjectDialog(self)
         self.tabWidget.setTabEnabled(1, False)
         self.btn_set_params.clicked.connect(self.set_params)
         self.ugtSlider.valueChanged.connect(self.change_ugt_level)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
-        self.btn_calculate.clicked.connect(self.project_dialog.show)
+        self.btn_calculate.clicked.connect(self.create_dialog)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
         self.params = []
-        self.project_dialog.enter_data[str, str].connect(self.calculate)
+        # self.project_dialog.enter_data[str, str].connect(self.calculate)
         self.project_num = ''
         self.expert_name = ''
+
+    def create_dialog(self):
+        self.project_dialog = ProjectDialog(self)
+        self.project_dialog.show()
+        self.project_dialog.enter_data[str, str].connect(self.calculate)
 
     def change_ugt_level(self):
         labels_ugt = {
@@ -138,7 +141,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         size = self.ugtSlider.value()
         for k, v in labels_ugt.items():
             if v[0] == size:
-                print(k.font().toString())
+                # print(k.font().toString())
                 x = k.x() - 10
                 y = k.y() - 5
                 k.setGeometry(QtCore.QRect(x, y, 33, 30))
@@ -158,17 +161,8 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
             k.setGeometry(v[1], 140, 15, 23)
 
     def reset_params(self):
-        # self.res_check_trl.setChecked(False)
-        # self.res_check_mrl.setChecked(False)
-        # self.res_check_erl.setChecked(False)
-        # self.res_check_orl.setChecked(False)
-        # self.res_check_crl.setChecked(False)
-        # self.radio_calc_hard.setChecked(False)
-        # self.radio_calc_soft.setChecked(False)
-        # self.radio_calc_both.setChecked(False)
         self.treeWidget.clear()
         self.params = []
-        # self.rad = []
 
     def reset_tasks(self):
         levels_count = self.treeWidget.topLevelItemCount()
@@ -185,23 +179,11 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         if len(self.params) == 0:
             QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
         else:
-            # self.tabWidget.setTabEnabled(1, True)
-            # self.tabWidget.setCurrentIndex(1)
-            # self.frame_check_params.setEnabled(False)
-            # self.group_check_params.setEnabled(False)
             self.create_rows()
             self.btn_calculate.setEnabled(True)
             self.btn_reset_tasks.setEnabled(True)
 
     def get_params(self):
-        # self.res_check_trl.setChecked(self.check_trl.isChecked())
-        # self.res_check_mrl.setChecked(self.check_mrl.isChecked())
-        # self.res_check_erl.setChecked(self.check_erl.isChecked())
-        # self.res_check_orl.setChecked(self.check_orl.isChecked())
-        # self.res_check_crl.setChecked(self.check_crl.isChecked())
-        # self.radio_calc_hard.setChecked(self.radio_hard.isChecked())
-        # self.radio_calc_soft.setChecked(self.radio_soft.isChecked())
-        # self.radio_calc_both.setChecked(self.radio_both.isChecked())
 
         if self.check_trl.isChecked():
             self.params.append('TRL')
@@ -213,17 +195,10 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
             self.params.append('ORL')
         if self.check_crl.isChecked():
             self.params.append('CRL')
-        # if not self.radio_calc_hard.isChecked():
-        #     self.rad.append('H')
-        # if not self.radio_calc_soft.isChecked():
-        #     self.rad.append('S')
-        # if not self.radio_calc_both.isChecked():
-        #     self.rad.append('B')
 
     def create_rows(self):
 
         data = pd.read_excel('Tasks.xlsx', index_col='Тип')
-        # df = data.drop(self.rad)
         val = self.make_level_dict(data, self.params)
 
         item_color = ''
@@ -302,6 +277,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 self.text_other.setTextBackgroundColor(QtGui.QColor('#f3f3f3'))
             self.text_other.append(f'{v}')
             count_rows += 1
+
     def make_text_dict(self, op_data, diction):
         new_text_dict = {}
         for key, value in diction.items():
@@ -315,11 +291,11 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
     def make_text(self):
         op_data = pd.read_excel('Levels.xlsx')
         text_dict = {'TPRL': str(self.ugtSlider.value())}
-        print(text_dict)
+        # print(text_dict)
         text_dict.update(self.d3)
-        print(text_dict)
+        # print(text_dict)
         text_levels = self.make_text_dict(op_data, text_dict)
-        print(text_levels)
+        # print(text_levels)
         self.create_text_rows(text_levels)
 
     def calculate(self, num, name):
@@ -352,7 +328,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                         d2[p].append(1)
                     else:
                         d2[p].append(0)
-            print(d2)
+            # print(d2)
             for k, v in d2.items():
                 v = round(sum(v) / len(v), 1)
                 d2[k] = v
@@ -362,7 +338,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                     self.d3[k].append(v)
             if level not in d1:
                 d1[topLevelItemText] = d2
-        print(self.d3)
+        # print(self.d3)
         for key, values in self.d3.items():
             summary = 0
             for iter_value in range(len(values)):
@@ -379,7 +355,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         for param in Window.parameters:
             if param not in self.d3.keys():
                 self.d3[param] = '0'
-        print('До обработки', self.d3)
+        # print('До обработки', self.d3)
         # x = float(max(self.d3.values()))
         # y = float(min(self.d3.values()))
         # if x - y > 2:
@@ -390,13 +366,11 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         for iter_k, iter_v in self.d3.items():
             iter_v = float(iter_v)
             # self.d3[iter_k] = iter_v
-        print('После обработки', self.d3)
+        # print('После обработки', self.d3)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
         create_chart(self.d3, self.lay)
         self.make_text()
-
-
 
     def show_results(self, res):
 
