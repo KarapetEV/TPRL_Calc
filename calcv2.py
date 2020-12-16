@@ -271,11 +271,12 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
 
         count_rows = 1
         for k, v in text_levels.items():
-            if count_rows % 2 == 0:
-                self.text_other.setTextBackgroundColor(QtGui.QColor('#c2c2c2'))
-            else:
-                self.text_other.setTextBackgroundColor(QtGui.QColor('#f3f3f3'))
+            # if count_rows % 2 == 0:
+            #     self.text_other.setTextBackgroundColor(QtGui.QColor('#c2c2c2'))
+            # else:
+            #     self.text_other.setTextBackgroundColor(QtGui.QColor('#f3f3f3'))
             self.text_other.append(f'{v}')
+            self.text_other.append('-'*115)
             count_rows += 1
 
     def make_text_dict(self, op_data, diction):
@@ -291,11 +292,8 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
     def make_text(self):
         op_data = pd.read_excel('Levels.xlsx')
         text_dict = {'TPRL': str(self.ugtSlider.value())}
-        # print(text_dict)
         text_dict.update(self.d3)
-        # print(text_dict)
         text_levels = self.make_text_dict(op_data, text_dict)
-        # print(text_levels)
         self.create_text_rows(text_levels)
 
     def calculate(self, num, name):
