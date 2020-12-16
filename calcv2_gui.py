@@ -421,7 +421,7 @@ class Ui_AppWindow(object):
         self.text_tprl.setObjectName('text_tprl')
         #-------------------------Other_text_results------------------------------
         self.text_other = QtWidgets.QTextEdit(self.frame_tprl_results)
-        self.text_other.setGeometry(QtCore.QRect(60, 60, 720, 300))
+        self.text_other.setGeometry(QtCore.QRect(60, 60, 700, 300))
         self.text_other.setStyleSheet('''background-color: #f3f3f3;
                                                 font-size: 16px; 
                                                 border: 0;''')
