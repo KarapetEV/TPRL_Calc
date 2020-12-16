@@ -158,7 +158,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
 
     def default_labels(self, labels):
         for k, v in labels.items():
-            k.setGeometry(v[1], 140, 15, 23)
+            k.setGeometry(v[1], 120, 15, 23)
 
     def reset_params(self):
         self.treeWidget.clear()
