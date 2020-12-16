@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+
+# Copyright (c) 2020 Alexey Karapyshev, Evgeniy Karapyshev
+# E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
+
+
 import sys, os
 import calc_gui
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
