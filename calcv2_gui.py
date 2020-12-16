@@ -414,8 +414,9 @@ class Ui_AppWindow(object):
         self.text_tprl = QtWidgets.QTextEdit(self.frame_tprl_results)
         self.text_tprl.setGeometry(QtCore.QRect(5, 5, 720, 55))
         self.text_tprl.setStyleSheet('''background-color: #f3f3f3;
-                                        font-size: 18px; 
-                                        border: 0;''')
+                                        font-size: 17px; 
+                                        border: 0;
+                                        border-bottom: 1px solid red''')
 
         self.text_tprl.setReadOnly(True)
         self.text_tprl.setObjectName('text_tprl')
