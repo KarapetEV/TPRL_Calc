@@ -219,6 +219,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
             font_0.setBold(True)
             item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget, [f'Уровень {key[0]}', key[1][0]])
             self.treeWidget.setItemWidget(item_0, 1, textEdit_0)
+            item_0.setToolTip(1, key[1][1])
             textEdit_0.td_size_sig.connect(lambda size: item_0.setSizeHint(1, size))
             item_0.setFont(0, font_0)
             # self.treeWidget.topLevelItem(i).setText(0, 'Уровень {}'.format(key[0]))
@@ -244,6 +245,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                     item_2.setFlags(QtCore.Qt.ItemIsUserCheckable)
                     item_2.setFlags(QtCore.Qt.ItemIsEnabled)
                     self.treeWidget.setItemWidget(item_2, 1, textEdit_2)
+                    item_2.setToolTip(1, item[1])
                     textEdit_2.td_size_sig.connect(lambda size: item_2.setSizeHint(1, size))
 
                     textEdit_0.setStyleSheet('''background-color: #fce6e6;
@@ -262,8 +264,6 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                                                 color: #000;
                                                 ''')
                     item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
-                    # item_2.setBackground(0, QtGui.QColor(item_color))
-                    # item_2.setBackground(1, QtGui.QColor(item_color))
 
 
     def make_params_dict(self, df, x,  params):
