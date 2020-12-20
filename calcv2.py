@@ -212,7 +212,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         item_color = ''
 
         for i, key in enumerate(val.items()):
-            textEdit_0 = AdjusttableTextEdit()
+            textEdit_0 = AdjusttableTextEdit() # key[1][1] - комментарий к key[1][0]
             textEdit_0.setText(key[1][0])
             textEdit_0.setReadOnly(True)
             font_0 = QtGui.QFont()
@@ -236,7 +236,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 # self.treeWidget.setText(1, v[1][0])
                 self.treeWidget.expandAll()
                 for item in v[1][1:]:
-                    textEdit_2 = AdjusttableTextEdit()
+                    textEdit_2 = AdjusttableTextEdit() # item[1] - комментарий к item[0]
                     textEdit_2.setText(item[0])
                     textEdit_2.setReadOnly(True)
                     item_2 = QtWidgets.QTreeWidgetItem(item_1, ["", ""])
