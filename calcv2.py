@@ -1,6 +1,7 @@
 import sys, os
 import calcv2_gui
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
+from PyQt5.QtWidgets import QToolTip
 import pandas as pd
 from chart import create_chart
 from PyQt5.QtCore import pyqtSignal, QSize
@@ -114,6 +115,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         self.expert_name = ''
         self.rad = []
 
+
     def create_dialog(self):
         self.project_dialog = ProjectDialog(self)
         self.project_dialog.show()
@@ -172,8 +174,11 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
             level = self.treeWidget.topLevelItem(i)
             childs_count = level.childCount()
             for j in range(childs_count):
-                task = level.child(j)
-                task.setCheckState(1, QtCore.Qt.Unchecked)
+                pars = level.child(j)
+                task_count = pars.childCount()
+                for gamma in range(task_count):
+                    task = pars.child(gamma)
+                    task.setCheckState(1, QtCore.Qt.Unchecked)
 
     def set_params(self):
         self.reset_params()
@@ -205,6 +210,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
             self.rad.append('B')
 
     def create_rows(self):
+        QToolTip.setFont(QtGui.QFont('Calibri', 9))
 
         data = pd.read_excel('Test_Tasks.xlsx', sheet_name=self.rad[0])
         val = self.make_level_dict(data, self.params)
@@ -219,7 +225,9 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
             font_0.setBold(True)
             item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget, [f'Уровень {key[0]}', key[1][0]])
             self.treeWidget.setItemWidget(item_0, 1, textEdit_0)
-            item_0.setToolTip(1, key[1][1])
+            x = '<nobr>' + key[1][1][:80] + '</nobr>' + key[1][1][80:]
+
+            item_0.setToolTip(1, x)
             textEdit_0.td_size_sig.connect(lambda size: item_0.setSizeHint(1, size))
             item_0.setFont(0, font_0)
             # self.treeWidget.topLevelItem(i).setText(0, 'Уровень {}'.format(key[0]))
@@ -245,7 +253,12 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                     item_2.setFlags(QtCore.Qt.ItemIsUserCheckable)
                     item_2.setFlags(QtCore.Qt.ItemIsEnabled)
                     self.treeWidget.setItemWidget(item_2, 1, textEdit_2)
-                    item_2.setToolTip(1, item[1])
+                    # self.treeWidget.setStyleSheet('''''QToolTip {
+                    #                                        width: 150px;
+                    #                                        word-wrap: break-word;
+                    #                                        }''')
+                    y = '<nobr>' + item[1][:80] + '</nobr>' + item[1][80:]
+                    item_2.setToolTip(1, y)
                     textEdit_2.td_size_sig.connect(lambda size: item_2.setSizeHint(1, size))
 
                     textEdit_0.setStyleSheet('''background-color: #fce6e6;
@@ -335,23 +348,26 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
             childs = self.treeWidget.topLevelItem(level).childCount()
             topLevelItemText = self.treeWidget.topLevelItem(level).text(0)
             d2 = {}
-            for kid in range(childs):
-                p = self.treeWidget.topLevelItem(level).child(kid).text(0)
-                ch_item = self.treeWidget.topLevelItem(level).child(kid)
+            for child in range(childs):
+                kids = self.treeWidget.topLevelItem(level).child(child).childCount()
+                p = self.treeWidget.topLevelItem(level).child(child).text(0)
+                for kid in range(kids):
+                    kid_item = self.treeWidget.topLevelItem(level).child(child).child(kid)
+                # ch_item = self.treeWidget.topLevelItem(level).child(child)
 
-                if p not in d2:
-                    l2 = []
-                    if ch_item.checkState(1) == QtCore.Qt.Checked:
-                        l2.append(1)
+                    if p not in d2:
+                        l2 = []
+                        if kid_item.checkState(1) == QtCore.Qt.Checked:
+                            l2.append(1)
+                        else:
+                            l2.append(0)
+                        d2[p] = l2
                     else:
-                        l2.append(0)
-                    d2[p] = l2
-                else:
-                    if ch_item.checkState(1) == QtCore.Qt.Checked:
-                        d2[p].append(1)
-                    else:
-                        d2[p].append(0)
-            # print(d2)
+                        if kid_item.checkState(1) == QtCore.Qt.Checked:
+                            d2[p].append(1)
+                        else:
+                            d2[p].append(0)
+            print(d2)
             for k, v in d2.items():
                 v = round(sum(v) / len(v), 1)
                 d2[k] = v
@@ -361,7 +377,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                     self.d3[k].append(v)
             if level not in d1:
                 d1[topLevelItemText] = d2
-        # print(self.d3)
+        print(self.d3)
         for key, values in self.d3.items():
             summary = 0
             for iter_value in range(len(values)):
