@@ -301,18 +301,18 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         return dict_levels
 
     def create_table_rows(self, text_levels):
-        table = QtWidgets.QTableWidget(self.frame_tprl_results)
-        table.setObjectName('table')
-        table.setRowCount(len(text_levels))
-        table.setColumnCount(2)
+        # table = QtWidgets.QTableWidget(self.frame_tprl_results)
+        # table.setObjectName('table')
+        self.table_tprl_results.setRowCount(len(text_levels))
+        self.table_tprl_results.setColumnCount(2)
         for key, values in text_levels.items():
             if key == 'TPRL':
-                table.setItem(0, 0, QtWidgets.QTableWidgetItem(values))
+                self.table_tprl_results.setItem(0, 0, QtWidgets.QTableWidgetItem(values))
         text_levels.pop('TPRL')
 
         for i, key in enumerate(text_levels.items()):
-            table.setItem(i+1, 0, QtWidgets.QTableWidgetItem(key[0]))
-            table.setItem(i+1, 1, QtWidgets.QTableWidgetItem(key[1]))
+            self.table_tprl_results.setItem(i+1, 0, QtWidgets.QTableWidgetItem(key[0]))
+            self.table_tprl_results.setItem(i+1, 1, QtWidgets.QTableWidgetItem(key[1]))
 
     #
     # def create_text_rows(self, text_levels):
