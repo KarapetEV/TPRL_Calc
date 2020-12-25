@@ -33,6 +33,7 @@ def create_chart(data, lay):
     for i in range(1, 10):
         l = [i for j in range(6)]
         plt.plot(theta, l, 'k', linewidth=0.2)
+    plt.box(on=None)
     lines, labels = plt.thetagrids(range(0, 360, int(360 / len(params))), (params))
     plt.plot(theta, results)
     plt.fill(theta, results, 'b', alpha=0.1)

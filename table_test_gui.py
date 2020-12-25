@@ -412,8 +412,10 @@ class Ui_AppWindow(object):
         self.frame_tprl_results.setObjectName('frame_tprl_results')
         # -----------------------Frame_TPRL_results----------------------
         self.table_tprl_results = QtWidgets.QTableWidget(self.frame_tprl_results)
-        self.table_tprl_results.setGeometry(QtCore.QRect(0, 0, 755, 380))
+        self.table_tprl_results.setGeometry(QtCore.QRect(0, 0, 750, 370))
         self.table_tprl_results.setObjectName('table_tprl_results')
+        self.table_tprl_results.horizontalHeader().setVisible(False)
+        self.table_tprl_results.verticalHeader().setVisible(False)
         #----------------------TPRL_Text_results-----------------------
         # self.text_tprl = QtWidgets.QTextEdit(self.frame_tprl_results)
         # self.text_tprl.setGeometry(QtCore.QRect(5, 5, 720, 55))
