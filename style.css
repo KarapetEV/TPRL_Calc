@@ -56,8 +56,7 @@ QPushButton	{
   	background-image: -ms-linear-gradient(top, #f24437, #c62d1f);
   	background-image: -o-linear-gradient(top, #f24437, #c62d1f);
   	background-image: linear-gradient(to bottom, #f24437, #c62d1f);
-  	-webkit-border-radius: 2;
-  	-moz-border-radius: 2;
+
   	border-radius: 5px;
   	font-family: Arial;
   	color: #f8e7e9;

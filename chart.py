@@ -29,6 +29,10 @@ def create_chart(data, lay):
     ax.set_theta_offset(np.pi/2)
     ax.set_ylim(0, 9)
     ax.set_yticks(np.arange(0, 10, 1.0))
+    ax.grid(False)
+    for i in range(1, 10):
+        l = [i for j in range(6)]
+        plt.plot(theta, l, 'k', linewidth=0.2)
     lines, labels = plt.thetagrids(range(0, 360, int(360 / len(params))), (params))
     plt.plot(theta, results)
     plt.fill(theta, results, 'b', alpha=0.1)
