@@ -29,10 +29,11 @@ def create_chart(data, lay):
     ax.set_theta_offset(np.pi/2)
     ax.set_ylim(0, 9)
     ax.set_yticks(np.arange(0, 10, 1.0))
-    ax.grid(False)
-    for i in range(1, 10):
-        l = [i for j in range(6)]
-        plt.plot(theta, l, 'k', linewidth=0.2)
+    plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], fontsize=6, color='grey')
+    ax.set_rlabel_position(0)
+    gridlines = ax.yaxis.get_gridlines()
+    for gl in gridlines:
+        gl.get_path()._interpolation_steps = 5
     plt.box(on=None)
     lines, labels = plt.thetagrids(range(0, 360, int(360 / len(params))), (params))
     plt.plot(theta, results)
