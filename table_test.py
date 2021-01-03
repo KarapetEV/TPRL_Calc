@@ -8,7 +8,7 @@ import table_test_gui
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
 from PyQt5.QtWidgets import QToolTip
 import pandas as pd
-from chart import create_chart
+from chart import Chart
 from PyQt5.QtCore import pyqtSignal, QSize
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
@@ -118,6 +118,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.treeWidget.itemClicked.connect(self.onItemClicked)
         self.btn_calculate.clicked.connect(self.create_dialog)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
+        self.save_graph_btn.clicked.connect(self.save_chart)
         # self.btn_save.clicked.connect(self.save_results)
         self.params = []
         self.project_num = ''
@@ -315,7 +316,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
             self.table_tprl_results.setItem(i+1, 0, QtWidgets.QTableWidgetItem(key[0]))
             self.table_tprl_results.setItem(i+1, 1, QtWidgets.QTableWidgetItem(key[1]))
         self.table_tprl_results.setColumnWidth(0, 50)
-        self.table_tprl_results.setColumnWidth(1, 700)
+        self.table_tprl_results.setColumnWidth(1, 705)
         self.table_tprl_results.setWordWrap(True)
 
     #
@@ -352,7 +353,9 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
 
     def calculate(self, num, name):
         self.label_project_num.setText(num)
+        self.project_num = num
         self.label_expert_name.setText(name)
+        self.expert_name = name
         self.tabWidget.setTabEnabled(1, True)
         self.tabWidget.setCurrentIndex(1)
         d1 = {}
@@ -424,8 +427,15 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         # print('После обработки', self.d3)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
-        create_chart(self.d3, self.lay)
+        self.chart = Chart(self.d3, self.lay)
+        self.save_graph_btn.setEnabled(True)
         self.make_text()
+
+    def save_chart(self):
+        self.chart.save_chart(self.project_num)
+        QtWidgets.QMessageBox.about(self, 'Сохранение файла',
+                                    f'График успешно сохранен в файле "{self.project_num}_chart.png"!')
+        self.save_graph_btn.setEnabled(False)
 
     def show_results(self, res):
 
