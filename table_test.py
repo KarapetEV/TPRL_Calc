@@ -182,8 +182,8 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.project_num = ''
         self.expert_name = ''
         self.rad = []
-        self._delegate = HighlightDelegate(self.table_tprl_results)
-        self.table_tprl_results.setItemDelegate(self._delegate)
+        # self._delegate = HighlightDelegate(self.table_tprl_results)
+        # self.table_tprl_results.setItemDelegate(self._delegate)
 
     def create_dialog(self):
         self.project_dialog = ProjectDialog(self)
@@ -369,21 +369,26 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.table_tprl_results.setColumnCount(2)
         self.table_tprl_results.setColumnWidth(0, 50)
         self.table_tprl_results.setColumnWidth(1, 700)
+        self.table_tprl_results.setStyleSheet('''font-size: 18px;
+                                                        ''')
 
         for key, values in text_levels.items():
             if key == 'TPRL':
                 self.table_tprl_results.setSpan(0, 0, 1, 2)
                 self.table_tprl_results.setItem(0, 0, QtWidgets.QTableWidgetItem(values))
+        self.table_tprl_results.resizeRowsToContents()
+
         text_levels.pop('TPRL')
 
         for i, key in enumerate(text_levels.items()):
             self.table_tprl_results.setItem(i+1, 0, QtWidgets.QTableWidgetItem(key[0]))
             self.table_tprl_results.setItem(i+1, 1, QtWidgets.QTableWidgetItem(key[1]))
-        self._delegate.setWordWrap(True)
+        # self._delegate.setWordWrap(True)
         self.table_tprl_results.setShowGrid(False)
-
+        self.table_tprl_results.resizeRowsToContents()
         self.table_tprl_results.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.table_tprl_results.setEnabled(False)
+
     #
     # def create_text_rows(self, text_levels):
     #     self.text_other.setText("")
