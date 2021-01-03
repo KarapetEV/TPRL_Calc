@@ -1,14 +1,22 @@
+# -*- coding: utf-8 -*-
+
+#  Copyright 2020 Aleksey Karapyshev, Evgeniy Karapyshev ©
+# E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
+
 import sys, os
-import calcv2_gui
+import table_test_gui
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
 from PyQt5.QtWidgets import QToolTip
 import pandas as pd
-from chart import create_chart
+from chart import Chart
 from PyQt5.QtCore import pyqtSignal, QSize
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
+
+
 class AdjusttableTextEdit(QtWidgets.QTextEdit):
     td_size_sig = pyqtSignal(QSize)
+
     def __init__(self, parent=None):
         super(AdjusttableTextEdit, self).__init__(parent)
 
@@ -24,6 +32,7 @@ class AdjusttableTextEdit(QtWidgets.QTextEdit):
         self.setMaximumHeight(docheight + margin)
 
         return
+
     def resizeEvent(self, e):
         super(AdjusttableTextEdit, self).resizeEvent(e)
         self.td_size_sig.emit(QSize(self.sizeHint().width(), self.maximumHeight()))
@@ -86,6 +95,7 @@ class ProjectDialog(QtWidgets.QDialog):
         self.btn_ok.clicked.connect(self.send_data)
         self.btn_cancel.clicked.connect(self.close)
 
+
     def send_data(self):
         if not self.line_project_num.text() or not self.line_expert.text():
             pass
@@ -94,8 +104,7 @@ class ProjectDialog(QtWidgets.QDialog):
             self.close()
 
 
-class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
-
+class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
     parameters = ['TRL', 'MRL', 'ERL', 'ORL', 'CRL']
 
     def __init__(self, parent=None):
@@ -109,12 +118,12 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         self.treeWidget.itemClicked.connect(self.onItemClicked)
         self.btn_calculate.clicked.connect(self.create_dialog)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
+        self.save_graph_btn.clicked.connect(self.save_chart)
+        # self.btn_save.clicked.connect(self.save_results)
         self.params = []
-        # self.project_dialog.enter_data[str, str].connect(self.calculate)
         self.project_num = ''
         self.expert_name = ''
         self.rad = []
-
 
     def create_dialog(self):
         self.project_dialog = ProjectDialog(self)
@@ -218,7 +227,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         item_color = ''
 
         for i, key in enumerate(val.items()):
-            textEdit_0 = AdjusttableTextEdit() # key[1][1] - комментарий к key[1][0]
+            textEdit_0 = AdjusttableTextEdit()  # key[1][1] - комментарий к key[1][0]
             textEdit_0.setText(key[1][0])
             textEdit_0.setReadOnly(True)
             font_0 = QtGui.QFont()
@@ -230,8 +239,6 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
             item_0.setToolTip(1, x)
             textEdit_0.td_size_sig.connect(lambda size: item_0.setSizeHint(1, size))
             item_0.setFont(0, font_0)
-            # self.treeWidget.topLevelItem(i).setText(0, 'Уровень {}'.format(key[0]))
-            # self.treeWidget.topLevelItem(i).setText(1, key[1][0])
             self.treeWidget.expandAll()
 
             for j, v in enumerate(key[1][2].items()):
@@ -241,11 +248,9 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 item_1 = QtWidgets.QTreeWidgetItem(item_0, [v[0], ""])
                 self.treeWidget.setItemWidget(item_1, 1, textEdit_1)
                 textEdit_1.td_size_sig.connect(lambda size: item_1.setSizeHint(1, size))
-                # self.treeWidget.setText(0, v[0])
-                # self.treeWidget.setText(1, v[1][0])
                 self.treeWidget.expandAll()
                 for item in v[1][1:]:
-                    textEdit_2 = AdjusttableTextEdit() # item[1] - комментарий к item[0]
+                    textEdit_2 = AdjusttableTextEdit()  # item[1] - комментарий к item[0]
                     textEdit_2.setText(item[0])
                     textEdit_2.setReadOnly(True)
                     item_2 = QtWidgets.QTreeWidgetItem(item_1, ["", ""])
@@ -253,10 +258,6 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                     item_2.setFlags(QtCore.Qt.ItemIsUserCheckable)
                     item_2.setFlags(QtCore.Qt.ItemIsEnabled)
                     self.treeWidget.setItemWidget(item_2, 1, textEdit_2)
-                    # self.treeWidget.setStyleSheet('''''QToolTip {
-                    #                                        width: 150px;
-                    #                                        word-wrap: break-word;
-                    #                                        }''')
                     y = '<nobr>' + item[1][:80] + '</nobr>' + item[1][80:]
                     item_2.setToolTip(1, y)
                     textEdit_2.td_size_sig.connect(lambda size: item_2.setSizeHint(1, size))
@@ -278,8 +279,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                                                 ''')
                     item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
 
-
-    def make_params_dict(self, df, x,  params):
+    def make_params_dict(self, df, x, params):
         dict_params = {}
         for row in range(df['Level'].shape[0]):
             if df['Level'][row] == x:
@@ -287,7 +287,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                     if df['Parameter'][row] == p:
                         if df['Parameter'][row] not in dict_params:
                             dict_params[df['Parameter'][row]] = [df['Pars_Name'][row], [df['Task'][row],
-                                                                                            df['Task_Comments'][row]]]
+                                                                                        df['Task_Comments'][row]]]
                         else:
                             dict_params[df['Parameter'][row]].append([df['Task'][row], df['Task_Comments'][row]])
         return dict_params
@@ -297,25 +297,41 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         for row in range(df['Level'].shape[0]):
             if df['Level'][row] not in dict_levels:
                 x = df['Level'][row]
-                dict_levels[x] = [df['Level_Name'][row], df['Level_Comments'][row], self.make_params_dict(df, x, params)]
+                dict_levels[x] = [df['Level_Name'][row], df['Level_Comments'][row],
+                                  self.make_params_dict(df, x, params)]
         return dict_levels
 
-    def create_text_rows(self, text_levels):
-        self.text_other.setText("")
+    def create_table_rows(self, text_levels):
+        # table = QtWidgets.QTableWidget(self.frame_tprl_results)
+        # table.setObjectName('table')
+        self.table_tprl_results.setRowCount(len(text_levels))
+        self.table_tprl_results.setColumnCount(2)
         for key, values in text_levels.items():
             if key == 'TPRL':
-                self.text_tprl.setText(values)
+                self.table_tprl_results.setItem(0, 0, QtWidgets.QTableWidgetItem(values))
+                self.table_tprl_results.setSpan(0, 0, 1, 2)
         text_levels.pop('TPRL')
 
-        count_rows = 1
-        for k, v in text_levels.items():
-            # if count_rows % 2 == 0:
-            #     self.text_other.setTextBackgroundColor(QtGui.QColor('#c2c2c2'))
-            # else:
-            #     self.text_other.setTextBackgroundColor(QtGui.QColor('#f3f3f3'))
-            self.text_other.append(f'{v}')
-            self.text_other.append('-'*115)
-            count_rows += 1
+        for i, key in enumerate(text_levels.items()):
+            self.table_tprl_results.setItem(i+1, 0, QtWidgets.QTableWidgetItem(key[0]))
+            self.table_tprl_results.setItem(i+1, 1, QtWidgets.QTableWidgetItem(key[1]))
+        self.table_tprl_results.setColumnWidth(0, 50)
+        self.table_tprl_results.setColumnWidth(1, 705)
+        self.table_tprl_results.setWordWrap(True)
+
+    #
+    # def create_text_rows(self, text_levels):
+    #     self.text_other.setText("")
+    #     for key, values in text_levels.items():
+    #         if key == 'TPRL':
+    #             self.text_tprl.setText(values)
+    #     text_levels.pop('TPRL')
+    #
+    #     count_rows = 1
+    #     for k, v in text_levels.items():
+    #         self.text_other.append(f'{v}')
+    #         self.text_other.append('-' * 112)
+    #         count_rows += 1
 
     def make_text_dict(self, op_data, diction):
         new_text_dict = {}
@@ -332,11 +348,14 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         text_dict = {'TPRL': str(self.ugtSlider.value())}
         text_dict.update(self.d3)
         text_levels = self.make_text_dict(op_data, text_dict)
-        self.create_text_rows(text_levels)
+        # self.create_text_rows(text_levels)
+        self.create_table_rows(text_levels)
 
     def calculate(self, num, name):
         self.label_project_num.setText(num)
+        self.project_num = num
         self.label_expert_name.setText(name)
+        self.expert_name = name
         self.tabWidget.setTabEnabled(1, True)
         self.tabWidget.setCurrentIndex(1)
         d1 = {}
@@ -353,7 +372,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                 p = self.treeWidget.topLevelItem(level).child(child).text(0)
                 for kid in range(kids):
                     kid_item = self.treeWidget.topLevelItem(level).child(child).child(kid)
-                # ch_item = self.treeWidget.topLevelItem(level).child(child)
+                    # ch_item = self.treeWidget.topLevelItem(level).child(child)
 
                     if p not in d2:
                         l2 = []
@@ -367,7 +386,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                             d2[p].append(1)
                         else:
                             d2[p].append(0)
-            print(d2)
+
             for k, v in d2.items():
                 v = round(sum(v) / len(v), 1)
                 d2[k] = v
@@ -377,7 +396,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
                     self.d3[k].append(v)
             if level not in d1:
                 d1[topLevelItemText] = d2
-        print(self.d3)
+
         for key, values in self.d3.items():
             summary = 0
             for iter_value in range(len(values)):
@@ -408,8 +427,15 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         # print('После обработки', self.d3)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
-        create_chart(self.d3, self.lay)
+        self.chart = Chart(self.d3, self.lay)
+        self.save_graph_btn.setEnabled(True)
         self.make_text()
+
+    def save_chart(self):
+        self.chart.save_chart(self.project_num)
+        QtWidgets.QMessageBox.about(self, 'Сохранение файла',
+                                    f'График успешно сохранен в файле "{self.project_num}_chart.png"!')
+        self.save_graph_btn.setEnabled(False)
 
     def show_results(self, res):
 
@@ -431,7 +457,6 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
         else:
             self.ugtSlider.setValue(int(itog))
 
-
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):
         if item.childCount() > 0:
@@ -448,7 +473,7 @@ class Window(QtWidgets.QWidget, calcv2_gui.Ui_AppWindow):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    window = Window()                   # Создаем экземпляр класса
+    window = Window()  # Создаем экземпляр класса
     window.setWindowTitle('TRL Calculator')
     window.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
     window.show()

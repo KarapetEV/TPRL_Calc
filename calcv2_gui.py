@@ -397,8 +397,16 @@ class Ui_AppWindow(object):
         self.frame_graph.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_graph.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_graph.setObjectName("frame_graph")
+        self.save_graph_btn = QtWidgets.QPushButton(self.frame_graph)
+        self.save_graph_btn.setStyleSheet('background: #f3f3f3;')
+        self.save_graph_btn.setGeometry(QtCore.QRect(350, 220, 30, 30))
+        self.save_graph_btn.setContentsMargins(0, 0, 0, 0)
+        self.save_graph_btn.setIcon(QtGui.QIcon('.\img\\save_icon2.png'))
+        self.save_graph_btn.setIconSize(QtCore.QSize(30, 30))
+        self.save_graph_btn.setToolTip("Сохранить график")
+        self.save_graph_btn.setEnabled(False)
         self.lay = QtWidgets.QVBoxLayout(self.frame_graph)
-        self.lay.setContentsMargins(0, 0, 0, 0)
+        self.lay.setContentsMargins(0, 0, 30, 0)
         self.line_horizontal = QtWidgets.QFrame(self.tab_results)
         self.line_horizontal.setGeometry(QtCore.QRect(0, 262, 770, 2))
         self.line_horizontal.setFrameShape(QtWidgets.QFrame.HLine)
@@ -410,27 +418,32 @@ class Ui_AppWindow(object):
         self.frame_tprl_results.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_tprl_results.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_tprl_results.setObjectName('frame_tprl_results')
+        # -----------------------Table_TPRL_results----------------------
+        self.table_tprl_results = QtWidgets.QTableWidget(self.frame_tprl_results)
+        self.table_tprl_results.setGeometry(QtCore.QRect(0, 0, 755, 370))
+        self.table_tprl_results.setObjectName('table_tprl_results')
+        self.table_tprl_results.horizontalHeader().setVisible(False)
+        self.table_tprl_results.verticalHeader().setVisible(False)
         #----------------------TPRL_Text_results-----------------------
-        self.text_tprl = QtWidgets.QTextEdit(self.frame_tprl_results)
-        self.text_tprl.setGeometry(QtCore.QRect(5, 5, 720, 55))
-        self.text_tprl.setStyleSheet('''background-color: #f3f3f3;
-                                        font-size: 17px; 
-                                        border: 0;
-                                        border-bottom: 1px solid red''')
-
-        self.text_tprl.setReadOnly(True)
-        self.text_tprl.setObjectName('text_tprl')
-        #-------------------------Other_text_results------------------------------
-        self.text_other = QtWidgets.QTextEdit(self.frame_tprl_results)
-        self.text_other.setGeometry(QtCore.QRect(60, 60, 700, 300))
-        self.text_other.setStyleSheet('''background-color: #f3f3f3;
-                                                font-size: 16px; 
-                                                border: 0;''')
-
-        self.text_other.setReadOnly(True)
-        self.text_other.setObjectName('text_other')
-        # self.text_results = QtWidgets.QTextEdit(self.tab_results)
-        # self.text_results.setGeometry(QtCore.QRect(5, 306, 755, 320))
+        # self.text_tprl = QtWidgets.QTextEdit(self.frame_tprl_results)
+        # self.text_tprl.setGeometry(QtCore.QRect(5, 5, 720, 55))
+        # self.text_tprl.setStyleSheet('''background-color: #f3f3f3;
+        #                                 font-size: 17px;
+        #                                 border: 0;
+        #                                 border-bottom: 1px solid red''')
+        #
+        # self.text_tprl.setReadOnly(True)
+        # self.text_tprl.setObjectName('text_tprl')
+        # #----------------------other_text_results------------------------
+        # self.text_other = QtWidgets.QTextEdit(self.frame_tprl_results)
+        # self.text_other.setGeometry(QtCore.QRect(60, 60, 700, 300))
+        # self.text_other.setStyleSheet('''background-color: #f3f3f3;
+        #                                         font-size: 16px;
+        #                                         border: 0;''')
+        #
+        # self.text_other.setReadOnly(True)
+        # self.text_other.setObjectName('text_other')
+        #
         #-----------------------------------------------------------
         # self.frame_check_params = QtWidgets.QFrame(self.tab_results)
         # self.frame_check_params.setGeometry(QtCore.QRect(0, 0, 770, 140))
