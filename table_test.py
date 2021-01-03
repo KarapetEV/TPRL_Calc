@@ -13,6 +13,64 @@ from PyQt5.QtCore import pyqtSignal, QSize
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
+class HighlightDelegate(QtWidgets.QStyledItemDelegate):
+    def __init__(self, parent=None):
+        super(HighlightDelegate, self).__init__(parent)
+        self._filters = []
+        self._wordwrap = False
+        self.doc = QtGui.QTextDocument(self)
+
+
+    def paint(self, painter, option, index):
+        painter.save()
+        options = QtWidgets.QStyleOptionViewItem(option)
+        self.initStyleOption(options, index)
+        self.doc.setPlainText(options.text)
+        if self._wordwrap:
+            self.doc.setTextWidth(options.rect.width())
+        options.text = ""
+        style = QApplication.style() if options.widget is None else options.widget.style()
+        style.drawControl(QtWidgets.QStyle.CE_ItemViewItem, options, painter)
+
+
+        if self._wordwrap:
+            painter.translate(options.rect.left(), options.rect.top())
+            clip = QtCore.QRectF(QtCore.QPointF(), QtCore.QSizeF(options.rect.size()))
+            self.doc.drawContents(painter, clip)
+        else:
+            # ctx = QtGui.QAbstractTextDocumentLayout.PaintContext()
+            # if option.state & QtWidgets.QStyle.State_Selected:
+            #     ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(
+            #         QtGui.QPalette.Active, QtGui.QPalette.HighlightedText))
+            # else:
+            #     ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(
+            #         QtGui.QPalette.Active, QtGui.QPalette.Text))
+            textRect = style.subElementRect(QtWidgets.QStyle.SE_ItemViewItemText, options, None)
+            if index.column() != 0:
+                textRect.adjust(5, 0, 0, 0)
+            # constant = 4
+            margin = (option.rect.height() - options.fontMetrics.height()) // 2
+            # margin = margin - constant
+            textRect.setTop(textRect.top() + margin)
+            painter.translate(textRect.topLeft())
+            painter.setClipRect(textRect.translated(-textRect.topLeft()))
+            self.doc.documentLayout().draw(painter)
+
+        painter.restore()
+        s = QtCore.QSize(self.doc.idealWidth(), self.doc.size().height())
+        index.model().setData(index, s, QtCore.Qt.SizeHintRole)
+
+    def filters(self):
+        return self._filters
+
+    def setWordWrap(self, on):
+        self._wordwrap = on
+        mode = QtGui.QTextOption.WordWrap if on else QtGui.QTextOption.WrapAtWordBoundaryOrAnywhere
+
+        textOption = QtGui.QTextOption(self.doc.defaultTextOption())
+        textOption.setWrapMode(mode)
+        self.doc.setDefaultTextOption(textOption)
+        self.parent().viewport().update()
 
 class AdjusttableTextEdit(QtWidgets.QTextEdit):
     td_size_sig = pyqtSignal(QSize)
@@ -124,6 +182,8 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.project_num = ''
         self.expert_name = ''
         self.rad = []
+        self._delegate = HighlightDelegate(self.table_tprl_results)
+        self.table_tprl_results.setItemDelegate(self._delegate)
 
     def create_dialog(self):
         self.project_dialog = ProjectDialog(self)
@@ -304,21 +364,26 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
     def create_table_rows(self, text_levels):
         # table = QtWidgets.QTableWidget(self.frame_tprl_results)
         # table.setObjectName('table')
+
         self.table_tprl_results.setRowCount(len(text_levels))
         self.table_tprl_results.setColumnCount(2)
+        self.table_tprl_results.setColumnWidth(0, 50)
+        self.table_tprl_results.setColumnWidth(1, 700)
+
         for key, values in text_levels.items():
             if key == 'TPRL':
-                self.table_tprl_results.setItem(0, 0, QtWidgets.QTableWidgetItem(values))
                 self.table_tprl_results.setSpan(0, 0, 1, 2)
+                self.table_tprl_results.setItem(0, 0, QtWidgets.QTableWidgetItem(values))
         text_levels.pop('TPRL')
 
         for i, key in enumerate(text_levels.items()):
             self.table_tprl_results.setItem(i+1, 0, QtWidgets.QTableWidgetItem(key[0]))
             self.table_tprl_results.setItem(i+1, 1, QtWidgets.QTableWidgetItem(key[1]))
-        self.table_tprl_results.setColumnWidth(0, 50)
-        self.table_tprl_results.setColumnWidth(1, 705)
-        self.table_tprl_results.setWordWrap(True)
+        self._delegate.setWordWrap(True)
+        self.table_tprl_results.setShowGrid(False)
 
+        self.table_tprl_results.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.table_tprl_results.setEnabled(False)
     #
     # def create_text_rows(self, text_levels):
     #     self.text_other.setText("")
