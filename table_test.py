@@ -509,7 +509,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.save_graph_btn.setEnabled(False)
 
     def show_results(self, res):
-
+        summa = 0
         for k_res, v_res in res.items():
             if k_res == 'TRL':
                 self.label_trl_result.setText(v_res)
@@ -521,7 +521,10 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                 self.label_orl_result.setText(v_res)
             elif k_res == 'CRL':
                 self.label_crl_result.setText(v_res)
-        self.tprl_average = float(min(res.values()))
+            summa += float(v_res)
+
+
+        self.tprl_average = float(summa/len(res.values()))
         self.tprl_min = int(self.tprl_average)
         self.label_tprl_average_result.setText(str(self.tprl_average))
         self.label_tprl_min_result.setText(str(self.tprl_min))
