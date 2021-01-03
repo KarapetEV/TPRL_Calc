@@ -172,7 +172,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         # self.project_dialog = ProjectDialog(self)
         self.tabWidget.setTabEnabled(1, False)
         self.btn_set_params.clicked.connect(self.set_params)
-        self.ugtSlider.valueChanged.connect(self.change_ugt_level)
+        # self.ugtSlider.valueChanged.connect(self.change_ugt_level)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
         self.btn_calculate.clicked.connect(self.create_dialog)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
@@ -182,6 +182,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.project_num = ''
         self.expert_name = ''
         self.rad = []
+        self.tprl_min = 0
         # self._delegate = HighlightDelegate(self.table_tprl_results)
         # self.table_tprl_results.setItemDelegate(self._delegate)
 
@@ -190,43 +191,43 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.project_dialog.show()
         self.project_dialog.enter_data[str, str].connect(self.calculate)
 
-    def change_ugt_level(self):
-        labels_ugt = {
-            self.label_ugt0: [0, 90],
-            self.label_ugt1: [1, 114],
-            self.label_ugt2: [2, 142],
-            self.label_ugt3: [3, 169],
-            self.label_ugt4: [4, 193],
-            self.label_ugt5: [5, 221],
-            self.label_ugt6: [6, 248],
-            self.label_ugt7: [7, 274],
-            self.label_ugt8: [8, 300],
-            self.label_ugt9: [9, 328],
-        }
-        result_style = ('''
-                        background-color: #e21a1a;
-                        font-family: MS Shell Dlg;
-                        color: #ffffff;
-                        font-size: 30px;
-                        ''')
-        self.default_labels(labels_ugt)
-        size = self.ugtSlider.value()
-        for k, v in labels_ugt.items():
-            if v[0] == size:
-                # print(k.font().toString())
-                x = k.x() - 10
-                y = k.y() - 5
-                k.setGeometry(QtCore.QRect(x, y, 33, 30))
-                k.setStyleSheet(result_style)
-                k.setEnabled(True)
-            else:
-                k.setStyleSheet('''
-                                background-color: #f3f3f3;
-                                font-family: MS Shell Dlg;
-                                color: #e21a1a;
-                                font-size: 18px;
-                                ''')
-                k.setEnabled(False)
+    # def change_ugt_level(self):
+    #     labels_ugt = {
+    #         self.label_ugt0: [0, 90],
+    #         self.label_ugt1: [1, 114],
+    #         self.label_ugt2: [2, 142],
+    #         self.label_ugt3: [3, 169],
+    #         self.label_ugt4: [4, 193],
+    #         self.label_ugt5: [5, 221],
+    #         self.label_ugt6: [6, 248],
+    #         self.label_ugt7: [7, 274],
+    #         self.label_ugt8: [8, 300],
+    #         self.label_ugt9: [9, 328],
+    #     }
+    #     result_style = ('''
+    #                     background-color: #e21a1a;
+    #                     font-family: MS Shell Dlg;
+    #                     color: #ffffff;
+    #                     font-size: 30px;
+    #                     ''')
+    #     self.default_labels(labels_ugt)
+    #     size = self.ugtSlider.value()
+    #     for k, v in labels_ugt.items():
+    #         if v[0] == size:
+    #             # print(k.font().toString())
+    #             x = k.x() - 10
+    #             y = k.y() - 5
+    #             k.setGeometry(QtCore.QRect(x, y, 33, 30))
+    #             k.setStyleSheet(result_style)
+    #             k.setEnabled(True)
+    #         else:
+    #             k.setStyleSheet('''
+    #                             background-color: #f3f3f3;
+    #                             font-family: MS Shell Dlg;
+    #                             color: #e21a1a;
+    #                             font-size: 18px;
+    #                             ''')
+    #             k.setEnabled(False)
 
     def default_labels(self, labels):
         for k, v in labels.items():
@@ -414,7 +415,8 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
 
     def make_text(self):
         op_data = pd.read_excel('Levels.xlsx')
-        text_dict = {'TPRL': str(self.ugtSlider.value())}
+        # text_dict = {'TPRL': str(self.ugtSlider.value())}
+        text_dict = {'TPRL': str(self.tprl_min)}
         text_dict.update(self.d3)
         text_levels = self.make_text_dict(op_data, text_dict)
         # self.create_text_rows(text_levels)
@@ -519,12 +521,15 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                 self.label_orl_result.setText(v_res)
             elif k_res == 'CRL':
                 self.label_crl_result.setText(v_res)
-        itog = float(min(res.values()))
-        if int(itog) == 0:
-            self.ugtSlider.setValue(1)
-            self.ugtSlider.setValue(0)
-        else:
-            self.ugtSlider.setValue(int(itog))
+        self.tprl_average = float(min(res.values()))
+        self.tprl_min = int(self.tprl_average)
+        self.label_tprl_average_result.setText(str(self.tprl_average))
+        self.label_tprl_min_result.setText(str(self.tprl_min))
+        # if int(itog) == 0:
+        #     self.ugtSlider.setValue(1)
+        #     self.ugtSlider.setValue(0)
+        # else:
+        #     self.ugtSlider.setValue(int(itog))
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):
