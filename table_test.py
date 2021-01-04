@@ -97,6 +97,45 @@ class AdjusttableTextEdit(QtWidgets.QTextEdit):
         return
 
 
+class HelpDialog(QtWidgets.QDialog):
+
+    def __init__(self, parent=None):
+
+        super(HelpDialog, self).__init__(parent)
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setStyleSheet('''
+                           background-color: #fce6e6;
+                           border-radius: 5px;
+                           border: 2px solid red;
+                           ''')
+        self.setWindowTitle('Информация о программе')
+        x = self.parent().x() + int(self.parent().width() / 2) - 250
+        y = self.parent().y() + int(self.parent().height() / 2) - 150
+        self.setGeometry(x, y, 500, 300)
+        self.help_text = QtWidgets.QTextEdit()
+        self.help_text.setStyleSheet('background-color: #f3f3f3;')
+        self.help_text.setPlainText('Инструкция!\nДля расчета уровня зрелости инновационного проекта/технологии к '
+                                    'внедрению в ОАО «РЖД» необходимо выбрать параметры оценки, по которым производится '
+                                    'расчет и нажать кнопку «Установить параметры». В открывшемся поле необходимо '
+                                    'отметить те задачи, которые были выполнены в полном объеме на каждом уровне. '
+                                    'Результат рассчитывается нажатием кнопки «Расчитать» и представлен в отдельной '
+                                    'вкладке «Результаты». Уровень зрелости результата проекта считается достигнутым, '
+                                    'если все задачи, относящиеся к различным унифицированным параметрам, отмечены. '
+                                    'Общая оценка зрелости проекта принимается равным минимальному достигнутому уровню '
+                                    'зрелости по отдельному выбранному параметру.')
+        self.help_text.setReadOnly(True)
+        self.help_text.setWordWrapMode(QtGui.QTextOption.WordWrap)
+        self.btn_ok = QtWidgets.QPushButton('OK')
+        self.btn_ok.setStyleSheet('background-color: #f24437;')
+        self.form = QtWidgets.QFormLayout()
+        self.form.setSpacing(20)
+        self.form.addRow(self.help_text)
+        self.form.addRow(self.btn_ok)
+        self.btn_ok.setFixedSize(70, 30)
+        self.setLayout(self.form)
+        self.btn_ok.clicked.connect(self.close)
+
+
 class ProjectDialog(QtWidgets.QDialog):
     enter_data = pyqtSignal(str, str)
 
@@ -177,6 +216,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.btn_calculate.clicked.connect(self.create_dialog)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
         self.save_graph_btn.clicked.connect(self.save_chart)
+        self.btn_manual.clicked.connect(self.show_help)
         # self.btn_save.clicked.connect(self.save_results)
         self.params = []
         self.project_num = ''
@@ -533,6 +573,10 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         #     self.ugtSlider.setValue(0)
         # else:
         #     self.ugtSlider.setValue(int(itog))
+
+    def show_help(self):
+        self.help_dialog = HelpDialog(self)
+        self.help_dialog.show()
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):

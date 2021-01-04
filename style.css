@@ -66,6 +66,11 @@ QPushButton	{
   	text-decoration: none;
 }
 
+#btn_manual	{
+	font-size: 10px;
+  	padding: 1px 2px 1px 2px;
+}
+
 QPushButton:pressed	{
 	background-color: #e31b1a;
 }
