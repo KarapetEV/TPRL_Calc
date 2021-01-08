@@ -136,21 +136,25 @@ class Login(QtWidgets.QDialog, login.Ui_Login):
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
         self.comboBox_users.addItems(check_db.create_user_list())
+        self.comboBox_users.setCurrentIndex(0)
         self.comboBox_users.currentIndexChanged.connect(self.reset_passw)
         self.btn_choose_user.clicked.connect(self.choose_user)
         self.btn_new_user.clicked.connect(self.register)
 
     def choose_user(self):
         user = self.comboBox_users.currentText()
-        password = self.lineEdit_password.text()
-        if check_db.login(user, password):
-            self.enter_data.emit(user)
-            self.close()
-            self.main = Window(user)
-            self.main.show()
+        if not user:
+            QtWidgets.QMessageBox.about(self, 'Ошибка', 'Пользователь не выбран!')
         else:
-            QtWidgets.QMessageBox.about(self, 'Ошибка', 'Неверный пароль!')
-            self.reset_passw()
+            password = self.lineEdit_password.text()
+            if check_db.login(user, password):
+                self.enter_data.emit(user)
+                self.close()
+                self.main = Window(user)
+                self.main.show()
+            else:
+                QtWidgets.QMessageBox.about(self, 'Ошибка', 'Неверный пароль!')
+                self.reset_passw()
 
 
     def register(self):
@@ -177,14 +181,18 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
         if self.lineEdit_login_create.text():
             name = self.lineEdit_login_create.text()
             user.append(name)
-        if self.lineEdit_password_create.text() == self.lineEdit_password_confirm.text():
-            password = self.lineEdit_password_create.text()
-            user.append(password)
+            if self.lineEdit_password_create.text() == self.lineEdit_password_confirm.text():
+                password = self.lineEdit_password_create.text()
+                user.append(password)
+                check_db.register(user, self.mysignal)
+            else:
+                QtWidgets.QMessageBox.about(self, 'Ошибка', 'Пароль не подтвержден!')
+                self.lineEdit_password_create.setText("")
+                self.lineEdit_password_confirm.setText("")
         else:
-            QtWidgets.QMessageBox.about(self, 'Ошибка', 'Пароль не подтвержден!')
+            QtWidgets.QMessageBox.about(self, 'Ошибка', 'Не введен логин!')
             self.lineEdit_password_create.setText("")
             self.lineEdit_password_confirm.setText("")
-        check_db.register(user, self.mysignal)
         self.close()
         self.login = Login()
         self.login.show()
