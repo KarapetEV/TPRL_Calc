@@ -28,7 +28,9 @@ def login(login, password):
     cur.close()
     con.close()
 
-    if value != [] and value[0][2] == password:
+    decrypt_pass = decrypt(value[0][2])
+
+    if value != [] and decrypt_pass == password:
         return True
     else:
         return False
@@ -40,15 +42,32 @@ def register(user, signal):
     cur.execute(f'SELECT * FROM users WHERE name="{user[0]}";')
     value = cur.fetchall()
 
+    encrypt_pass = encrypt(user[1])
+
     if value != []:
         signal.emit('Такой пользователь существует!')
     elif value == []:
-        cur.execute(f"INSERT INTO users (name, password) VALUES ('{user[0]}', '{user[1]}')")
+        cur.execute(f"INSERT INTO users (name, password) VALUES ('{user[0]}', '{encrypt_pass}')")
         signal.emit(f'Пользователь {user[0]} зарегистрирован!')
         con.commit()
 
     cur.close()
     con.close()
+
+def encrypt(line):
+    result = ""
+    for i in range(len(line)):
+        char = line[i]
+        result += chr(ord(char) * 2 - 10)
+    return result
+
+def decrypt(line):
+    result = ""
+    for i in range(len(line)):
+        char = line[i]
+        result += chr(int((ord(char) + 10) / 2))
+    return result
+
 
 if __name__ == '__main__':
     login()
