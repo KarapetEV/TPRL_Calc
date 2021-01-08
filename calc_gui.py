@@ -9,7 +9,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_AppWindow(object):
     def setupUi(self, AppWindow):
         AppWindow.setObjectName("AppWindow")
+        AppWindow.setWindowTitle("TPRL Calculator")
         AppWindow.setFixedSize(820, 685)
+        AppWindow.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
         self.frame_title = QtWidgets.QFrame(AppWindow)
         self.frame_title.setGeometry(QtCore.QRect(0, 0, 820, 70))
         self.frame_title.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -576,7 +578,7 @@ class Ui_AppWindow(object):
 
     def retranslateUi(self, AppWindow):
         _translate = QtCore.QCoreApplication.translate
-        AppWindow.setWindowTitle(_translate("AppWindow", "Form"))
+        AppWindow.setWindowTitle(_translate("AppWindow", "TPRL Calculator"))
         self.labelCalc.setText(_translate("AppWindow", "Расчёт уровня зрелости инновационного продукта/технологии к внедрению в ОАО «РЖД»"))
         self.btn_manual.setText(_translate("AppWindow", "Справка"))
         # self.labelManual.setText(_translate("AppWindow", "Инструкция! Для расчета уровня зрелости инновационного проекта/технологии к внедрению в ОАО «РЖД» необходимо выбрать параметры оценки, по которым производится расчет и нажать кнопку «Установить параметры». В открывшемся поле необходимо отметить те задачи, которые были выполнены в полном объеме на каждом уровне. Результат рассчитывается нажатием кнопки «Расчитать» и представлен в отдельной вкладке «Результаты». Уровень зрелости результата проекта считается достигнутым, если все задачи, относящиеся к различным унифицированным параметрам, отмечены. Общая оценка зрелости проекта принимается равным минимальному достигнутому уровню зрелости по отдельному выбранному параметру.   "))

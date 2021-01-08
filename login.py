@@ -15,6 +15,7 @@ class Ui_Login(object):
     def setupUi(self, Login):
         Login.setObjectName("Login")
         Login.setWindowTitle("Авторизация пользователя")
+        Login.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
         Login.resize(320, 250)
         self.main_frame = QtWidgets.QFrame(Login)
         self.main_frame.setGeometry(QtCore.QRect(0, 0, 320, 250))
