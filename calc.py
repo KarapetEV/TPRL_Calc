@@ -129,6 +129,7 @@ class HelpDialog(QtWidgets.QDialog):
 
 
 class Login(QtWidgets.QDialog, login.Ui_Login):
+    enter_data = pyqtSignal(str)
 
     def __init__(self):
         super(Login, self).__init__()
