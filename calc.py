@@ -200,69 +200,77 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
     def signal_handler(self, value):
         QtWidgets.QMessageBox.about(self, 'Ошибка', value)
 
-# class ProjectDialog(QtWidgets.QDialog):
-#     enter_data = pyqtSignal(str, str)
-#
-#     def __init__(self, parent=None):
-#
-#         super(ProjectDialog, self).__init__(parent)
-#         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
-#         self.setStyleSheet('''
-#                            border-radius: 5px;
-#                            border: 1px solid red;
-#                            ''')
-#         self.setWindowTitle('Ввод данных')
-#         # desktop = QtWidgets.QApplication.desktop()
-#         # x = int(desktop.width()/2) - 150
-#         # y = int(desktop.height()/2) - 80
-#         x = self.parent().x() + int(self.parent().width() / 2) - 175
-#         y = self.parent().y() + int(self.parent().height() / 2) - 50
-#         self.setGeometry(x, y, 350, 100)
-#         self.line_project_num = QtWidgets.QLineEdit()
-#         self.line_project_num.setStyleSheet('''
-#                                             border: 1px solid red;
-#                                             font-size: 14px;
-#                                             ''')
-#         self.line_project_num.setMaximumWidth(300)
-#         self.line_project_num.setPlaceholderText('Введите номер проекта...')
-#         self.line_expert = QtWidgets.QLineEdit()
-#         self.line_expert.setStyleSheet('''
-#                                        border: 1px solid red;
-#                                        font-size: 14px;
-#                                        ''')
-#         self.line_expert.setMaximumWidth(300)
-#         self.line_expert.setPlaceholderText('Введите ФИО эксперта...')
-#         self.btn_ok = QtWidgets.QPushButton('OK')
-#         self.btn_cancel = QtWidgets.QPushButton('Отмена')
-#         self.hbox = QtWidgets.QHBoxLayout()
-#         self.hbox.addWidget(self.btn_ok)
-#         self.hbox.addWidget(self.btn_cancel)
-#         self.form = QtWidgets.QFormLayout()
-#         self.form.setSpacing(20)
-#         self.form.addRow("&Номер проекта:", self.line_project_num)
-#         self.form.addRow("&ФИО эксперта:", self.line_expert)
-#         self.form.addRow(self.hbox)
-#         self.form.labelForField(self.line_project_num).setStyleSheet('''
-#                                                                      border: none;
-#                                                                      font-size: 14px;
-#                                                                      font-weight: bold;
-#                                                                      ''')
-#         self.form.labelForField(self.line_expert).setStyleSheet('''
-#                                                                 border: none;
-#                                                                 font-size: 14px;
-#                                                                 font-weight: bold;
-#                                                                 ''')
-#         self.setLayout(self.form)
-#         self.btn_ok.clicked.connect(self.send_data)
-#         self.btn_cancel.clicked.connect(self.close)
-#
-#
-#     def send_data(self):
-#         if not self.line_project_num.text() or not self.line_expert.text():
-#             pass
-#         else:
-#             self.enter_data.emit(self.line_project_num.text(), self.line_expert.text())
-#             self.close()
+class ProjectDialog(QtWidgets.QDialog):
+    enter_data = pyqtSignal(str)
+
+    def __init__(self, parent=None):
+
+        super(ProjectDialog, self).__init__(parent)
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setStyleSheet('''
+                           border-radius: 5px;
+                           border: 1px solid red;
+                           ''')
+        self.setWindowTitle('Ввод данных')
+        # desktop = QtWidgets.QApplication.desktop()
+        # x = int(desktop.width()/2) - 150
+        # y = int(desktop.height()/2) - 80
+        x = self.parent().x() + int(self.parent().width() / 2) - 175
+        y = self.parent().y() + int(self.parent().height() / 2) - 50
+        self.setGeometry(x, y, 350, 100)
+        self.line_project_num = QtWidgets.QLineEdit()
+        self.line_project_num.setStyleSheet('''
+                                            border: 1px solid red;
+                                            font-size: 14px;
+                                            ''')
+        self.line_project_num.setMaximumWidth(300)
+        self.line_project_num.setPlaceholderText('Введите номер проекта...')
+        # self.line_expert = QtWidgets.QLineEdit()
+        # self.line_expert.setStyleSheet('''
+        #                                border: 1px solid red;
+        #                                font-size: 14px;
+        #                                ''')
+        # self.line_expert.setMaximumWidth(300)
+        # self.line_expert.setPlaceholderText('Введите ФИО эксперта...')
+        self.btn_ok = QtWidgets.QPushButton('OK')
+        self.btn_cancel = QtWidgets.QPushButton('Отмена')
+        self.hbox = QtWidgets.QHBoxLayout()
+        self.hbox.addWidget(self.btn_ok)
+        self.hbox.addWidget(self.btn_cancel)
+        self.form = QtWidgets.QFormLayout()
+        self.form.setSpacing(20)
+        self.form.addRow("&Номер проекта:", self.line_project_num)
+        # self.form.addRow("&ФИО эксперта:", self.line_expert)
+        self.form.addRow(self.hbox)
+        self.form.labelForField(self.line_project_num).setStyleSheet('''
+                                                                     border: none;
+                                                                     font-size: 14px;
+                                                                     font-weight: bold;
+                                                                     ''')
+        # self.form.labelForField(self.line_expert).setStyleSheet('''
+        #                                                         border: none;
+        #                                                         font-size: 14px;
+        #                                                         font-weight: bold;
+        #                                                         ''')
+        self.setLayout(self.form)
+        self.btn_ok.clicked.connect(self.send_data)
+        self.btn_cancel.clicked.connect(self.close)
+
+
+    # def send_data(self):
+    #     if not self.line_project_num.text() or not self.line_expert.text():
+    #         pass
+    #     else:
+    #         self.enter_data.emit(self.line_project_num.text(), self.line_expert.text())
+    #         self.close()
+
+    # Новый вариант метода
+    def send_data(self):
+        if not self.line_project_num.text():
+            pass
+        else:
+            self.enter_data.emit(self.line_project_num.text())
+            self.close()
 
 
 class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
@@ -275,8 +283,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.tabWidget.setTabEnabled(1, False)
         self.btn_set_params.clicked.connect(self.set_params)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
-        # self.btn_calculate.clicked.connect(self.create_dialog)
-        self.btn_calculate.clicked.connect(self.calculate)
+        self.btn_calculate.clicked.connect(self.create_dialog)
+        # self.btn_calculate.clicked.connect(self.calculate)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
         self.save_graph_btn.clicked.connect(self.save_chart)
         self.btn_manual.clicked.connect(self.show_help)
@@ -289,9 +297,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # self._delegate = HighlightDelegate(self.table_tprl_results)
         # self.table_tprl_results.setItemDelegate(self._delegate)
 
-    # def create_dialog(self):
-    #     self.login = Login()
-    #     self.login.enter_data[str].connect(self.calculate)
+    def create_dialog(self):
+        self.project_dialog = ProjectDialog(self)
+        self.project_dialog.show()
+        self.project_dialog.enter_data[str].connect(self.calculate)
 
     # def change_ugt_level(self):
     #     labels_ugt = {
@@ -527,9 +536,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # self.create_text_rows(text_levels)
         self.create_table_rows(text_levels)
 
-    def calculate(self, name):
-        # self.label_project_num.setText(num)
-        # self.project_num = num
+    def calculate(self, num):
+        self.label_project_num.setText(num)
+        self.project_num = num
         self.label_expert_name.setText(self.expert_name)
         # self.expert_name = name
         self.tabWidget.setTabEnabled(1, True)
