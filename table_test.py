@@ -4,12 +4,14 @@
 # E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
 
 import sys, os
-import table_test_gui
+import login, register, check_db
+import calc_gui
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
 from PyQt5.QtWidgets import QToolTip
 import pandas as pd
 from chart import Chart
 from PyQt5.QtCore import pyqtSignal, QSize
+
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
@@ -32,25 +34,15 @@ class HighlightDelegate(QtWidgets.QStyledItemDelegate):
         style = QApplication.style() if options.widget is None else options.widget.style()
         style.drawControl(QtWidgets.QStyle.CE_ItemViewItem, options, painter)
 
-
         if self._wordwrap:
             painter.translate(options.rect.left(), options.rect.top())
             clip = QtCore.QRectF(QtCore.QPointF(), QtCore.QSizeF(options.rect.size()))
             self.doc.drawContents(painter, clip)
         else:
-            # ctx = QtGui.QAbstractTextDocumentLayout.PaintContext()
-            # if option.state & QtWidgets.QStyle.State_Selected:
-            #     ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(
-            #         QtGui.QPalette.Active, QtGui.QPalette.HighlightedText))
-            # else:
-            #     ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(
-            #         QtGui.QPalette.Active, QtGui.QPalette.Text))
             textRect = style.subElementRect(QtWidgets.QStyle.SE_ItemViewItemText, options, None)
             if index.column() != 0:
                 textRect.adjust(5, 0, 0, 0)
-            # constant = 4
             margin = (option.rect.height() - options.fontMetrics.height()) // 2
-            # margin = margin - constant
             textRect.setTop(textRect.top() + margin)
             painter.translate(textRect.topLeft())
             painter.setClipRect(textRect.translated(-textRect.topLeft()))
@@ -136,6 +128,78 @@ class HelpDialog(QtWidgets.QDialog):
         self.btn_ok.clicked.connect(self.close)
 
 
+# class Login(QtWidgets.QDialog, login.Ui_Login):
+#     enter_data = pyqtSignal(str)
+#
+#     def __init__(self):
+#         super(Login, self).__init__()
+#         self.setupUi(self)
+#         self.setStyleSheet(open(style).read())
+#         self.comboBox_users.addItems(check_db.create_user_list())
+#         self.comboBox_users.setCurrentIndex(0)
+#         self.comboBox_users.currentIndexChanged.connect(self.reset_passw)
+#         self.btn_choose_user.clicked.connect(self.choose_user)
+#         self.btn_new_user.clicked.connect(self.register)
+#
+#     def choose_user(self):
+#         user = self.comboBox_users.currentText()
+#         if not user:
+#             QtWidgets.QMessageBox.about(self, 'Ошибка', 'Пользователь не выбран!')
+#         else:
+#             password = self.lineEdit_password.text()
+#             if check_db.login(user, password):
+#                 self.enter_data.emit(user)
+#                 self.close()
+#                 self.main = Window(user)
+#                 self.main.show()
+#             else:
+#                 QtWidgets.QMessageBox.about(self, 'Ошибка', 'Неверный пароль!')
+#                 self.reset_passw()
+#
+#
+#     def register(self):
+#         self.close()
+#         self.register = Register()
+#         self.register.show()
+#
+#     def reset_passw(self):
+#         self.lineEdit_password.setText("")
+#
+#
+# class Register(QtWidgets.QDialog, register.Ui_Register):
+#     mysignal = pyqtSignal(str)
+#
+#     def __init__(self):
+#         super(Register, self).__init__()
+#         self.setupUi(self)
+#         self.setStyleSheet(open(style).read())
+#         self.btn_register.clicked.connect(self.register)
+#         self.mysignal.connect(self.signal_handler)
+#
+#     def register(self):
+#         user = []
+#         if self.lineEdit_login_create.text():
+#             name = self.lineEdit_login_create.text()
+#             user.append(name)
+#             if self.lineEdit_password_create.text() == self.lineEdit_password_confirm.text():
+#                 password = self.lineEdit_password_create.text()
+#                 user.append(password)
+#                 check_db.register(user, self.mysignal)
+#             else:
+#                 QtWidgets.QMessageBox.about(self, 'Ошибка', 'Пароль не подтвержден!')
+#                 self.lineEdit_password_create.setText("")
+#                 self.lineEdit_password_confirm.setText("")
+#         else:
+#             QtWidgets.QMessageBox.about(self, 'Ошибка', 'Не введен логин!')
+#             self.lineEdit_password_create.setText("")
+#             self.lineEdit_password_confirm.setText("")
+#         self.close()
+#         self.login = Login()
+#         self.login.show()
+#
+#     def signal_handler(self, value):
+#         QtWidgets.QMessageBox.about(self, 'Ошибка', value)
+
 class ProjectDialog(QtWidgets.QDialog):
     enter_data = pyqtSignal(str, str)
 
@@ -201,19 +265,18 @@ class ProjectDialog(QtWidgets.QDialog):
             self.close()
 
 
-class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
+class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
     parameters = ['TRL', 'MRL', 'ERL', 'ORL', 'CRL']
 
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
-        # self.project_dialog = ProjectDialog(self)
         self.tabWidget.setTabEnabled(1, False)
         self.btn_set_params.clicked.connect(self.set_params)
-        # self.ugtSlider.valueChanged.connect(self.change_ugt_level)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
         self.btn_calculate.clicked.connect(self.create_dialog)
+        # self.btn_calculate.clicked.connect(self.calculate)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
         self.save_graph_btn.clicked.connect(self.save_chart)
         self.btn_manual.clicked.connect(self.show_help)
@@ -406,7 +469,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         # table = QtWidgets.QTableWidget(self.frame_tprl_results)
         # table.setObjectName('table')
 
-        self.table_tprl_results.setRowCount(len(text_levels))
+        self.table_tprl_results.setRowCount(len(text_levels)-1)
         self.table_tprl_results.setColumnCount(2)
         self.table_tprl_results.setColumnWidth(0, 50)
         self.table_tprl_results.setColumnWidth(1, 700)
@@ -415,17 +478,20 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
 
         for key, values in text_levels.items():
             if key == 'TPRL':
-                self.table_tprl_results.setSpan(0, 0, 1, 2)
-                self.table_tprl_results.setItem(0, 0, QtWidgets.QTableWidgetItem(values))
+                self.label_main_tprl.setText(f'{values}')
+
+                # self.table_tprl_results.setItem(0, 1, QtWidgets.QTableWidgetItem(values))
+                # self.table_tprl_results.setSpan(0, 0, 1, 2)
 
         text_levels.pop('TPRL')
 
         for i, key in enumerate(text_levels.items()):
-            self.table_tprl_results.setItem(i+1, 0, QtWidgets.QTableWidgetItem(key[0]))
-            self.table_tprl_results.setItem(i+1, 1, QtWidgets.QTableWidgetItem(key[1]))
+            self.table_tprl_results.setItem(i, 0, QtWidgets.QTableWidgetItem(key[0]))
+            self.table_tprl_results.setItem(i, 1, QtWidgets.QTableWidgetItem(key[1]))
         # self._delegate.setWordWrap(True)
         self.table_tprl_results.setShowGrid(False)
         self.table_tprl_results.resizeRowsToContents()
+        self.table_tprl_results.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.table_tprl_results.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.table_tprl_results.setEnabled(False)
 
@@ -565,7 +631,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
 
 
         self.tprl_average = float(summa/len(res.values()))
-        self.tprl_min = int(self.tprl_average)
+        self.tprl_min = int(float(min(res.values())))
         self.label_tprl_average_result.setText(str(self.tprl_average))
         self.label_tprl_min_result.setText(str(self.tprl_min))
         # if int(itog) == 0:
@@ -595,7 +661,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = Window()  # Создаем экземпляр класса
-    window.setWindowTitle('TRL Calculator')
+    window.setWindowTitle('TPRL Calculator')
     window.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
     window.show()
     sys.exit(app.exec_())

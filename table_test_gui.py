@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 
+# Copyright 2020 Aleksey Karapyshev, Evgeniy Karapyshev ©
+# E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_AppWindow(object):
     def setupUi(self, AppWindow):
         AppWindow.setObjectName("AppWindow")
+        AppWindow.setWindowTitle("TPRL Calculator")
         AppWindow.setFixedSize(820, 685)
+        AppWindow.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
         self.frame_title = QtWidgets.QFrame(AppWindow)
         self.frame_title.setGeometry(QtCore.QRect(0, 0, 820, 70))
         self.frame_title.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -442,25 +447,34 @@ class Ui_AppWindow(object):
         self.lay = QtWidgets.QVBoxLayout(self.frame_graph)
         self.lay.setContentsMargins(0, 0, 40, 0)
         self.line_horizontal = QtWidgets.QFrame(self.tab_results)
-        self.line_horizontal.setGeometry(QtCore.QRect(0, 242, 820, 2))
+        self.line_horizontal.setGeometry(QtCore.QRect(5, 232, 820, 2))
         self.line_horizontal.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_horizontal.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_horizontal.setObjectName("line_horizontal")
         #-----------------------Frame_TPRL_results----------------------
         self.frame_tprl_results = QtWidgets.QFrame(self.tab_results)
-        self.frame_tprl_results.setGeometry(QtCore.QRect(5, 236, 815, 350))
+        self.frame_tprl_results.setGeometry(QtCore.QRect(5, 235, 815, 345))
         self.frame_tprl_results.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_tprl_results.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_tprl_results.setObjectName('frame_tprl_results')
+        #------------------------Label_Main_TPRL-------------------------
+        self.label_main_tprl = QtWidgets.QLabel(self.frame_tprl_results)
+        self.label_main_tprl.setGeometry(QtCore.QRect(0, 0, 805, 40))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.label_main_tprl.setFont(font)
+        self.label_main_tprl.setWordWrap(True)
+        self.label_main_tprl.setObjectName('label_main_tprl')
         # -----------------------Table_TPRL_results----------------------
         self.table_tprl_results = QtWidgets.QTableWidget(self.frame_tprl_results)
-        self.table_tprl_results.setGeometry(QtCore.QRect(0, 0, 805, 310))
+        self.table_tprl_results.setGeometry(QtCore.QRect(0, 45, 805, 260))
         self.table_tprl_results.setObjectName('table_tprl_results')
         self.table_tprl_results.horizontalHeader().setVisible(False)
         self.table_tprl_results.verticalHeader().setVisible(False)
+        # self.table_tprl_results.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         #----------------------Save_results Button-----------------------
         self.btn_save_results = QtWidgets.QPushButton(self.frame_tprl_results)
-        self.btn_save_results.setGeometry(QtCore.QRect(317, 315, 180, 30))
+        self.btn_save_results.setGeometry(QtCore.QRect(317, 310, 180, 30))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(14)
@@ -573,7 +587,7 @@ class Ui_AppWindow(object):
 
     def retranslateUi(self, AppWindow):
         _translate = QtCore.QCoreApplication.translate
-        AppWindow.setWindowTitle(_translate("AppWindow", "Form"))
+        AppWindow.setWindowTitle(_translate("AppWindow", "TPRL Calculator"))
         self.labelCalc.setText(_translate("AppWindow", "Расчёт уровня зрелости инновационного продукта/технологии к внедрению в ОАО «РЖД»"))
         self.btn_manual.setText(_translate("AppWindow", "Справка"))
         # self.labelManual.setText(_translate("AppWindow", "Инструкция! Для расчета уровня зрелости инновационного проекта/технологии к внедрению в ОАО «РЖД» необходимо выбрать параметры оценки, по которым производится расчет и нажать кнопку «Установить параметры». В открывшемся поле необходимо отметить те задачи, которые были выполнены в полном объеме на каждом уровне. Результат рассчитывается нажатием кнопки «Расчитать» и представлен в отдельной вкладке «Результаты». Уровень зрелости результата проекта считается достигнутым, если все задачи, относящиеся к различным унифицированным параметрам, отмечены. Общая оценка зрелости проекта принимается равным минимальному достигнутому уровню зрелости по отдельному выбранному параметру.   "))
@@ -591,6 +605,7 @@ class Ui_AppWindow(object):
         self.labelProject.setText(_translate("AppWindow", "Номер проекта:"))
         self.label_tprl_min.setText(_translate("AppWindow", "TPRLmin:"))
         self.label_tprl_average.setText(_translate("AppWindow", "TPRLav:"))
+        self.label_main_tprl.setText(_translate("AppWindow", ""))
         # self.label_ugt0.setText(_translate("AppWindow", "0"))
         # self.label_ugt1.setText(_translate("AppWindow", "1"))
         # self.label_ugt2.setText(_translate("AppWindow", "2"))
