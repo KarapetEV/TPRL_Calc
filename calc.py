@@ -468,7 +468,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # table = QtWidgets.QTableWidget(self.frame_tprl_results)
         # table.setObjectName('table')
 
-        self.table_tprl_results.setRowCount(len(text_levels))
+        self.table_tprl_results.setRowCount(len(text_levels)-1)
         self.table_tprl_results.setColumnCount(2)
         self.table_tprl_results.setColumnWidth(0, 50)
         self.table_tprl_results.setColumnWidth(1, 700)
@@ -477,17 +477,20 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
         for key, values in text_levels.items():
             if key == 'TPRL':
-                self.table_tprl_results.setSpan(0, 0, 1, 2)
-                self.table_tprl_results.setItem(0, 0, QtWidgets.QTableWidgetItem(values))
+                self.label_main_tprl.setText(f'{values}')
+
+                # self.table_tprl_results.setItem(0, 1, QtWidgets.QTableWidgetItem(values))
+                # self.table_tprl_results.setSpan(0, 0, 1, 2)
 
         text_levels.pop('TPRL')
 
         for i, key in enumerate(text_levels.items()):
-            self.table_tprl_results.setItem(i+1, 0, QtWidgets.QTableWidgetItem(key[0]))
-            self.table_tprl_results.setItem(i+1, 1, QtWidgets.QTableWidgetItem(key[1]))
+            self.table_tprl_results.setItem(i, 0, QtWidgets.QTableWidgetItem(key[0]))
+            self.table_tprl_results.setItem(i, 1, QtWidgets.QTableWidgetItem(key[1]))
         # self._delegate.setWordWrap(True)
         self.table_tprl_results.setShowGrid(False)
         self.table_tprl_results.resizeRowsToContents()
+        self.table_tprl_results.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.table_tprl_results.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.table_tprl_results.setEnabled(False)
 
@@ -627,7 +630,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
 
         self.tprl_average = float(summa/len(res.values()))
-        self.tprl_min = int(self.tprl_average)
+        self.tprl_min = int(float(min(res.values())))
         self.label_tprl_average_result.setText(str(self.tprl_average))
         self.label_tprl_min_result.setText(str(self.tprl_min))
         # if int(itog) == 0:
