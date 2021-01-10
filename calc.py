@@ -3,66 +3,18 @@
 #  Copyright 2020 Aleksey Karapyshev, Evgeniy Karapyshev ©
 # E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
 
-import sys, os
+import sys, os, datetime
 import login, register, check_db
 import calc_gui
 from PyQt5 import QtCore, QtWidgets, uic, QtGui
 from PyQt5.QtWidgets import QToolTip
+import numpy as np
 import pandas as pd
 from chart import Chart
 from PyQt5.QtCore import pyqtSignal, QSize
 
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
-
-class HighlightDelegate(QtWidgets.QStyledItemDelegate):
-    def __init__(self, parent=None):
-        super(HighlightDelegate, self).__init__(parent)
-        self._filters = []
-        self._wordwrap = False
-        self.doc = QtGui.QTextDocument(self)
-
-
-    def paint(self, painter, option, index):
-        painter.save()
-        options = QtWidgets.QStyleOptionViewItem(option)
-        self.initStyleOption(options, index)
-        self.doc.setPlainText(options.text)
-        if self._wordwrap:
-            self.doc.setTextWidth(options.rect.width())
-        options.text = ""
-        style = QApplication.style() if options.widget is None else options.widget.style()
-        style.drawControl(QtWidgets.QStyle.CE_ItemViewItem, options, painter)
-
-        if self._wordwrap:
-            painter.translate(options.rect.left(), options.rect.top())
-            clip = QtCore.QRectF(QtCore.QPointF(), QtCore.QSizeF(options.rect.size()))
-            self.doc.drawContents(painter, clip)
-        else:
-            textRect = style.subElementRect(QtWidgets.QStyle.SE_ItemViewItemText, options, None)
-            if index.column() != 0:
-                textRect.adjust(5, 0, 0, 0)
-            margin = (option.rect.height() - options.fontMetrics.height()) // 2
-            textRect.setTop(textRect.top() + margin)
-            painter.translate(textRect.topLeft())
-            painter.setClipRect(textRect.translated(-textRect.topLeft()))
-            self.doc.documentLayout().draw(painter)
-
-        painter.restore()
-        s = QtCore.QSize(self.doc.idealWidth(), self.doc.size().height())
-        index.model().setData(index, s, QtCore.Qt.SizeHintRole)
-
-    def filters(self):
-        return self._filters
-
-    def setWordWrap(self, on):
-        self._wordwrap = on
-        mode = QtGui.QTextOption.WordWrap if on else QtGui.QTextOption.WrapAtWordBoundaryOrAnywhere
-
-        textOption = QtGui.QTextOption(self.doc.defaultTextOption())
-        textOption.setWrapMode(mode)
-        self.doc.setDefaultTextOption(textOption)
-        self.parent().viewport().update()
 
 class AdjusttableTextEdit(QtWidgets.QTextEdit):
     td_size_sig = pyqtSignal(QSize)
@@ -288,14 +240,12 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
         self.save_graph_btn.clicked.connect(self.save_chart)
         self.btn_manual.clicked.connect(self.show_help)
-        # self.btn_save.clicked.connect(self.save_results)
+        self.btn_save_results.clicked.connect(self.save_results)
         self.params = []
         self.project_num = ''
         self.expert_name = user
         self.rad = []
         self.tprl_min = 0
-        # self._delegate = HighlightDelegate(self.table_tprl_results)
-        # self.table_tprl_results.setItemDelegate(self._delegate)
 
     def create_dialog(self):
         self.project_dialog = ProjectDialog(self)
@@ -621,6 +571,30 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         QtWidgets.QMessageBox.about(self, 'Сохранение файла',
                                     f'График успешно сохранен в файле "{self.project_num}_chart.png"!')
         self.save_graph_btn.setEnabled(False)
+
+    def save_results(self):
+        # ---------------Формируем dataframe с результатами------------------------
+        now = datetime.datetime.now()
+        date = now.strftime("%d.%m.%Y %H:%M")
+        total = [[self.expert_name, self.project_num, date, self.label_tprl_min_result.text(),
+                  self.label_tprl_average_result.text(), self.label_trl_result.text(),
+                  self.label_mrl_result.text(), self.label_erl_result.text(),
+                  self.label_orl_result.text(), self.label_crl_result.text()]]
+        features = np.array(total)
+        columns = ['Expert', 'Project Number', 'Date', 'TPRLmin', 'TPRLaverage', 'TRL', 'MRL', 'ERL', 'ORL', 'CRL']
+        frame = pd.DataFrame(data=features, columns=columns)
+        # ---------------Записываем данные в файл----------------------------------
+        file_name = 'Results.xlsx'
+        if os.path.isfile(file_name):
+            old_frame = pd.read_excel('Results.xlsx')
+            old_frame = old_frame.append(frame, ignore_index=True)
+            old_frame.to_excel('Results.xlsx', index=False)
+        else:
+            file = open('Results.xlsx', 'w')
+            frame.to_excel('Results.xlsx', index=False)
+            file.close()
+
+
 
     def show_results(self, res):
         summa = 0
