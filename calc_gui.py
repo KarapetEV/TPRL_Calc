@@ -440,7 +440,7 @@ class Ui_AppWindow(object):
         self.save_graph_btn.setStyleSheet('background: #f3f3f3;')
         self.save_graph_btn.setGeometry(QtCore.QRect(365, 190, 30, 30))
         self.save_graph_btn.setContentsMargins(0, 0, 0, 0)
-        self.save_graph_btn.setIcon(QtGui.QIcon('.\img\\save_icon2.png'))
+        self.save_graph_btn.setIcon(QtGui.QIcon('.\img\\save_chart.png'))
         self.save_graph_btn.setIconSize(QtCore.QSize(30, 30))
         self.save_graph_btn.setToolTip("Сохранить график")
         self.save_graph_btn.setEnabled(False)
