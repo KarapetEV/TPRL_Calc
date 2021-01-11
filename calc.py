@@ -495,6 +495,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # self.expert_name = name
         self.tabWidget.setTabEnabled(1, True)
         self.tabWidget.setCurrentIndex(1)
+        self.check_draft.setEnabled(True)
+        self.check_draft.setChecked(False)
+        self.btn_save_results.setEnabled(True)
         d1 = {}
         self.d3 = {}
         l2 = []
@@ -578,12 +581,16 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # ---------------Формируем dataframe с результатами------------------------
         now = datetime.datetime.now()
         date = now.strftime("%d.%m.%Y %H:%M")
+        if self.check_draft.isChecked():
+            project_state = 'черновик'
+        else:
+            project_state = 'итог'
         total = [[self.expert_name, self.project_num, date, self.label_tprl_min_result.text(),
                   self.label_tprl_average_result.text(), self.label_trl_result.text(),
                   self.label_mrl_result.text(), self.label_erl_result.text(),
-                  self.label_orl_result.text(), self.label_crl_result.text()]]
+                  self.label_orl_result.text(), self.label_crl_result.text(), project_state]]
         features = np.array(total)
-        columns = ['Expert', 'Project Number', 'Date', 'TPRLmin', 'TPRLaverage', 'TRL', 'MRL', 'ERL', 'ORL', 'CRL']
+        columns = ['Expert', 'Project Number', 'Date', 'TPRLmin', 'TPRLaverage', 'TRL', 'MRL', 'ERL', 'ORL', 'CRL', 'Статус']
         frame = pd.DataFrame(data=features, columns=columns)
         # ---------------Записываем данные в файл----------------------------------
         file_name = 'Results.xlsx'
@@ -595,8 +602,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             file = open('Results.xlsx', 'w')
             frame.to_excel('Results.xlsx', index=False)
             file.close()
-
-
+        QtWidgets.QMessageBox.about(self, 'Сохранение результатов', 'Результаты успешно сохранены')
+        self.btn_save_results.setEnabled(False)
+        self.check_draft.setEnabled(False)
 
     def show_results(self, res):
         summa = 0
