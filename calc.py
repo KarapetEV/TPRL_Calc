@@ -445,13 +445,15 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
         for i, key in enumerate(text_levels.items()):
             self.table_tprl_results.setItem(i, 0, QtWidgets.QTableWidgetItem(key[0]))
+            self.table_tprl_results.item(i, 0).setFlags(QtCore.Qt.ItemIsEditable)
             self.table_tprl_results.setItem(i, 1, QtWidgets.QTableWidgetItem(key[1]))
+            self.table_tprl_results.item(i, 1).setFlags(QtCore.Qt.ItemIsEditable)
         # self._delegate.setWordWrap(True)
         self.table_tprl_results.setShowGrid(False)
         self.table_tprl_results.resizeRowsToContents()
         self.table_tprl_results.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.table_tprl_results.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.table_tprl_results.setEnabled(False)
+        self.table_tprl_results.setEnabled(True)
 
     #
     # def create_text_rows(self, text_levels):
