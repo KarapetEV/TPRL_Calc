@@ -3,10 +3,12 @@
 #  Copyright 2020 Aleksey Karapyshev, Evgeniy Karapyshev ©
 # E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
 
-import sys, os
-import table_test_gui
-from PyQt5 import QtCore, QtWidgets, uic, QtGui
+import sys, os, datetime
+import login, register, check_db
+import calc_gui
+from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QToolTip
+import numpy as np
 import pandas as pd
 from chart import Chart
 from PyQt5.QtCore import pyqtSignal, QSize
@@ -39,8 +41,124 @@ class AdjusttableTextEdit(QtWidgets.QTextEdit):
         return
 
 
+class HelpDialog(QtWidgets.QDialog):
+
+    def __init__(self, parent=None):
+        super(HelpDialog, self).__init__(parent)
+        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+        self.setStyleSheet('''
+                           background-color: #fce6e6;
+                           border-radius: 5px;
+                           border: 2px solid red;
+                           ''')
+        self.setWindowTitle('Информация о программе')
+        x = self.parent().x() + int(self.parent().width() / 2) - 250
+        y = self.parent().y() + int(self.parent().height() / 2) - 150
+        self.setGeometry(x, y, 500, 300)
+        self.help_text = QtWidgets.QTextEdit()
+        self.help_text.setStyleSheet('background-color: #f3f3f3;')
+        self.help_text.setPlainText('Инструкция!\nДля расчета уровня зрелости инновационного проекта/технологии к '
+                                    'внедрению в ОАО «РЖД» необходимо выбрать параметры оценки, по которым производится '
+                                    'расчет и нажать кнопку «Установить параметры». В открывшемся поле необходимо '
+                                    'отметить те задачи, которые были выполнены в полном объеме на каждом уровне. '
+                                    'Результат рассчитывается нажатием кнопки «Расчитать» и представлен в отдельной '
+                                    'вкладке «Результаты». Уровень зрелости результата проекта считается достигнутым, '
+                                    'если все задачи, относящиеся к различным унифицированным параметрам, отмечены. '
+                                    'Общая оценка зрелости проекта принимается равным минимальному достигнутому уровню '
+                                    'зрелости по отдельному выбранному параметру.')
+        self.help_text.setReadOnly(True)
+        self.help_text.setWordWrapMode(QtGui.QTextOption.WordWrap)
+        self.btn_ok = QtWidgets.QPushButton('OK')
+        self.btn_ok.setStyleSheet('background-color: #f24437;')
+        self.form = QtWidgets.QFormLayout()
+        self.form.setSpacing(20)
+        self.form.addRow(self.help_text)
+        self.form.addRow(self.btn_ok)
+        self.btn_ok.setFixedSize(70, 30)
+        self.setLayout(self.form)
+        self.btn_ok.clicked.connect(self.close)
+
+
+class Login(QtWidgets.QDialog, login.Ui_Login):
+    # enter_data = pyqtSignal(str)
+    switch_register = pyqtSignal()
+    switch_mainwindow = pyqtSignal(str)
+
+    def __init__(self):
+        super(Login, self).__init__()
+        self.setupUi(self)
+        self.setStyleSheet(open(style).read())
+        self.comboBox_users.addItems(check_db.create_user_list())
+        self.comboBox_users.setCurrentIndex(0)
+        self.comboBox_users.currentIndexChanged.connect(self.reset_passw)
+        self.btn_choose_user.clicked.connect(self.choose_user)
+        self.btn_new_user.clicked.connect(self.register)
+
+    def choose_user(self):
+        user = self.comboBox_users.currentText()
+        if not user:
+            QtWidgets.QMessageBox.about(self, 'Ошибка', 'Пользователь не выбран!')
+        else:
+            password = self.lineEdit_password.text()
+            if check_db.login(user, password):
+                self.switch_mainwindow.emit(user)
+                # self.enter_data.emit(user)
+                # self.close()
+                # self.main = Window(user)
+                # self.main.show()
+            else:
+                QtWidgets.QMessageBox.about(self, 'Ошибка', 'Неверный пароль!')
+                self.reset_passw()
+
+    def register(self):
+        self.switch_register.emit()
+        # self.close()
+        # self.register = Register()
+        # self.register.show()
+
+    def reset_passw(self):
+        self.lineEdit_password.setText("")
+
+
+class Register(QtWidgets.QDialog, register.Ui_Register):
+    mysignal = pyqtSignal(str)
+    switch_login = pyqtSignal()
+
+    def __init__(self):
+        super(Register, self).__init__()
+        self.setupUi(self)
+        self.setStyleSheet(open(style).read())
+        self.btn_register.clicked.connect(self.register)
+        self.mysignal.connect(self.signal_handler)
+
+    def register(self):
+        user = []
+        if self.lineEdit_login_create.text():
+            name = self.lineEdit_login_create.text()
+            user.append(name)
+            if self.lineEdit_password_create.text() == self.lineEdit_password_confirm.text():
+                password = self.lineEdit_password_create.text()
+                user.append(password)
+                check_db.register(user, self.mysignal)
+            else:
+                QtWidgets.QMessageBox.about(self, 'Ошибка', 'Пароль не подтвержден!')
+                self.lineEdit_password_create.setText("")
+                self.lineEdit_password_confirm.setText("")
+        else:
+            QtWidgets.QMessageBox.about(self, 'Ошибка', 'Не введен логин!')
+            self.lineEdit_password_create.setText("")
+            self.lineEdit_password_confirm.setText("")
+        self.switch_login.emit()
+        # self.close()
+        # self.login = Login()
+        # self.login.show()
+
+    def signal_handler(self, value):
+        QtWidgets.QMessageBox.about(self, 'Ошибка', value)
+
+
 class ProjectDialog(QtWidgets.QDialog):
-    enter_data = pyqtSignal(str, str)
+    enter_data = pyqtSignal(str)
 
     def __init__(self, parent=None):
 
@@ -64,13 +182,13 @@ class ProjectDialog(QtWidgets.QDialog):
                                             ''')
         self.line_project_num.setMaximumWidth(300)
         self.line_project_num.setPlaceholderText('Введите номер проекта...')
-        self.line_expert = QtWidgets.QLineEdit()
-        self.line_expert.setStyleSheet('''
-                                       border: 1px solid red;
-                                       font-size: 14px;
-                                       ''')
-        self.line_expert.setMaximumWidth(300)
-        self.line_expert.setPlaceholderText('Введите ФИО эксперта...')
+        # self.line_expert = QtWidgets.QLineEdit()
+        # self.line_expert.setStyleSheet('''
+        #                                border: 1px solid red;
+        #                                font-size: 14px;
+        #                                ''')
+        # self.line_expert.setMaximumWidth(300)
+        # self.line_expert.setPlaceholderText('Введите ФИО эксперта...')
         self.btn_ok = QtWidgets.QPushButton('OK')
         self.btn_cancel = QtWidgets.QPushButton('Отмена')
         self.hbox = QtWidgets.QHBoxLayout()
@@ -79,94 +197,102 @@ class ProjectDialog(QtWidgets.QDialog):
         self.form = QtWidgets.QFormLayout()
         self.form.setSpacing(20)
         self.form.addRow("&Номер проекта:", self.line_project_num)
-        self.form.addRow("&ФИО эксперта:", self.line_expert)
+        # self.form.addRow("&ФИО эксперта:", self.line_expert)
         self.form.addRow(self.hbox)
         self.form.labelForField(self.line_project_num).setStyleSheet('''
                                                                      border: none;
                                                                      font-size: 14px;
                                                                      font-weight: bold;
                                                                      ''')
-        self.form.labelForField(self.line_expert).setStyleSheet('''
-                                                                border: none;
-                                                                font-size: 14px;
-                                                                font-weight: bold;
-                                                                ''')
+        # self.form.labelForField(self.line_expert).setStyleSheet('''
+        #                                                         border: none;
+        #                                                         font-size: 14px;
+        #                                                         font-weight: bold;
+        #                                                         ''')
         self.setLayout(self.form)
         self.btn_ok.clicked.connect(self.send_data)
         self.btn_cancel.clicked.connect(self.close)
 
+    # def send_data(self):
+    #     if not self.line_project_num.text() or not self.line_expert.text():
+    #         pass
+    #     else:
+    #         self.enter_data.emit(self.line_project_num.text(), self.line_expert.text())
+    #         self.close()
 
+    # Новый вариант метода
     def send_data(self):
-        if not self.line_project_num.text() or not self.line_expert.text():
+        if not self.line_project_num.text():
             pass
         else:
-            self.enter_data.emit(self.line_project_num.text(), self.line_expert.text())
+            self.enter_data.emit(self.line_project_num.text())
             self.close()
 
 
-class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
+class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
     parameters = ['TRL', 'MRL', 'ERL', 'ORL', 'CRL']
 
-    def __init__(self, parent=None):
-        QtWidgets.QWidget.__init__(self, parent)
+    def __init__(self, user):
+        QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
-        # self.project_dialog = ProjectDialog(self)
         self.tabWidget.setTabEnabled(1, False)
         self.btn_set_params.clicked.connect(self.set_params)
-        self.ugtSlider.valueChanged.connect(self.change_ugt_level)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
         self.btn_calculate.clicked.connect(self.create_dialog)
+        # self.btn_calculate.clicked.connect(self.calculate)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
         self.save_graph_btn.clicked.connect(self.save_chart)
-        # self.btn_save.clicked.connect(self.save_results)
+        self.btn_manual.clicked.connect(self.show_help)
+        self.btn_save_results.clicked.connect(self.save_results)
         self.params = []
         self.project_num = ''
-        self.expert_name = ''
+        self.expert_name = user
         self.rad = []
+        self.tprl_min = 0
 
     def create_dialog(self):
         self.project_dialog = ProjectDialog(self)
         self.project_dialog.show()
-        self.project_dialog.enter_data[str, str].connect(self.calculate)
+        self.project_dialog.enter_data[str].connect(self.calculate)
 
-    def change_ugt_level(self):
-        labels_ugt = {
-            self.label_ugt0: [0, 90],
-            self.label_ugt1: [1, 114],
-            self.label_ugt2: [2, 142],
-            self.label_ugt3: [3, 169],
-            self.label_ugt4: [4, 193],
-            self.label_ugt5: [5, 221],
-            self.label_ugt6: [6, 248],
-            self.label_ugt7: [7, 274],
-            self.label_ugt8: [8, 300],
-            self.label_ugt9: [9, 328],
-        }
-        result_style = ('''
-                        background-color: #e21a1a;
-                        font-family: MS Shell Dlg;
-                        color: #ffffff;
-                        font-size: 30px;
-                        ''')
-        self.default_labels(labels_ugt)
-        size = self.ugtSlider.value()
-        for k, v in labels_ugt.items():
-            if v[0] == size:
-                # print(k.font().toString())
-                x = k.x() - 10
-                y = k.y() - 5
-                k.setGeometry(QtCore.QRect(x, y, 33, 30))
-                k.setStyleSheet(result_style)
-                k.setEnabled(True)
-            else:
-                k.setStyleSheet('''
-                                background-color: #f3f3f3;
-                                font-family: MS Shell Dlg;
-                                color: #e21a1a;
-                                font-size: 18px;
-                                ''')
-                k.setEnabled(False)
+    # def change_ugt_level(self):
+    #     labels_ugt = {
+    #         self.label_ugt0: [0, 90],
+    #         self.label_ugt1: [1, 114],
+    #         self.label_ugt2: [2, 142],
+    #         self.label_ugt3: [3, 169],
+    #         self.label_ugt4: [4, 193],
+    #         self.label_ugt5: [5, 221],
+    #         self.label_ugt6: [6, 248],
+    #         self.label_ugt7: [7, 274],
+    #         self.label_ugt8: [8, 300],
+    #         self.label_ugt9: [9, 328],
+    #     }
+    #     result_style = ('''
+    #                     background-color: #e21a1a;
+    #                     font-family: MS Shell Dlg;
+    #                     color: #ffffff;
+    #                     font-size: 30px;
+    #                     ''')
+    #     self.default_labels(labels_ugt)
+    #     size = self.ugtSlider.value()
+    #     for k, v in labels_ugt.items():
+    #         if v[0] == size:
+    #             # print(k.font().toString())
+    #             x = k.x() - 10
+    #             y = k.y() - 5
+    #             k.setGeometry(QtCore.QRect(x, y, 33, 30))
+    #             k.setStyleSheet(result_style)
+    #             k.setEnabled(True)
+    #         else:
+    #             k.setStyleSheet('''
+    #                             background-color: #f3f3f3;
+    #                             font-family: MS Shell Dlg;
+    #                             color: #e21a1a;
+    #                             font-size: 18px;
+    #                             ''')
+    #             k.setEnabled(False)
 
     def default_labels(self, labels):
         for k, v in labels.items():
@@ -221,7 +347,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
     def create_rows(self):
         QToolTip.setFont(QtGui.QFont('Calibri', 9))
 
-        data = pd.read_excel('Test_Tasks.xlsx', sheet_name=self.rad[0])
+        data = pd.read_excel('New_Tasks.xlsx', sheet_name=self.rad[0])
         val = self.make_level_dict(data, self.params)
 
         item_color = ''
@@ -254,7 +380,10 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                     textEdit_2.setText(item[0])
                     textEdit_2.setReadOnly(True)
                     item_2 = QtWidgets.QTreeWidgetItem(item_1, ["", ""])
-                    item_2.setCheckState(1, QtCore.Qt.Unchecked)
+                    if item[2] == 0:
+                        item_2.setCheckState(1, QtCore.Qt.Unchecked)
+                    else:
+                        item_2.setCheckState(1, QtCore.Qt.Checked)
                     item_2.setFlags(QtCore.Qt.ItemIsUserCheckable)
                     item_2.setFlags(QtCore.Qt.ItemIsEnabled)
                     self.treeWidget.setItemWidget(item_2, 1, textEdit_2)
@@ -287,9 +416,10 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                     if df['Parameter'][row] == p:
                         if df['Parameter'][row] not in dict_params:
                             dict_params[df['Parameter'][row]] = [df['Pars_Name'][row], [df['Task'][row],
-                                                                                        df['Task_Comments'][row]]]
+                                                                                        df['Task_Comments'][row],
+                                                                                        df['State'][row]]]
                         else:
-                            dict_params[df['Parameter'][row]].append([df['Task'][row], df['Task_Comments'][row]])
+                            dict_params[df['Parameter'][row]].append([df['Task'][row], df['Task_Comments'][row], df['State'][row]])
         return dict_params
 
     def make_level_dict(self, df, params):
@@ -304,20 +434,34 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
     def create_table_rows(self, text_levels):
         # table = QtWidgets.QTableWidget(self.frame_tprl_results)
         # table.setObjectName('table')
-        self.table_tprl_results.setRowCount(len(text_levels))
+
+        self.table_tprl_results.setRowCount(len(text_levels) - 1)
         self.table_tprl_results.setColumnCount(2)
+        self.table_tprl_results.setColumnWidth(0, 50)
+        self.table_tprl_results.setColumnWidth(1, 700)
+        self.table_tprl_results.setStyleSheet('''font-size: 15px;
+                                                        ''')
+
         for key, values in text_levels.items():
             if key == 'TPRL':
-                self.table_tprl_results.setItem(0, 0, QtWidgets.QTableWidgetItem(values))
-                self.table_tprl_results.setSpan(0, 0, 1, 2)
+                self.label_main_tprl.setText(f'{values}')
+
+                # self.table_tprl_results.setItem(0, 1, QtWidgets.QTableWidgetItem(values))
+                # self.table_tprl_results.setSpan(0, 0, 1, 2)
+
         text_levels.pop('TPRL')
 
         for i, key in enumerate(text_levels.items()):
-            self.table_tprl_results.setItem(i+1, 0, QtWidgets.QTableWidgetItem(key[0]))
-            self.table_tprl_results.setItem(i+1, 1, QtWidgets.QTableWidgetItem(key[1]))
-        self.table_tprl_results.setColumnWidth(0, 50)
-        self.table_tprl_results.setColumnWidth(1, 705)
-        self.table_tprl_results.setWordWrap(True)
+            self.table_tprl_results.setItem(i, 0, QtWidgets.QTableWidgetItem(key[0]))
+            self.table_tprl_results.item(i, 0).setFlags(QtCore.Qt.ItemIsEditable)
+            self.table_tprl_results.setItem(i, 1, QtWidgets.QTableWidgetItem(key[1]))
+            self.table_tprl_results.item(i, 1).setFlags(QtCore.Qt.ItemIsEditable)
+        # self._delegate.setWordWrap(True)
+        self.table_tprl_results.setShowGrid(False)
+        self.table_tprl_results.resizeRowsToContents()
+        self.table_tprl_results.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.table_tprl_results.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.table_tprl_results.setEnabled(True)
 
     #
     # def create_text_rows(self, text_levels):
@@ -345,19 +489,23 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
 
     def make_text(self):
         op_data = pd.read_excel('Levels.xlsx')
-        text_dict = {'TPRL': str(self.ugtSlider.value())}
+        # text_dict = {'TPRL': str(self.ugtSlider.value())}
+        text_dict = {'TPRL': str(self.tprl_min)}
         text_dict.update(self.d3)
         text_levels = self.make_text_dict(op_data, text_dict)
         # self.create_text_rows(text_levels)
         self.create_table_rows(text_levels)
 
-    def calculate(self, num, name):
+    def calculate(self, num):
         self.label_project_num.setText(num)
         self.project_num = num
-        self.label_expert_name.setText(name)
-        self.expert_name = name
+        self.label_expert_name.setText(self.expert_name)
+        # self.expert_name = name
         self.tabWidget.setTabEnabled(1, True)
         self.tabWidget.setCurrentIndex(1)
+        self.check_draft.setEnabled(True)
+        self.check_draft.setChecked(False)
+        self.btn_save_results.setEnabled(True)
         d1 = {}
         self.d3 = {}
         l2 = []
@@ -437,8 +585,38 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                                     f'График успешно сохранен в файле "{self.project_num}_chart.png"!')
         self.save_graph_btn.setEnabled(False)
 
-    def show_results(self, res):
+    def save_results(self):
+        # ---------------Формируем dataframe с результатами------------------------
+        now = datetime.datetime.now()
+        date = now.strftime("%d.%m.%Y %H:%M")
+        if self.check_draft.isChecked():
+            project_state = 'черновик'
+        else:
+            project_state = 'итог'
+        total = [[self.expert_name, self.project_num, date, self.label_tprl_min_result.text(),
+                  self.label_tprl_average_result.text(), self.label_trl_result.text(),
+                  self.label_mrl_result.text(), self.label_erl_result.text(),
+                  self.label_orl_result.text(), self.label_crl_result.text(), project_state]]
+        features = np.array(total)
+        columns = ['Expert', 'Project Number', 'Date', 'TPRLmin', 'TPRLaverage', 'TRL', 'MRL', 'ERL', 'ORL', 'CRL',
+                   'Статус']
+        frame = pd.DataFrame(data=features, columns=columns)
+        # ---------------Записываем данные в файл----------------------------------
+        file_name = 'Results.xlsx'
+        if os.path.isfile(file_name):
+            old_frame = pd.read_excel('Results.xlsx')
+            old_frame = old_frame.append(frame, ignore_index=True)
+            old_frame.to_excel('Results.xlsx', index=False)
+        else:
+            file = open('Results.xlsx', 'w')
+            frame.to_excel('Results.xlsx', index=False)
+            file.close()
+        QtWidgets.QMessageBox.about(self, 'Сохранение результатов', 'Результаты успешно сохранены')
+        self.btn_save_results.setEnabled(False)
+        self.check_draft.setEnabled(False)
 
+    def show_results(self, res):
+        summa = 0
         for k_res, v_res in res.items():
             if k_res == 'TRL':
                 self.label_trl_result.setText(v_res)
@@ -450,12 +628,21 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                 self.label_orl_result.setText(v_res)
             elif k_res == 'CRL':
                 self.label_crl_result.setText(v_res)
-        itog = float(min(res.values()))
-        if int(itog) == 0:
-            self.ugtSlider.setValue(1)
-            self.ugtSlider.setValue(0)
-        else:
-            self.ugtSlider.setValue(int(itog))
+            summa += float(v_res)
+
+        self.tprl_average = float(summa / len(res.values()))
+        self.tprl_min = int(float(min(res.values())))
+        self.label_tprl_average_result.setText(str(self.tprl_average))
+        self.label_tprl_min_result.setText(str(self.tprl_min))
+        # if int(itog) == 0:
+        #     self.ugtSlider.setValue(1)
+        #     self.ugtSlider.setValue(0)
+        # else:
+        #     self.ugtSlider.setValue(int(itog))
+
+    def show_help(self):
+        self.help_dialog = HelpDialog(self)
+        self.help_dialog.show()
 
     @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
     def onItemClicked(self, item):
@@ -471,10 +658,37 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                 item.setCheckState(1, QtCore.Qt.Unchecked)
 
 
+class Controller:
+
+    def __init__(self):
+        self.login = None
+        self.register = None
+        self.window = None
+
+    def show_login_page(self):
+        self.login = Login()
+        self.login.switch_register.connect(self.show_register_page)
+        self.login.switch_mainwindow[str].connect(self.show_mainwindow)
+        if self.register:
+            self.register.close()
+        self.login.show()
+
+    def show_register_page(self):
+        self.register = Register()
+        self.register.switch_login.connect(self.show_login_page)
+        self.login.close()
+        self.register.show()
+
+    def show_mainwindow(self, user):
+        self.window = Window(user)
+        self.login.close()
+        self.window.show()
+
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    window = Window()  # Создаем экземпляр класса
-    window.setWindowTitle('TRL Calculator')
-    window.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
-    window.show()
+    controller = Controller()  # Создаем экземпляр класса
+    # window.setWindowTitle('TPRL Calculator')
+    # window.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
+    controller.show_login_page()
     sys.exit(app.exec_())
