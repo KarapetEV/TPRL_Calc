@@ -60,7 +60,10 @@ class Ui_Register(object):
         self.lineEdit_password_confirm.setEchoMode(QtWidgets.QLineEdit.Password)
         self.btn_register = QtWidgets.QPushButton(self.main_frame)
         self.btn_register.setObjectName("btn_register")
-        self.btn_register.setGeometry(QtCore.QRect(85, 205, 150, 30))
+        self.btn_register.setGeometry(QtCore.QRect(5, 205, 150, 30))
+        self.btn_back = QtWidgets.QPushButton(self.main_frame)
+        self.btn_back.setObjectName("btn_back")
+        self.btn_back.setGeometry(QtCore.QRect(165, 205, 150, 30))
 
         self.retranslateUi(Register)
         QtCore.QMetaObject.connectSlotsByName(Register)
@@ -73,3 +76,4 @@ class Ui_Register(object):
         self.lineEdit_password_create.setPlaceholderText(_translate("Register", "Введите пароль..."))
         self.lineEdit_password_confirm.setPlaceholderText(_translate("Register", "Подтвердите пароль..."))
         self.btn_register.setText(_translate("Register", "Зарегистрировать"))
+        self.btn_back.setText(_translate("Register", "Назад"))

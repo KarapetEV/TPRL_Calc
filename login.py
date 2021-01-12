@@ -17,7 +17,11 @@ class Ui_Login(object):
         Login.setWindowTitle("Авторизация пользователя")
         Login.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
         Login.setFixedSize(320, 250)
-        Login.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
+        Login.setWindowFlags(
+            QtCore.Qt.CustomizeWindowHint |
+            QtCore.Qt.WindowCloseButtonHint |
+            QtCore.Qt.WindowStaysOnTopHint
+            )
         self.main_frame = QtWidgets.QFrame(Login)
         self.main_frame.setGeometry(QtCore.QRect(0, 0, 320, 250))
         self.main_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
@@ -51,10 +55,10 @@ class Ui_Login(object):
         self.lineEdit_password.setEchoMode(QtWidgets.QLineEdit.Password)
         self.btn_choose_user = QtWidgets.QPushButton(self.main_frame)
         self.btn_choose_user.setObjectName("btn_choose_user")
-        self.btn_choose_user.setGeometry(QtCore.QRect(5, 200, 150, 30))
+        self.btn_choose_user.setGeometry(QtCore.QRect(5, 205, 150, 30))
         self.btn_new_user = QtWidgets.QPushButton(self.main_frame)
         self.btn_new_user.setObjectName("btn_new_user")
-        self.btn_new_user.setGeometry(QtCore.QRect(165, 200, 150, 30))
+        self.btn_new_user.setGeometry(QtCore.QRect(165, 205, 150, 30))
 
         self.retranslateUi(Login)
         QtCore.QMetaObject.connectSlotsByName(Login)
@@ -63,7 +67,7 @@ class Ui_Login(object):
         _translate = QtCore.QCoreApplication.translate
         Login.setWindowTitle(_translate("Login", "Авторизация"))
         self.label_login_title.setText(_translate("Login", "Выбор пользователя"))
-        self.comboBox_users.setPlaceholderText(_translate("Login", "Выберите пользователя..."))
+        # self.comboBox_users.setPlaceholderText(_translate("Login", "Выберите пользователя..."))
         self.lineEdit_password.setPlaceholderText(_translate("Login", "Введите пароль..."))
         self.btn_choose_user.setText(_translate("Login", "Выбрать"))
         self.btn_new_user.setText(_translate("Login", "Создать нового"))
