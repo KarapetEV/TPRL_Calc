@@ -235,9 +235,12 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         pass
 
     def change_user(self):
-        self.projects_table.clear()
-        self.tabWidget.setEnabled(False)
         self.switch_login.emit()
+        self.expert_name = ''
+        self.label_user_name.setText("")
+        self.label_user_name2.setText("")
+        self.projects_table.clear()
+        self.projects_table2.clear()
 
     def load_project(self):
         pass
@@ -248,9 +251,13 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.tabWidget.setCurrentIndex(2)
 
     def create_dialog(self):
-        self.project_dialog = ProjectDialog(self)
-        self.project_dialog.show()
-        self.project_dialog.enter_data[str].connect(self.start_project)
+        if self.expert_name == '':
+            QtWidgets.QMessageBox.about(self, "Внимание!", "Не выбран пользователь!")
+            self.switch_login.emit()
+        else:
+            self.project_dialog = ProjectDialog(self)
+            self.project_dialog.show()
+            self.project_dialog.enter_data[str].connect(self.start_project)
 
     def default_labels(self, labels):
         for k, v in labels.items():
@@ -261,10 +268,23 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.params = []
         self.rad = []
 
+    def confirm_reset(self):
+        messageBox = QtWidgets.QMessageBox(self)
+        messageBox.setWindowTitle("Подтверждение")
+        messageBox.setIcon(QtWidgets.QMessageBox.Question)
+        messageBox.setText("Вы уверены, что хотите сбросить все отметки?")
+        buttonYes = messageBox.addButton("Да", QtWidgets.QMessageBox.YesRole)
+        buttonNo = messageBox.addButton("Нет", QtWidgets.QMessageBox.NoRole)
+        messageBox.setDefaultButton(buttonYes)
+        messageBox.exec_()
+
+        if messageBox.clickedButton() == buttonYes:
+            return True
+        elif messageBox.clickedButton() == buttonNo:
+            return False
+
     def reset_tasks(self):
-        qm = QtWidgets.QMessageBox()
-        res = qm.question(self, 'Подтверждение', "Вы уверены, что хотите сбросить все отметки?", qm.Yes | qm.No)
-        if res == qm.Yes:
+        if self.confirm_reset():
             levels_count = self.treeWidget.topLevelItemCount()
             for i in range(levels_count):
                 level = self.treeWidget.topLevelItem(i)
