@@ -343,7 +343,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
     def create_rows(self):
         QToolTip.setFont(QtGui.QFont('Calibri', 9))
 
-        data = pd.read_excel('Test_Tasks.xlsx', sheet_name=self.rad[0])
+        data = pd.read_excel('New_Tasks.xlsx', sheet_name=self.rad[0])
         val = self.make_level_dict(data, self.params)
 
         item_color = ''
@@ -376,7 +376,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     textEdit_2.setText(item[0])
                     textEdit_2.setReadOnly(True)
                     item_2 = QtWidgets.QTreeWidgetItem(item_1, ["", ""])
-                    item_2.setCheckState(1, QtCore.Qt.Unchecked)
+                    if item[2] == 0:
+                        item_2.setCheckState(1, QtCore.Qt.Unchecked)
+                    else:
+                        item_2.setCheckState(1, QtCore.Qt.Checked)
                     item_2.setFlags(QtCore.Qt.ItemIsUserCheckable)
                     item_2.setFlags(QtCore.Qt.ItemIsEnabled)
                     self.treeWidget.setItemWidget(item_2, 1, textEdit_2)
@@ -409,9 +412,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     if df['Parameter'][row] == p:
                         if df['Parameter'][row] not in dict_params:
                             dict_params[df['Parameter'][row]] = [df['Pars_Name'][row], [df['Task'][row],
-                                                                                        df['Task_Comments'][row]]]
+                                                                                        df['Task_Comments'][row],
+                                                                                        df['State'][row]]]
                         else:
-                            dict_params[df['Parameter'][row]].append([df['Task'][row], df['Task_Comments'][row]])
+                            dict_params[df['Parameter'][row]].append([df['Task'][row], df['Task_Comments'][row], df['State'][row]])
         return dict_params
 
     def make_level_dict(self, df, params):
