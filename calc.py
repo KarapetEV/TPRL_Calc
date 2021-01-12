@@ -80,7 +80,9 @@ class HelpDialog(QtWidgets.QDialog):
 
 
 class Login(QtWidgets.QDialog, login.Ui_Login):
-    enter_data = pyqtSignal(str)
+    # enter_data = pyqtSignal(str)
+    switch_register = pyqtSignal()
+    switch_mainwindow = pyqtSignal(str)
 
     def __init__(self):
         super(Login, self).__init__()
@@ -99,18 +101,20 @@ class Login(QtWidgets.QDialog, login.Ui_Login):
         else:
             password = self.lineEdit_password.text()
             if check_db.login(user, password):
-                self.enter_data.emit(user)
-                self.close()
-                self.main = Window(user)
-                self.main.show()
+                self.switch_mainwindow.emit(user)
+                # self.enter_data.emit(user)
+                # self.close()
+                # self.main = Window(user)
+                # self.main.show()
             else:
                 QtWidgets.QMessageBox.about(self, 'Ошибка', 'Неверный пароль!')
                 self.reset_passw()
 
     def register(self):
-        self.close()
-        self.register = Register()
-        self.register.show()
+        self.switch_register.emit()
+        # self.close()
+        # self.register = Register()
+        # self.register.show()
 
     def reset_passw(self):
         self.lineEdit_password.setText("")
@@ -118,6 +122,7 @@ class Login(QtWidgets.QDialog, login.Ui_Login):
 
 class Register(QtWidgets.QDialog, register.Ui_Register):
     mysignal = pyqtSignal(str)
+    switch_login = pyqtSignal()
 
     def __init__(self):
         super(Register, self).__init__()
@@ -143,9 +148,10 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
             QtWidgets.QMessageBox.about(self, 'Ошибка', 'Не введен логин!')
             self.lineEdit_password_create.setText("")
             self.lineEdit_password_confirm.setText("")
-        self.close()
-        self.login = Login()
-        self.login.show()
+        self.switch_login.emit()
+        # self.close()
+        # self.login = Login()
+        # self.login.show()
 
     def signal_handler(self, value):
         QtWidgets.QMessageBox.about(self, 'Ошибка', value)
@@ -652,10 +658,37 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 item.setCheckState(1, QtCore.Qt.Unchecked)
 
 
+class Controller:
+
+    def __init__(self):
+        self.login = None
+        self.register = None
+        self.window = None
+
+    def show_login_page(self):
+        self.login = Login()
+        self.login.switch_register.connect(self.show_register_page)
+        self.login.switch_mainwindow[str].connect(self.show_mainwindow)
+        if self.register:
+            self.register.close()
+        self.login.show()
+
+    def show_register_page(self):
+        self.register = Register()
+        self.register.switch_login.connect(self.show_login_page)
+        self.login.close()
+        self.register.show()
+
+    def show_mainwindow(self, user):
+        self.window = Window(user)
+        self.login.close()
+        self.window.show()
+
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    window = Login()  # Создаем экземпляр класса
-    window.setWindowTitle('TPRL Calculator')
-    window.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
-    window.show()
+    controller = Controller()  # Создаем экземпляр класса
+    # window.setWindowTitle('TPRL Calculator')
+    # window.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
+    controller.show_login_page()
     sys.exit(app.exec_())
