@@ -80,7 +80,6 @@ class HelpDialog(QtWidgets.QDialog):
 
 
 class Login(QtWidgets.QDialog, login.Ui_Login):
-    # enter_data = pyqtSignal(str)
     switch_register = pyqtSignal()
     switch_mainwindow = pyqtSignal(str)
 
@@ -102,19 +101,12 @@ class Login(QtWidgets.QDialog, login.Ui_Login):
             password = self.lineEdit_password.text()
             if check_db.login(user, password):
                 self.switch_mainwindow.emit(user)
-                # self.enter_data.emit(user)
-                # self.close()
-                # self.main = Window(user)
-                # self.main.show()
             else:
                 QtWidgets.QMessageBox.about(self, 'Ошибка', 'Неверный пароль!')
                 self.reset_passw()
 
     def register(self):
         self.switch_register.emit()
-        # self.close()
-        # self.register = Register()
-        # self.register.show()
 
     def reset_passw(self):
         self.lineEdit_password.setText("")
@@ -129,6 +121,7 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
         self.btn_register.clicked.connect(self.register)
+        self.btn_back.clicked.connect(self.get_back)
         self.mysignal.connect(self.signal_handler)
 
     def register(self):
@@ -149,9 +142,9 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
             self.lineEdit_password_create.setText("")
             self.lineEdit_password_confirm.setText("")
         self.switch_login.emit()
-        # self.close()
-        # self.login = Login()
-        # self.login.show()
+
+    def get_back(self):
+        self.switch_login.emit()
 
     def signal_handler(self, value):
         QtWidgets.QMessageBox.about(self, 'Ошибка', value)
@@ -169,9 +162,6 @@ class ProjectDialog(QtWidgets.QDialog):
                            border: 1px solid red;
                            ''')
         self.setWindowTitle('Ввод данных')
-        # desktop = QtWidgets.QApplication.desktop()
-        # x = int(desktop.width()/2) - 150
-        # y = int(desktop.height()/2) - 80
         x = self.parent().x() + int(self.parent().width() / 2) - 175
         y = self.parent().y() + int(self.parent().height() / 2) - 50
         self.setGeometry(x, y, 350, 100)
@@ -182,13 +172,6 @@ class ProjectDialog(QtWidgets.QDialog):
                                             ''')
         self.line_project_num.setMaximumWidth(300)
         self.line_project_num.setPlaceholderText('Введите номер проекта...')
-        # self.line_expert = QtWidgets.QLineEdit()
-        # self.line_expert.setStyleSheet('''
-        #                                border: 1px solid red;
-        #                                font-size: 14px;
-        #                                ''')
-        # self.line_expert.setMaximumWidth(300)
-        # self.line_expert.setPlaceholderText('Введите ФИО эксперта...')
         self.btn_ok = QtWidgets.QPushButton('OK')
         self.btn_cancel = QtWidgets.QPushButton('Отмена')
         self.hbox = QtWidgets.QHBoxLayout()
@@ -197,30 +180,16 @@ class ProjectDialog(QtWidgets.QDialog):
         self.form = QtWidgets.QFormLayout()
         self.form.setSpacing(20)
         self.form.addRow("&Номер проекта:", self.line_project_num)
-        # self.form.addRow("&ФИО эксперта:", self.line_expert)
         self.form.addRow(self.hbox)
         self.form.labelForField(self.line_project_num).setStyleSheet('''
                                                                      border: none;
                                                                      font-size: 14px;
                                                                      font-weight: bold;
                                                                      ''')
-        # self.form.labelForField(self.line_expert).setStyleSheet('''
-        #                                                         border: none;
-        #                                                         font-size: 14px;
-        #                                                         font-weight: bold;
-        #                                                         ''')
         self.setLayout(self.form)
         self.btn_ok.clicked.connect(self.send_data)
         self.btn_cancel.clicked.connect(self.close)
 
-    # def send_data(self):
-    #     if not self.line_project_num.text() or not self.line_expert.text():
-    #         pass
-    #     else:
-    #         self.enter_data.emit(self.line_project_num.text(), self.line_expert.text())
-    #         self.close()
-
-    # Новый вариант метода
     def send_data(self):
         if not self.line_project_num.text():
             pass
@@ -230,6 +199,8 @@ class ProjectDialog(QtWidgets.QDialog):
 
 
 class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
+    switch_login = pyqtSignal()
+
     parameters = ['TRL', 'MRL', 'ERL', 'ORL', 'CRL']
 
     def __init__(self, user):
@@ -237,62 +208,48 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
         self.tabWidget.setTabEnabled(1, False)
-        self.btn_set_params.clicked.connect(self.set_params)
+        self.tabWidget.setTabEnabled(2, False)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
-        self.btn_calculate.clicked.connect(self.create_dialog)
-        # self.btn_calculate.clicked.connect(self.calculate)
+
+        self.btn_set_params.clicked.connect(self.set_params)
+        # self.btn_calculate.clicked.connect(self.create_dialog)
+        self.btn_calculate.clicked.connect(self.calculate)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
         self.save_graph_btn.clicked.connect(self.save_chart)
         self.btn_manual.clicked.connect(self.show_help)
         self.btn_save_results.clicked.connect(self.save_results)
+        self.btn_change_user.clicked.connect(self.change_user)
+        self.btn_load_project.clicked.connect(self.load_project)
+        self.btn_new_project.clicked.connect(self.create_dialog)
+
         self.params = []
         self.project_num = ''
         self.expert_name = user
         self.rad = []
         self.tprl_min = 0
 
+        self.label_user_name.setText(user)
+
+    def show_user_projects(self):
+        pass
+
+    def change_user(self):
+        self.projects_table.clear()
+        self.tabWidget.setEnabled(False)
+        self.switch_login.emit()
+
+    def load_project(self):
+        pass
+
+    def start_project(self, num):
+        self.project_num = num
+        self.tabWidget.setTabEnabled(1, True)
+        self.tabWidget.setCurrentIndex(1)
+
     def create_dialog(self):
         self.project_dialog = ProjectDialog(self)
         self.project_dialog.show()
-        self.project_dialog.enter_data[str].connect(self.calculate)
-
-    # def change_ugt_level(self):
-    #     labels_ugt = {
-    #         self.label_ugt0: [0, 90],
-    #         self.label_ugt1: [1, 114],
-    #         self.label_ugt2: [2, 142],
-    #         self.label_ugt3: [3, 169],
-    #         self.label_ugt4: [4, 193],
-    #         self.label_ugt5: [5, 221],
-    #         self.label_ugt6: [6, 248],
-    #         self.label_ugt7: [7, 274],
-    #         self.label_ugt8: [8, 300],
-    #         self.label_ugt9: [9, 328],
-    #     }
-    #     result_style = ('''
-    #                     background-color: #e21a1a;
-    #                     font-family: MS Shell Dlg;
-    #                     color: #ffffff;
-    #                     font-size: 30px;
-    #                     ''')
-    #     self.default_labels(labels_ugt)
-    #     size = self.ugtSlider.value()
-    #     for k, v in labels_ugt.items():
-    #         if v[0] == size:
-    #             # print(k.font().toString())
-    #             x = k.x() - 10
-    #             y = k.y() - 5
-    #             k.setGeometry(QtCore.QRect(x, y, 33, 30))
-    #             k.setStyleSheet(result_style)
-    #             k.setEnabled(True)
-    #         else:
-    #             k.setStyleSheet('''
-    #                             background-color: #f3f3f3;
-    #                             font-family: MS Shell Dlg;
-    #                             color: #e21a1a;
-    #                             font-size: 18px;
-    #                             ''')
-    #             k.setEnabled(False)
+        self.project_dialog.enter_data[str].connect(self.start_project)
 
     def default_labels(self, labels):
         for k, v in labels.items():
@@ -349,8 +306,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
         data = pd.read_excel('New_Tasks.xlsx', sheet_name=self.rad[0])
         val = self.make_level_dict(data, self.params)
-
-        item_color = ''
 
         for i, key in enumerate(val.items()):
             textEdit_0 = AdjusttableTextEdit()  # key[1][1] - комментарий к key[1][0]
@@ -496,13 +451,14 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # self.create_text_rows(text_levels)
         self.create_table_rows(text_levels)
 
-    def calculate(self, num):
-        self.label_project_num.setText(num)
-        self.project_num = num
+    def calculate(self):
+        self.label_project_num.setText(self.project_num)
         self.label_expert_name.setText(self.expert_name)
-        # self.expert_name = name
-        self.tabWidget.setTabEnabled(1, True)
-        self.tabWidget.setCurrentIndex(1)
+        # self.label_project_num.setText(self.project_num)
+        # self.project_num = num
+        # self.label_expert_name.setText(self.expert_name)
+        self.tabWidget.setTabEnabled(2, True)
+        self.tabWidget.setCurrentIndex(2)
         self.check_draft.setEnabled(True)
         self.check_draft.setChecked(False)
         self.btn_save_results.setEnabled(True)
@@ -561,14 +517,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         for param in Window.parameters:
             if param not in self.d3.keys():
                 self.d3[param] = '0'
-        # print('До обработки', self.d3)
-        # x = float(max(self.d3.values()))
-        # y = float(min(self.d3.values()))
-        # if x - y > 2:
-        #     for iter_k, iter_v in self.d3.items():
-        #         iter_v = float(iter_v)
-        #         if iter_v == x:
-        #             self.d3[iter_k] = str(round(iter_v - 1, 1))
         for iter_k, iter_v in self.d3.items():
             iter_v = float(iter_v)
             # self.d3[iter_k] = iter_v
@@ -634,11 +582,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.tprl_min = int(float(min(res.values())))
         self.label_tprl_average_result.setText(str(self.tprl_average))
         self.label_tprl_min_result.setText(str(self.tprl_min))
-        # if int(itog) == 0:
-        #     self.ugtSlider.setValue(1)
-        #     self.ugtSlider.setValue(0)
-        # else:
-        #     self.ugtSlider.setValue(int(itog))
 
     def show_help(self):
         self.help_dialog = HelpDialog(self)
@@ -681,6 +624,7 @@ class Controller:
 
     def show_mainwindow(self, user):
         self.window = Window(user)
+        self.window.switch_login.connect(self.show_login_page)
         self.login.close()
         self.window.show()
 
