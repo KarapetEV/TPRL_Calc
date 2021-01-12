@@ -6,15 +6,15 @@
 import sys, os, datetime
 import login, register, check_db
 import calc_gui
-from PyQt5 import QtCore, QtWidgets, uic, QtGui
+from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QToolTip
 import numpy as np
 import pandas as pd
 from chart import Chart
 from PyQt5.QtCore import pyqtSignal, QSize
 
-
 style = os.path.join(os.path.dirname(__file__), 'style.css')
+
 
 class AdjusttableTextEdit(QtWidgets.QTextEdit):
     td_size_sig = pyqtSignal(QSize)
@@ -44,7 +44,6 @@ class AdjusttableTextEdit(QtWidgets.QTextEdit):
 class HelpDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
-
         super(HelpDialog, self).__init__(parent)
         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
         self.setStyleSheet('''
@@ -108,7 +107,6 @@ class Login(QtWidgets.QDialog, login.Ui_Login):
                 QtWidgets.QMessageBox.about(self, 'Ошибка', 'Неверный пароль!')
                 self.reset_passw()
 
-
     def register(self):
         self.close()
         self.register = Register()
@@ -151,6 +149,7 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
 
     def signal_handler(self, value):
         QtWidgets.QMessageBox.about(self, 'Ошибка', value)
+
 
 class ProjectDialog(QtWidgets.QDialog):
     enter_data = pyqtSignal(str)
@@ -207,7 +206,6 @@ class ProjectDialog(QtWidgets.QDialog):
         self.setLayout(self.form)
         self.btn_ok.clicked.connect(self.send_data)
         self.btn_cancel.clicked.connect(self.close)
-
 
     # def send_data(self):
     #     if not self.line_project_num.text() or not self.line_expert.text():
@@ -427,7 +425,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # table = QtWidgets.QTableWidget(self.frame_tprl_results)
         # table.setObjectName('table')
 
-        self.table_tprl_results.setRowCount(len(text_levels)-1)
+        self.table_tprl_results.setRowCount(len(text_levels) - 1)
         self.table_tprl_results.setColumnCount(2)
         self.table_tprl_results.setColumnWidth(0, 50)
         self.table_tprl_results.setColumnWidth(1, 700)
@@ -590,7 +588,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                   self.label_mrl_result.text(), self.label_erl_result.text(),
                   self.label_orl_result.text(), self.label_crl_result.text(), project_state]]
         features = np.array(total)
-        columns = ['Expert', 'Project Number', 'Date', 'TPRLmin', 'TPRLaverage', 'TRL', 'MRL', 'ERL', 'ORL', 'CRL', 'Статус']
+        columns = ['Expert', 'Project Number', 'Date', 'TPRLmin', 'TPRLaverage', 'TRL', 'MRL', 'ERL', 'ORL', 'CRL',
+                   'Статус']
         frame = pd.DataFrame(data=features, columns=columns)
         # ---------------Записываем данные в файл----------------------------------
         file_name = 'Results.xlsx'
@@ -621,8 +620,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 self.label_crl_result.setText(v_res)
             summa += float(v_res)
 
-
-        self.tprl_average = float(summa/len(res.values()))
+        self.tprl_average = float(summa / len(res.values()))
         self.tprl_min = int(float(min(res.values())))
         self.label_tprl_average_result.setText(str(self.tprl_average))
         self.label_tprl_min_result.setText(str(self.tprl_min))

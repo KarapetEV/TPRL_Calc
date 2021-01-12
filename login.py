@@ -63,7 +63,7 @@ class Ui_Login(object):
         _translate = QtCore.QCoreApplication.translate
         Login.setWindowTitle(_translate("Login", "Авторизация"))
         self.label_login_title.setText(_translate("Login", "Выбор пользователя"))
-        self.comboBox_users.setPlaceholderText(_translate("Login", "Выберите пользователя..."))
+        # self.comboBox_users.setPlaceholderText(_translate("Login", "Выберите пользователя..."))
         self.lineEdit_password.setPlaceholderText(_translate("Login", "Введите пароль..."))
         self.btn_choose_user.setText(_translate("Login", "Выбрать"))
         self.btn_new_user.setText(_translate("Login", "Создать нового"))
