@@ -439,6 +439,7 @@ class Ui_AppWindow(object):
         # -----------------------Table_TPRL_results----------------------
         self.table_tprl_results = QtWidgets.QTableWidget(self.frame_tprl_results)
         self.table_tprl_results.setGeometry(QtCore.QRect(0, 45, 805, 260))
+        self.table_tprl_results.setContentsMargins(0, 0, 0, 0)
         self.table_tprl_results.setObjectName('table_tprl_results')
         self.table_tprl_results.horizontalHeader().setVisible(False)
         self.table_tprl_results.verticalHeader().setVisible(False)

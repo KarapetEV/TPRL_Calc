@@ -46,12 +46,8 @@ class HelpDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
         super(HelpDialog, self).__init__(parent)
-        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
-        self.setStyleSheet('''
-                           background-color: #fce6e6;
-                           border-radius: 5px;
-                           border: 2px solid red;
-                           ''')
+        self.setWindowFlag(QtCore.Qt.WindowCloseButtonHint)
+        self.setStyleSheet(open(style).read())
         self.setWindowTitle('Информация о программе')
         x = self.parent().x() + int(self.parent().width() / 2) - 200
         y = self.parent().y() + int(self.parent().height() / 2) - 125
@@ -74,7 +70,7 @@ class HelpDialog(QtWidgets.QDialog):
         self.help_text.setReadOnly(True)
         self.help_text.setWordWrapMode(QtGui.QTextOption.WordWrap)
         self.btn_ok = QtWidgets.QPushButton(self)
-        self.btn_ok.setStyleSheet(open(style).read())
+        # self.btn_ok.setStyleSheet(open(style).read())
         self.btn_ok.setGeometry(150, 205, 100, 30)
         self.btn_ok.setText("OK")
         self.btn_ok.clicked.connect(self.close)
@@ -434,7 +430,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.table_tprl_results.setColumnCount(2)
         self.table_tprl_results.setColumnWidth(0, 50)
         self.table_tprl_results.setColumnWidth(1, 700)
-        self.table_tprl_results.setStyleSheet('''font-size: 15px;
+        self.table_tprl_results.setStyleSheet('''font-size: 14px;
                                                         ''')
 
         for key, values in text_levels.items():
@@ -445,12 +441,20 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 # self.table_tprl_results.setSpan(0, 0, 1, 2)
 
         text_levels.pop('TPRL')
-
         for i, key in enumerate(text_levels.items()):
-            self.table_tprl_results.setItem(i, 0, QtWidgets.QTableWidgetItem(key[0]))
-            self.table_tprl_results.item(i, 0).setFlags(QtCore.Qt.ItemIsEditable)
-            self.table_tprl_results.setItem(i, 1, QtWidgets.QTableWidgetItem(key[1]))
-            self.table_tprl_results.item(i, 1).setFlags(QtCore.Qt.ItemIsEditable)
+            label1 = QtWidgets.QLabel(key[0])
+            label1.setStyleSheet("border-bottom: 1px solid;")
+            label1.setMaximumHeight(50)
+            label2 = QtWidgets.QLabel(key[1])
+            label2.setStyleSheet("border-bottom: 1px solid;")
+            label2.setMaximumHeight(50)
+            label2.setWordWrap(True)
+            self.table_tprl_results.setCellWidget(i, 0, label1)
+            self.table_tprl_results.setCellWidget(i, 1, label2)
+            # self.table_tprl_results.setItem(i, 0, QtWidgets.QTableWidgetItem(key[0]))
+            # self.table_tprl_results.item(i, 0).setFlags(QtCore.Qt.ItemIsEditable)
+            # self.table_tprl_results.setItem(i, 1, QtWidgets.QTableWidgetItem(key[1]))
+            # self.table_tprl_results.item(i, 1).setFlags(QtCore.Qt.ItemIsEditable)
         # self._delegate.setWordWrap(True)
         self.table_tprl_results.setShowGrid(False)
         self.table_tprl_results.resizeRowsToContents()
