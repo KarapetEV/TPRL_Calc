@@ -53,7 +53,7 @@ class Chart:
         plotWidget = FigureCanvas(self.figure)
         self.layout.addWidget(plotWidget, QtCore.Qt.AlignVCenter)
 
-    def save_chart(self, num):
-        if not os.path.isdir("Charts"):
-            os.mkdir("Charts")
-        self.figure.savefig(f".\Charts\\{num}_chart.png", dpi=300)
+    def save_chart(self, dir, file_name):
+        # if not os.path.isdir("Charts"):
+        #     os.mkdir("Charts")
+        self.figure.savefig(f".\{dir}\\{file_name}.png", dpi=300)
