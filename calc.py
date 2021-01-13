@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 from chart import Chart
 from PyQt5.QtCore import pyqtSignal, QSize
+from splash import Splash
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
@@ -631,6 +632,13 @@ class Controller:
         self.login = None
         self.register = None
         self.window = None
+        self.splashscreen = None
+
+    def show_splash(self):
+        self.splashscreen = Splash()
+        self.splashscreen.show()
+        app.processEvents()
+        self.show_login_page()
 
     def show_login_page(self):
         self.login = Login()
@@ -639,6 +647,8 @@ class Controller:
         if self.register:
             self.register.close()
         self.login.show()
+        if self.splashscreen:
+            self.splashscreen.finish(self.login)
 
     def show_register_page(self):
         self.register = Register()
@@ -658,5 +668,6 @@ if __name__ == '__main__':
     controller = Controller()  # Создаем экземпляр класса
     # window.setWindowTitle('TPRL Calculator')
     # window.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
-    controller.show_login_page()
+    # controller.show_login_page()
+    controller.show_splash()
     sys.exit(app.exec_())
