@@ -228,7 +228,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.expert_name = user
         self.rad = []
         self.tprl_min = 0
-
+        self.project_state = ''
         self.label_user_name.setText(user)
         self.label_user_name2.setText(user)
 
@@ -329,7 +329,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
     def create_rows(self):
         QToolTip.setFont(QtGui.QFont('Calibri', 9))
 
-        self.data = pd.read_excel('New_Tasks.xlsx', sheet_name=self.rad[0])
+        if self.project_state in ['черновик', 'итог']:
+            self.data = pd.read_excel(self.path)
+        else:
+            self.data = pd.read_excel('New_Tasks.xlsx', sheet_name=self.rad[0])
         val = self.make_level_dict(self.data, self.params)
 
         for i, key in enumerate(val.items()):
@@ -573,15 +576,15 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         date = now.strftime("%d.%m.%Y %H:%M")
         file_date = now.strftime("%d.%m.%Y")
         if self.check_draft.isChecked():
-            project_state = 'черновик'
+            self.project_state = 'черновик'
         else:
-            project_state = 'итог'
+            self.project_state = 'итог'
         project_dir = f'{self.project_num}_{file_date}'
         new_file_name = f'{self.project_num}_{file_date}.xlsx'
         total = [[self.expert_name, self.project_num, date, self.label_tprl_min_result.text(),
                   self.label_tprl_average_result.text(), self.label_trl_result.text(),
                   self.label_mrl_result.text(), self.label_erl_result.text(),
-                  self.label_orl_result.text(), self.label_crl_result.text(), project_state]]
+                  self.label_orl_result.text(), self.label_crl_result.text(), self.project_state]]
         features = np.array(total)
         columns = ['Expert', 'Project Number', 'Date', 'TPRLmin', 'TPRLaverage', 'TRL', 'MRL', 'ERL', 'ORL', 'CRL',
                    'Статус']
@@ -599,22 +602,25 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # ---------------Записываем данные в файл_2--------------------------------------------
         if not os.path.isdir("Projects"):
             os.mkdir("Projects")
-        if project_state == 'черновик':
+        if self.project_state == 'черновик':
             if not os.path.isdir("Projects/Черновики"):
                 os.mkdir("Projects/Черновики")
             os.mkdir(f"Projects/Черновики/{project_dir}")
-            new_file = open(f"Projects/Черновики/{project_dir}/{new_file_name}", 'w')
-            self.save_data.to_excel(f"Projects/Черновики/{project_dir}/{new_file_name}", index=False)
+            self.path = f"Projects/Черновики/{project_dir}/{new_file_name}"
+            new_file = open(self.path, 'w')
+            self.save_data.to_excel(self.path, index=False)
             new_file.close()
         else:
             if not os.path.isdir("Projects/Завершенные"):
                 os.mkdir("Projects/Завершенные")
             os.mkdir(f"Projects/Завершенные/{project_dir}")
+            self.path = f"Projects/Завершенные/{project_dir}/{new_file_name}"
             full_dir = f"Projects/Завершенные/{project_dir}"
-            new_file = open(f"{full_dir}/{new_file_name}", 'w')
-            self.save_data.to_excel(f"{full_dir}/{new_file_name}", index=False)
+            new_file = open(self.path, 'w')
+            self.save_data.to_excel(self.path, index=False)
             new_file.close()
             self.chart.save_chart(full_dir, project_dir)
+
         QtWidgets.QMessageBox.about(self, 'Сохранение результатов', 'Результаты успешно сохранены')
         self.btn_save_results.setEnabled(False)
         self.check_draft.setEnabled(False)
