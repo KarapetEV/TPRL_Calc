@@ -208,8 +208,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
-        self.tabWidget.setTabEnabled(2, False)
         self.tabWidget.setTabEnabled(3, False)
+        self.tabWidget.setTabEnabled(4, False)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
 
         self.btn_set_params.clicked.connect(self.set_params)
@@ -220,6 +220,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.btn_manual.clicked.connect(self.show_help)
         self.btn_save_results.clicked.connect(self.save_results)
         self.btn_change_user.clicked.connect(self.change_user)
+        self.btn_change_user1.clicked.connect(self.change_user)
+        self.btn_change_user2.clicked.connect(self.change_user)
         self.btn_load_project.clicked.connect(self.load_project)
         self.btn_new_project.clicked.connect(self.create_dialog)
 
@@ -230,6 +232,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.tprl_min = 0
         self.project_state = ''
         self.label_user_name.setText(user)
+        self.label_user_name1.setText(user)
         self.label_user_name2.setText(user)
 
     def show_user_projects(self):
@@ -239,6 +242,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.switch_login.emit()
         self.expert_name = ''
         self.label_user_name.setText("")
+        self.label_user_name1.setText("")
         self.label_user_name2.setText("")
         self.projects_table.clear()
         self.projects_table2.clear()
@@ -248,17 +252,17 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
     def start_project(self, num):
         self.project_num = num
-        self.tabWidget.setTabEnabled(2, True)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setTabEnabled(3, True)
+        self.tabWidget.setCurrentIndex(3)
 
     def create_dialog(self):
         if self.expert_name == '':
             QtWidgets.QMessageBox.about(self, "Внимание!", "Не выбран пользователь!")
             self.switch_login.emit()
         else:
-            self.project_dialog = ProjectDialog(self)
-            self.project_dialog.show()
-            self.project_dialog.enter_data[str].connect(self.start_project)
+            project_num = self.enter_project_num.text()
+            self.start_project(project_num)
+            # self.project_dialog.enter_data[str].connect(self.start_project)
 
     def default_labels(self, labels):
         for k, v in labels.items():
@@ -488,8 +492,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # self.label_project_num.setText(self.project_num)
         # self.project_num = num
         # self.label_expert_name.setText(self.expert_name)
-        self.tabWidget.setTabEnabled(3, True)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setTabEnabled(4, True)
+        self.tabWidget.setCurrentIndex(4)
         self.check_draft.setEnabled(True)
         self.check_draft.setChecked(False)
         self.btn_save_results.setEnabled(True)
