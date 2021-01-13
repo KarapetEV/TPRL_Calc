@@ -329,8 +329,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
     def create_rows(self):
         QToolTip.setFont(QtGui.QFont('Calibri', 9))
 
-        data = pd.read_excel('New_Tasks.xlsx', sheet_name=self.rad[0])
-        val = self.make_level_dict(data, self.params)
+        self.data = pd.read_excel('New_Tasks.xlsx', sheet_name=self.rad[0])
+        val = self.make_level_dict(self.data, self.params)
 
         for i, key in enumerate(val.items()):
             textEdit_0 = AdjusttableTextEdit()  # key[1][1] - комментарий к key[1][0]
@@ -477,6 +477,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.create_table_rows(text_levels)
 
     def calculate(self):
+        self.save_data = self.data.copy()
+        self.save_data = self.save_data.loc[self.save_data['Parameter'].isin(self.params)]
+        self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
         self.label_expert_name.setText(self.expert_name)
         # self.label_project_num.setText(self.project_num)
@@ -491,8 +494,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.d3 = {}
         l2 = []
         levels = self.treeWidget.topLevelItemCount()
+        l1 = []
         for level in range(levels):
-            l1 = []
+
             childs = self.treeWidget.topLevelItem(level).childCount()
             topLevelItemText = self.treeWidget.topLevelItem(level).text(0)
             d2 = {}
@@ -502,7 +506,12 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 for kid in range(kids):
                     kid_item = self.treeWidget.topLevelItem(level).child(child).child(kid)
                     # ch_item = self.treeWidget.topLevelItem(level).child(child)
-
+                    # -----------------Добавляем в новый State значение (0/1)
+                    if kid_item.checkState(1) == QtCore.Qt.Checked:
+                        l1.append(1)
+                    else:
+                        l1.append(0)
+                    # ------------Продолжаем формировать словарь---------------
                     if p not in d2:
                         l2 = []
                         if kid_item.checkState(1) == QtCore.Qt.Checked:
@@ -525,7 +534,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     self.d3[k].append(v)
             if level not in d1:
                 d1[topLevelItemText] = d2
-
+        self.save_data['State'] = l1
         for key, values in self.d3.items():
             summary = 0
             for iter_value in range(len(values)):
@@ -562,10 +571,13 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # ---------------Формируем dataframe с результатами------------------------
         now = datetime.datetime.now()
         date = now.strftime("%d.%m.%Y %H:%M")
+        file_date = now.strftime("%d.%m.%Y")
         if self.check_draft.isChecked():
             project_state = 'черновик'
         else:
             project_state = 'итог'
+        project_dir = f'{self.project_num}_{file_date}'
+        new_file_name = f'{self.project_num}_{file_date}.xlsx'
         total = [[self.expert_name, self.project_num, date, self.label_tprl_min_result.text(),
                   self.label_tprl_average_result.text(), self.label_trl_result.text(),
                   self.label_mrl_result.text(), self.label_erl_result.text(),
@@ -584,6 +596,25 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             file = open('Results.xlsx', 'w')
             frame.to_excel('Results.xlsx', index=False)
             file.close()
+        # ---------------Записываем данные в файл_2--------------------------------------------
+        if not os.path.isdir("Projects"):
+            os.mkdir("Projects")
+        if project_state == 'черновик':
+            if not os.path.isdir("Projects/Черновики"):
+                os.mkdir("Projects/Черновики")
+            os.mkdir(f"Projects/Черновики/{project_dir}")
+            new_file = open(f"Projects/Черновики/{project_dir}/{new_file_name}", 'w')
+            self.save_data.to_excel(f"Projects/Черновики/{project_dir}/{new_file_name}", index=False)
+            new_file.close()
+        else:
+            if not os.path.isdir("Projects/Завершенные"):
+                os.mkdir("Projects/Завершенные")
+            os.mkdir(f"Projects/Завершенные/{project_dir}")
+            full_dir = f"Projects/Завершенные/{project_dir}"
+            new_file = open(f"{full_dir}/{new_file_name}", 'w')
+            self.save_data.to_excel(f"{full_dir}/{new_file_name}", index=False)
+            new_file.close()
+            self.chart.save_chart(full_dir, project_dir)
         QtWidgets.QMessageBox.about(self, 'Сохранение результатов', 'Результаты успешно сохранены')
         self.btn_save_results.setEnabled(False)
         self.check_draft.setEnabled(False)
