@@ -53,12 +53,16 @@ class HelpDialog(QtWidgets.QDialog):
                            border: 2px solid red;
                            ''')
         self.setWindowTitle('Информация о программе')
-        x = self.parent().x() + int(self.parent().width() / 2) - 250
-        y = self.parent().y() + int(self.parent().height() / 2) - 150
-        self.setGeometry(x, y, 500, 300)
-        self.help_text = QtWidgets.QTextEdit()
+        x = self.parent().x() + int(self.parent().width() / 2) - 200
+        y = self.parent().y() + int(self.parent().height() / 2) - 125
+        self.setGeometry(x, y, 400, 250)
+        self.help_text = QtWidgets.QTextEdit(self)
+        self.help_text.setGeometry(10, 10, 380, 180)
         self.help_text.setStyleSheet('background-color: #f3f3f3;')
-        self.help_text.setPlainText('Инструкция!\nДля расчета уровня зрелости инновационного проекта/технологии к '
+        self.help_text.setAlignment(QtCore.Qt.AlignHCenter)
+        self.help_text.insertPlainText('Инструкция!\n')
+        self.help_text.setAlignment(QtCore.Qt.AlignLeft)
+        self.help_text.insertPlainText('Для расчета уровня зрелости инновационного проекта/технологии к '
                                     'внедрению в ОАО «РЖД» необходимо выбрать параметры оценки, по которым производится '
                                     'расчет и нажать кнопку «Установить параметры». В открывшемся поле необходимо '
                                     'отметить те задачи, которые были выполнены в полном объеме на каждом уровне. '
@@ -69,14 +73,10 @@ class HelpDialog(QtWidgets.QDialog):
                                     'зрелости по отдельному выбранному параметру.')
         self.help_text.setReadOnly(True)
         self.help_text.setWordWrapMode(QtGui.QTextOption.WordWrap)
-        self.btn_ok = QtWidgets.QPushButton('OK')
-        self.btn_ok.setStyleSheet('background-color: #f24437;')
-        self.form = QtWidgets.QFormLayout()
-        self.form.setSpacing(20)
-        self.form.addRow(self.help_text)
-        self.form.addRow(self.btn_ok)
-        self.btn_ok.setFixedSize(70, 30)
-        self.setLayout(self.form)
+        self.btn_ok = QtWidgets.QPushButton(self)
+        self.btn_ok.setStyleSheet(open(style).read())
+        self.btn_ok.setGeometry(150, 205, 100, 30)
+        self.btn_ok.setText("OK")
         self.btn_ok.clicked.connect(self.close)
 
 
@@ -151,52 +151,52 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
         QtWidgets.QMessageBox.about(self, 'Ошибка', value)
 
 
-class ProjectDialog(QtWidgets.QDialog):
-    enter_data = pyqtSignal(str)
-
-    def __init__(self, parent=None):
-
-        super(ProjectDialog, self).__init__(parent)
-        self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
-        self.setStyleSheet('''
-                           border-radius: 5px;
-                           border: 1px solid red;
-                           ''')
-        self.setWindowTitle('Ввод данных')
-        x = self.parent().x() + int(self.parent().width() / 2) - 175
-        y = self.parent().y() + int(self.parent().height() / 2) - 50
-        self.setGeometry(x, y, 350, 100)
-        self.line_project_num = QtWidgets.QLineEdit()
-        self.line_project_num.setStyleSheet('''
-                                            border: 1px solid red;
-                                            font-size: 14px;
-                                            ''')
-        self.line_project_num.setMaximumWidth(300)
-        self.line_project_num.setPlaceholderText('Введите номер проекта...')
-        self.btn_ok = QtWidgets.QPushButton('OK')
-        self.btn_cancel = QtWidgets.QPushButton('Отмена')
-        self.hbox = QtWidgets.QHBoxLayout()
-        self.hbox.addWidget(self.btn_ok)
-        self.hbox.addWidget(self.btn_cancel)
-        self.form = QtWidgets.QFormLayout()
-        self.form.setSpacing(20)
-        self.form.addRow("&Номер проекта:", self.line_project_num)
-        self.form.addRow(self.hbox)
-        self.form.labelForField(self.line_project_num).setStyleSheet('''
-                                                                     border: none;
-                                                                     font-size: 14px;
-                                                                     font-weight: bold;
-                                                                     ''')
-        self.setLayout(self.form)
-        self.btn_ok.clicked.connect(self.send_data)
-        self.btn_cancel.clicked.connect(self.close)
-
-    def send_data(self):
-        if not self.line_project_num.text():
-            pass
-        else:
-            self.enter_data.emit(self.line_project_num.text())
-            self.close()
+# class ProjectDialog(QtWidgets.QDialog):
+#     enter_data = pyqtSignal(str)
+#
+#     def __init__(self, parent=None):
+#
+#         super(ProjectDialog, self).__init__(parent)
+#         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
+#         self.setStyleSheet('''
+#                            border-radius: 5px;
+#                            border: 1px solid red;
+#                            ''')
+#         self.setWindowTitle('Ввод данных')
+#         x = self.parent().x() + int(self.parent().width() / 2) - 175
+#         y = self.parent().y() + int(self.parent().height() / 2) - 50
+#         self.setGeometry(x, y, 350, 100)
+#         self.line_project_num = QtWidgets.QLineEdit()
+#         self.line_project_num.setStyleSheet('''
+#                                             border: 1px solid red;
+#                                             font-size: 14px;
+#                                             ''')
+#         self.line_project_num.setMaximumWidth(300)
+#         self.line_project_num.setPlaceholderText('Введите номер проекта...')
+#         self.btn_ok = QtWidgets.QPushButton('OK')
+#         self.btn_cancel = QtWidgets.QPushButton('Отмена')
+#         self.hbox = QtWidgets.QHBoxLayout()
+#         self.hbox.addWidget(self.btn_ok)
+#         self.hbox.addWidget(self.btn_cancel)
+#         self.form = QtWidgets.QFormLayout()
+#         self.form.setSpacing(20)
+#         self.form.addRow("&Номер проекта:", self.line_project_num)
+#         self.form.addRow(self.hbox)
+#         self.form.labelForField(self.line_project_num).setStyleSheet('''
+#                                                                      border: none;
+#                                                                      font-size: 14px;
+#                                                                      font-weight: bold;
+#                                                                      ''')
+#         self.setLayout(self.form)
+#         self.btn_ok.clicked.connect(self.send_data)
+#         self.btn_cancel.clicked.connect(self.close)
+#
+#     def send_data(self):
+#         if not self.line_project_num.text():
+#             pass
+#         else:
+#             self.enter_data.emit(self.line_project_num.text())
+#             self.close()
 
 
 class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
@@ -213,10 +213,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.treeWidget.itemClicked.connect(self.onItemClicked)
 
         self.btn_set_params.clicked.connect(self.set_params)
-        # self.btn_calculate.clicked.connect(self.create_dialog)
         self.btn_calculate.clicked.connect(self.calculate)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
-        # self.save_graph_btn.clicked.connect(self.save_chart)
         self.btn_manual.clicked.connect(self.show_help)
         self.btn_save_results.clicked.connect(self.save_results)
         self.btn_change_user.clicked.connect(self.change_user)
@@ -260,9 +258,18 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             QtWidgets.QMessageBox.about(self, "Внимание!", "Не выбран пользователь!")
             self.switch_login.emit()
         else:
+            self.check_enterdata()
+
+    def check_enterdata(self):
+        full_info = True
+        for item in self.tab_new_project.children():
+            if isinstance(item, QtWidgets.QLineEdit) and item.text() == '':
+                full_info = False
+        if not full_info:
+            QtWidgets.QMessageBox.about(self, "Внимание!", "Не все поля заполнены!")
+        else:
             project_num = self.enter_project_num.text()
             self.start_project(project_num)
-            # self.project_dialog.enter_data[str].connect(self.start_project)
 
     def default_labels(self, labels):
         for k, v in labels.items():
@@ -273,11 +280,11 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.params = []
         self.rad = []
 
-    def confirm_reset(self):
+    def confirm_msg(self, text):
         messageBox = QtWidgets.QMessageBox(self)
         messageBox.setWindowTitle("Подтверждение")
         messageBox.setIcon(QtWidgets.QMessageBox.Question)
-        messageBox.setText("Вы уверены, что хотите сбросить все отметки?")
+        messageBox.setText(f"Вы уверены, что хотите {text}?")
         buttonYes = messageBox.addButton("Да", QtWidgets.QMessageBox.YesRole)
         buttonNo = messageBox.addButton("Нет", QtWidgets.QMessageBox.NoRole)
         messageBox.setDefaultButton(buttonYes)
@@ -289,7 +296,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             return False
 
     def reset_tasks(self):
-        if self.confirm_reset():
+        text = "сбросить все отметки"
+        if self.confirm_msg(text):
             levels_count = self.treeWidget.topLevelItemCount()
             for i in range(levels_count):
                 level = self.treeWidget.topLevelItem(i)
@@ -489,9 +497,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
         self.label_expert_name.setText(self.expert_name)
-        # self.label_project_num.setText(self.project_num)
-        # self.project_num = num
-        # self.label_expert_name.setText(self.expert_name)
         self.tabWidget.setTabEnabled(4, True)
         self.tabWidget.setCurrentIndex(4)
         self.check_draft.setEnabled(True)
@@ -568,12 +573,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # self.save_graph_btn.setEnabled(True)
         self.make_text()
 
-    # def save_chart(self):
-    #     self.chart.save_chart(self.project_num)
-    #     QtWidgets.QMessageBox.about(self, 'Сохранение файла',
-    #                                 f'График успешно сохранен в файле "{self.project_num}_chart.png"!')
-    #     self.save_graph_btn.setEnabled(False)
-
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
         now = datetime.datetime.now()
@@ -606,20 +605,22 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # ---------------Записываем данные в файл_2--------------------------------------------
         if not os.path.isdir("Projects"):
             os.mkdir("Projects")
+        if not os.path.isdir(f"Projects/{self.expert_name}"):
+            os.mkdir(f"Projects/{self.expert_name}")
         if self.project_state == 'черновик':
-            if not os.path.isdir("Projects/Черновики"):
-                os.mkdir("Projects/Черновики")
-            os.mkdir(f"Projects/Черновики/{project_dir}")
-            self.path = f"Projects/Черновики/{project_dir}/{new_file_name}"
+            if not os.path.isdir(f"Projects/{self.expert_name}/Черновики"):
+                os.mkdir(f"Projects/{self.expert_name}/Черновики")
+            os.mkdir(f"Projects/{self.expert_name}/Черновики/{project_dir}")
+            self.path = f"Projects/{self.expert_name}/Черновики/{project_dir}/{new_file_name}"
             new_file = open(self.path, 'w')
             self.save_data.to_excel(self.path, index=False)
             new_file.close()
         else:
-            if not os.path.isdir("Projects/Завершенные"):
-                os.mkdir("Projects/Завершенные")
-            os.mkdir(f"Projects/Завершенные/{project_dir}")
-            self.path = f"Projects/Завершенные/{project_dir}/{new_file_name}"
-            full_dir = f"Projects/Завершенные/{project_dir}"
+            if not os.path.isdir(f"Projects/{self.expert_name}/Завершенные"):
+                os.mkdir(f"Projects/{self.expert_name}/Завершенные")
+            os.mkdir(f"Projects/{self.expert_name}/Завершенные/{project_dir}")
+            self.path = f"Projects/{self.expert_name}/Завершенные/{project_dir}/{new_file_name}"
+            full_dir = f"Projects/{self.expert_name}/Завершенные/{project_dir}"
             new_file = open(self.path, 'w')
             self.save_data.to_excel(self.path, index=False)
             new_file.close()
@@ -665,6 +666,13 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 item.setCheckState(1, QtCore.Qt.Checked)
             else:
                 item.setCheckState(1, QtCore.Qt.Unchecked)
+
+    def closeEvent(self, event):
+        text = "закрыть программу"
+        if self.confirm_msg(text):
+            event.accept()
+        else:
+            event.ignore()
 
 
 class Controller:
