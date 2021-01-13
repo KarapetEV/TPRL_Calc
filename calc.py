@@ -216,7 +216,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # self.btn_calculate.clicked.connect(self.create_dialog)
         self.btn_calculate.clicked.connect(self.calculate)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
-        self.save_graph_btn.clicked.connect(self.save_chart)
+        # self.save_graph_btn.clicked.connect(self.save_chart)
         self.btn_manual.clicked.connect(self.show_help)
         self.btn_save_results.clicked.connect(self.save_results)
         self.btn_change_user.clicked.connect(self.change_user)
@@ -565,14 +565,14 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
         self.chart = Chart(self.d3, self.lay)
-        self.save_graph_btn.setEnabled(True)
+        # self.save_graph_btn.setEnabled(True)
         self.make_text()
 
-    def save_chart(self):
-        self.chart.save_chart(self.project_num)
-        QtWidgets.QMessageBox.about(self, 'Сохранение файла',
-                                    f'График успешно сохранен в файле "{self.project_num}_chart.png"!')
-        self.save_graph_btn.setEnabled(False)
+    # def save_chart(self):
+    #     self.chart.save_chart(self.project_num)
+    #     QtWidgets.QMessageBox.about(self, 'Сохранение файла',
+    #                                 f'График успешно сохранен в файле "{self.project_num}_chart.png"!')
+    #     self.save_graph_btn.setEnabled(False)
 
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
