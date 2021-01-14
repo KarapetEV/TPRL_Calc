@@ -206,7 +206,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.setStyleSheet(open(style).read())
         self.tabWidget.setTabEnabled(1, True)
         self.tabWidget.setTabEnabled(2, False)
-        self.treeWidget.itemClicked.connect(self.onItemClicked)
+        # self.treeWidget.itemClicked.connect(self.onItemClicked)
 
         self.btn_set_params.clicked.connect(self.set_params)
         self.btn_calculate.clicked.connect(self.calculate)
