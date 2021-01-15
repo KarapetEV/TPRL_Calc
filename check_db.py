@@ -17,6 +17,7 @@ def create_user_list():
 
     return users
 
+
 def login(login, password):
     user = []
     con = sqlite3.connect("data/data.db")
@@ -34,6 +35,7 @@ def login(login, password):
         return True
     else:
         return False
+
 
 def register(user, signal):
     con = sqlite3.connect("data/data.db")
@@ -54,6 +56,7 @@ def register(user, signal):
     cur.close()
     con.close()
 
+
 def save_project(user, info):
     con = sqlite3.connect("data/data.db")
     cur = con.cursor()
@@ -69,6 +72,7 @@ def save_project(user, info):
     cur.close()
     con.close()
 
+
 def load_project(name, state):
     con = sqlite3.connect("data/data.db")
     cur = con.cursor()
@@ -81,8 +85,7 @@ def load_project(name, state):
                           theme, 
                           initiator, 
                           customer, 
-                          save_date, 
-                          path 
+                          save_date
                     FROM projects 
                     WHERE user_id="{user_id}" AND state="{state}"''')
     value = cur.fetchall()
@@ -92,12 +95,29 @@ def load_project(name, state):
 
     return value
 
+
+def get_path(data):
+    con = sqlite3.connect("data/data.db")
+    cur = con.cursor()
+
+    user_id = cur.execute(f"SELECT user_id FROM users WHERE name='{data[0]}'").fetchone()[0]
+
+    cur.execute(f"SELECT state, path FROM projects WHERE user_id='{user_id}' AND project_num='{data[1]}' AND save_date='{data[2]}'")
+    value = cur.fetchone()
+
+    cur.close()
+    con.close()
+
+    return value
+
+
 def encrypt(line):
     result = ""
     for i in range(len(line)):
         char = line[i]
         result += chr(ord(char) * 2 - 10)
     return result
+
 
 def decrypt(line):
     result = ""

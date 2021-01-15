@@ -59,14 +59,14 @@ class HelpDialog(QtWidgets.QDialog):
         self.help_text.insertPlainText('Инструкция!\n')
         self.help_text.setAlignment(QtCore.Qt.AlignLeft)
         self.help_text.insertPlainText('Для расчета уровня зрелости инновационного проекта/технологии к '
-                                    'внедрению в ОАО «РЖД» необходимо выбрать параметры оценки, по которым производится '
-                                    'расчет и нажать кнопку «Установить параметры». В открывшемся поле необходимо '
-                                    'отметить те задачи, которые были выполнены в полном объеме на каждом уровне. '
-                                    'Результат рассчитывается нажатием кнопки «Расчитать» и представлен в отдельной '
-                                    'вкладке «Результаты». Уровень зрелости результата проекта считается достигнутым, '
-                                    'если все задачи, относящиеся к различным унифицированным параметрам, отмечены. '
-                                    'Общая оценка зрелости проекта принимается равным минимальному достигнутому уровню '
-                                    'зрелости по отдельному выбранному параметру.')
+                                       'внедрению в ОАО «РЖД» необходимо выбрать параметры оценки, по которым производится '
+                                       'расчет и нажать кнопку «Установить параметры». В открывшемся поле необходимо '
+                                       'отметить те задачи, которые были выполнены в полном объеме на каждом уровне. '
+                                       'Результат рассчитывается нажатием кнопки «Расчитать» и представлен в отдельной '
+                                       'вкладке «Результаты». Уровень зрелости результата проекта считается достигнутым, '
+                                       'если все задачи, относящиеся к различным унифицированным параметрам, отмечены. '
+                                       'Общая оценка зрелости проекта принимается равным минимальному достигнутому уровню '
+                                       'зрелости по отдельному выбранному параметру.')
         self.help_text.setReadOnly(True)
         self.help_text.setWordWrapMode(QtGui.QTextOption.WordWrap)
         self.btn_ok = QtWidgets.QPushButton(self)
@@ -123,7 +123,15 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
 
     def register(self):
         user = []
+        chars = ':\/*?<>"|'
         if self.lineEdit_login_create.text():
+            for ch in chars:
+                if ch in self.lineEdit_login_create.text():
+                    QtWidgets.QMessageBox.about(self, 'Ошибка', 'Имя не должно содержать символы :\/*?<>"| !')
+                    self.lineEdit_login_create.setText("")
+                    self.lineEdit_password_create.setText("")
+                    self.lineEdit_password_confirm.setText("")
+                    return
             name = self.lineEdit_login_create.text()
             user.append(name)
             if self.lineEdit_password_create.text() == self.lineEdit_password_confirm.text():
@@ -208,7 +216,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.tabWidget.setTabEnabled(4, False)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
 
-        self.count = 1
         self.expert_name = user
         self.params = []
         self.project_num = ''
@@ -221,8 +228,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.newproject_data = tuple()
         self.saveproject_data = tuple()
 
-        self.show_user_projects()
-
         self.btn_set_params.clicked.connect(self.set_params)
         self.btn_calculate.clicked.connect(self.calculate)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
@@ -231,28 +236,40 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.btn_change_user.clicked.connect(self.change_user)
         self.btn_change_user1.clicked.connect(self.change_user)
         self.btn_change_user2.clicked.connect(self.change_user)
-        self.btn_load_project.clicked.connect(self.load_project)
+        self.btn_load_project.clicked.connect(self.load_project_data)
+        self.btn_load_project2.clicked.connect(self.load_project_data)
         self.btn_new_project.clicked.connect(self.create_dialog)
+        self.tabWidget.currentChanged.connect(self.show_user_projects)
 
-    def show_user_projects(self):
-        drafts = check_db.load_project(self.expert_name, 'черновик')
-        self.create_table(self.projects_table, drafts)
-        complete = check_db.load_project(self.expert_name, 'итог')
-        self.create_table(self.projects_table2, complete)
+    @QtCore.pyqtSlot(int)
+    def show_user_projects(self, index):
+        if index == 1:
+            drafts = check_db.load_project(self.expert_name, 'черновик')
+            self.create_table(self.projects_table, drafts)
+        elif index == 2:
+            complete = check_db.load_project(self.expert_name, 'итог')
+            self.create_table(self.projects_table2, complete)
+        else:
+            pass
 
     def create_table(self, tab_widget, data):
         tab_widget.setRowCount(len(data))
-        tab_widget.setRowHeight(0, 20)
         for row, form in enumerate(data):
+            tab_widget.setRowHeight(0, 20)
+            form = ((str(row + 1)),) + form
             for column, cell in enumerate(form):
                 if column == 0:
-                    item = QtGui.QTableWidgetItem(str(row+1))
+                    item = QtWidgets.QTableWidgetItem(str(row + 1))
+                    item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
                     tab_widget.setColumnWidth(column, 50)
                     item.setTextAlignment(QtCore.Qt.AlignCenter)
                     tab_widget.setItem(row, column, item)
                 else:
-                    item = QtGui.QTableWidgetItem(str(cell))
+                    item = QtWidgets.QTableWidgetItem(str(cell))
+                    item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
                     tab_widget.setItem(row, column, item)
+        tab_widget.resizeColumnsToContents()
+        tab_widget.setColumnWidth(3, 200)
 
     def change_user(self):
         self.switch_login.emit()
@@ -263,8 +280,24 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.projects_table.clear()
         self.projects_table2.clear()
 
-    def load_project(self):
-        pass
+    def load_project_data(self):
+        data = [self.expert_name]
+        table = None
+        if self.tabWidget.currentIndex() == 1:
+            table = self.projects_table
+        elif self.tabWidget.currentIndex() == 2:
+            table = self.projects_table2
+        row = table.currentRow()
+        num = table.item(row, 1).text()
+        data.append(num)
+        date = table.item(row, 6).text()
+        data.append(date)
+        value = check_db.get_path(data)
+        self.project_state = value[0]
+        self.path = value[1]
+        self.tabWidget.setTabEnabled(3, True)
+        self.tabWidget.setCurrentIndex(3)
+        self.create_rows()
 
     def start_project(self, num):
         self.project_num = num
@@ -276,7 +309,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.newproject_data = tuple(temp)
         self.tabWidget.setTabEnabled(3, True)
         self.tabWidget.setCurrentIndex(3)
-
 
     def create_dialog(self):
         if self.expert_name == '':
@@ -295,10 +327,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         else:
             project_num = self.enter_project_num.text()
             self.start_project(project_num)
-
-    # def default_labels(self, labels):
-    #     for k, v in labels.items():
-    #         k.setGeometry(v[1], 120, 15, 23)
 
     def reset_params(self):
         self.treeWidget.clear()
@@ -439,7 +467,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                                                                                         df['Task_Comments'][row],
                                                                                         df['State'][row]]]
                         else:
-                            dict_params[df['Parameter'][row]].append([df['Task'][row], df['Task_Comments'][row], df['State'][row]])
+                            dict_params[df['Parameter'][row]].append(
+                                [df['Task'][row], df['Task_Comments'][row], df['State'][row]])
         return dict_params
 
     def make_level_dict(self, df, params):
@@ -615,8 +644,15 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.project_state = 'черновик'
         else:
             self.project_state = 'итог'
-        project_dir = f'{self.project_num}_{file_date}'
-        new_file_name = f'{self.project_num}_{file_date}.xlsx'
+        chars = ':\/*?<>"|'
+        saved_file_name = self.project_num
+        for ch in chars:
+            if ch in saved_file_name:
+                saved_file_name = saved_file_name.replace(ch, '_')
+        if '\\' in saved_file_name:
+            saved_file_name = saved_file_name.replace('\\', '_')
+        project_dir = f'{saved_file_name}_{file_date}'
+        new_file_name = f'{saved_file_name}_{file_date}.xlsx'
         total = [[self.expert_name, self.project_num, date, self.label_tprl_min_result.text(),
                   self.label_tprl_average_result.text(), self.label_trl_result.text(),
                   self.label_mrl_result.text(), self.label_erl_result.text(),
