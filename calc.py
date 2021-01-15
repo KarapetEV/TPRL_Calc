@@ -246,12 +246,12 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         for row, form in enumerate(data):
             for column, cell in enumerate(form):
                 if column == 0:
-                    item = QtGui.QTableWidgetItem(str(row+1))
+                    item = QtWidgets.QTableWidgetItem(str(row+1))
                     tab_widget.setColumnWidth(column, 50)
                     item.setTextAlignment(QtCore.Qt.AlignCenter)
                     tab_widget.setItem(row, column, item)
                 else:
-                    item = QtGui.QTableWidgetItem(str(cell))
+                    item = QtWidgets.QTableWidgetItem(str(cell))
                     tab_widget.setItem(row, column, item)
 
     def change_user(self):
