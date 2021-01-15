@@ -3,7 +3,7 @@ from PyQt5 import QtCore, QtWidgets
 
 
 def create_user_list():
-    con = sqlite3.connect(".\data\\users.db")
+    con = sqlite3.connect("data/data.db")
     cur = con.cursor()
 
     cur.execute(f'SELECT name FROM users')
@@ -19,7 +19,7 @@ def create_user_list():
 
 def login(login, password):
     user = []
-    con = sqlite3.connect(".\data\\users.db")
+    con = sqlite3.connect("data/data.db")
     cur = con.cursor()
 
     cur.execute(f'SELECT * FROM users WHERE name="{login}";')
@@ -36,7 +36,7 @@ def login(login, password):
         return False
 
 def register(user, signal):
-    con = sqlite3.connect(".\data\\users.db")
+    con = sqlite3.connect("data/data.db")
     cur = con.cursor()
 
     cur.execute(f'SELECT * FROM users WHERE name="{user[0]}";')
@@ -53,6 +53,44 @@ def register(user, signal):
 
     cur.close()
     con.close()
+
+def save_project(user, info):
+    con = sqlite3.connect("data/data.db")
+    cur = con.cursor()
+
+    cur.execute(f"SELECT user_id FROM users WHERE name='{user}'")
+    value = cur.fetchone()
+
+    entry_data = value + info
+
+    cur.execute('INSERT INTO projects VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', entry_data)
+    con.commit()
+
+    cur.close()
+    con.close()
+
+def load_project(name, state):
+    con = sqlite3.connect("data/data.db")
+    cur = con.cursor()
+
+    cur.execute(f"SELECT user_id FROM users WHERE name='{name}'")
+    user_id = cur.fetchone()[0]
+
+    cur.execute(f'''SELECT project_num, 
+                          date, 
+                          theme, 
+                          initiator, 
+                          customer, 
+                          save_date, 
+                          path 
+                    FROM projects 
+                    WHERE user_id="{user_id}" AND state="{state}"''')
+    value = cur.fetchall()
+
+    cur.close()
+    con.close()
+
+    return value
 
 def encrypt(line):
     result = ""

@@ -208,6 +208,21 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.tabWidget.setTabEnabled(4, False)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
 
+        self.count = 1
+        self.expert_name = user
+        self.params = []
+        self.project_num = ''
+        self.rad = []
+        self.tprl_min = 0
+        self.project_state = ''
+        self.label_user_name.setText(user)
+        self.label_user_name1.setText(user)
+        self.label_user_name2.setText(user)
+        self.newproject_data = tuple()
+        self.saveproject_data = tuple()
+
+        self.show_user_projects()
+
         self.btn_set_params.clicked.connect(self.set_params)
         self.btn_calculate.clicked.connect(self.calculate)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
@@ -219,18 +234,25 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.btn_load_project.clicked.connect(self.load_project)
         self.btn_new_project.clicked.connect(self.create_dialog)
 
-        self.params = []
-        self.project_num = ''
-        self.expert_name = user
-        self.rad = []
-        self.tprl_min = 0
-        self.project_state = ''
-        self.label_user_name.setText(user)
-        self.label_user_name1.setText(user)
-        self.label_user_name2.setText(user)
-
     def show_user_projects(self):
-        pass
+        drafts = check_db.load_project(self.expert_name, 'черновик')
+        self.create_table(self.projects_table, drafts)
+        complete = check_db.load_project(self.expert_name, 'итог')
+        self.create_table(self.projects_table2, complete)
+
+    def create_table(self, tab_widget, data):
+        tab_widget.setRowCount(len(data))
+        tab_widget.setRowHeight(0, 20)
+        for row, form in enumerate(data):
+            for column, cell in enumerate(form):
+                if column == 0:
+                    item = QtGui.QTableWidgetItem(str(row+1))
+                    tab_widget.setColumnWidth(column, 50)
+                    item.setTextAlignment(QtCore.Qt.AlignCenter)
+                    tab_widget.setItem(row, column, item)
+                else:
+                    item = QtGui.QTableWidgetItem(str(cell))
+                    tab_widget.setItem(row, column, item)
 
     def change_user(self):
         self.switch_login.emit()
@@ -246,8 +268,15 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
     def start_project(self, num):
         self.project_num = num
+        temp = []
+        for item in self.tab_new_project.children():
+            if isinstance(item, QtWidgets.QLineEdit):
+                temp.append(item.text())
+                item.setText("")
+        self.newproject_data = tuple(temp)
         self.tabWidget.setTabEnabled(3, True)
         self.tabWidget.setCurrentIndex(3)
+
 
     def create_dialog(self):
         if self.expert_name == '':
@@ -267,9 +296,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             project_num = self.enter_project_num.text()
             self.start_project(project_num)
 
-    def default_labels(self, labels):
-        for k, v in labels.items():
-            k.setGeometry(v[1], 120, 15, 23)
+    # def default_labels(self, labels):
+    #     for k, v in labels.items():
+    #         k.setGeometry(v[1], 120, 15, 23)
 
     def reset_params(self):
         self.treeWidget.clear()
@@ -629,6 +658,11 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.save_data.to_excel(self.path, index=False)
             new_file.close()
             self.chart.save_chart(full_dir, project_dir)
+
+        # сохранение проекта в БД
+        self.saveproject_data = (date, self.project_state, self.path)
+        data = self.newproject_data + self.saveproject_data
+        check_db.save_project(self.expert_name, data)
 
         QtWidgets.QMessageBox.about(self, 'Сохранение результатов', 'Результаты успешно сохранены')
         self.btn_save_results.setEnabled(False)
