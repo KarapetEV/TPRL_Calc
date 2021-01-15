@@ -123,7 +123,15 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
 
     def register(self):
         user = []
+        chars = ':\/*?<>"|'
         if self.lineEdit_login_create.text():
+            for ch in chars:
+                if ch in self.lineEdit_login_create.text():
+                    QtWidgets.QMessageBox.about(self, 'Ошибка', 'Имя не должно содержать символы :\/*?<>"| !')
+                    self.lineEdit_login_create.setText("")
+                    self.lineEdit_password_create.setText("")
+                    self.lineEdit_password_confirm.setText("")
+                    return
             name = self.lineEdit_login_create.text()
             user.append(name)
             if self.lineEdit_password_create.text() == self.lineEdit_password_confirm.text():
@@ -220,8 +228,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.newproject_data = tuple()
         self.saveproject_data = tuple()
 
-        # self.show_user_projects()
-
         self.btn_set_params.clicked.connect(self.set_params)
         self.btn_calculate.clicked.connect(self.calculate)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
@@ -261,8 +267,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     item = QtWidgets.QTableWidgetItem(str(cell))
                     item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
                     tab_widget.setItem(row, column, item)
-                # tab_widget.currentItem().setFlags(QtCore.Qt.ItemIsEditable)
         tab_widget.resizeColumnsToContents()
+        tab_widget.setColumnWidth(3, 200)
 
     def change_user(self):
         self.switch_login.emit()
@@ -625,8 +631,15 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.project_state = 'черновик'
         else:
             self.project_state = 'итог'
-        project_dir = f'{self.project_num}_{file_date}'
-        new_file_name = f'{self.project_num}_{file_date}.xlsx'
+        chars = ':\/*?<>"|'
+        saved_file_name = self.project_num
+        for ch in chars:
+            if ch in saved_file_name:
+                saved_file_name = saved_file_name.replace(ch, '_')
+        if '\\' in saved_file_name:
+            saved_file_name = saved_file_name.replace('\\', '_')
+        project_dir = f'{saved_file_name}_{file_date}'
+        new_file_name = f'{saved_file_name}_{file_date}.xlsx'
         total = [[self.expert_name, self.project_num, date, self.label_tprl_min_result.text(),
                   self.label_tprl_average_result.text(), self.label_trl_result.text(),
                   self.label_mrl_result.text(), self.label_erl_result.text(),
