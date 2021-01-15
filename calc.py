@@ -59,14 +59,14 @@ class HelpDialog(QtWidgets.QDialog):
         self.help_text.insertPlainText('Инструкция!\n')
         self.help_text.setAlignment(QtCore.Qt.AlignLeft)
         self.help_text.insertPlainText('Для расчета уровня зрелости инновационного проекта/технологии к '
-                                    'внедрению в ОАО «РЖД» необходимо выбрать параметры оценки, по которым производится '
-                                    'расчет и нажать кнопку «Установить параметры». В открывшемся поле необходимо '
-                                    'отметить те задачи, которые были выполнены в полном объеме на каждом уровне. '
-                                    'Результат рассчитывается нажатием кнопки «Расчитать» и представлен в отдельной '
-                                    'вкладке «Результаты». Уровень зрелости результата проекта считается достигнутым, '
-                                    'если все задачи, относящиеся к различным унифицированным параметрам, отмечены. '
-                                    'Общая оценка зрелости проекта принимается равным минимальному достигнутому уровню '
-                                    'зрелости по отдельному выбранному параметру.')
+                                       'внедрению в ОАО «РЖД» необходимо выбрать параметры оценки, по которым производится '
+                                       'расчет и нажать кнопку «Установить параметры». В открывшемся поле необходимо '
+                                       'отметить те задачи, которые были выполнены в полном объеме на каждом уровне. '
+                                       'Результат рассчитывается нажатием кнопки «Расчитать» и представлен в отдельной '
+                                       'вкладке «Результаты». Уровень зрелости результата проекта считается достигнутым, '
+                                       'если все задачи, относящиеся к различным унифицированным параметрам, отмечены. '
+                                       'Общая оценка зрелости проекта принимается равным минимальному достигнутому уровню '
+                                       'зрелости по отдельному выбранному параметру.')
         self.help_text.setReadOnly(True)
         self.help_text.setWordWrapMode(QtGui.QTextOption.WordWrap)
         self.btn_ok = QtWidgets.QPushButton(self)
@@ -236,7 +236,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.btn_change_user.clicked.connect(self.change_user)
         self.btn_change_user1.clicked.connect(self.change_user)
         self.btn_change_user2.clicked.connect(self.change_user)
-        self.btn_load_project.clicked.connect(self.load_project)
+        self.btn_load_project.clicked.connect(self.load_project_data)
+        self.btn_load_project2.clicked.connect(self.load_project_data)
         self.btn_new_project.clicked.connect(self.create_dialog)
         self.tabWidget.currentChanged.connect(self.show_user_projects)
 
@@ -255,10 +256,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         tab_widget.setRowCount(len(data))
         for row, form in enumerate(data):
             tab_widget.setRowHeight(0, 20)
-            form = ((str(row+1)),) + form
+            form = ((str(row + 1)),) + form
             for column, cell in enumerate(form):
                 if column == 0:
-                    item = QtWidgets.QTableWidgetItem(str(row+1))
+                    item = QtWidgets.QTableWidgetItem(str(row + 1))
                     item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
                     tab_widget.setColumnWidth(column, 50)
                     item.setTextAlignment(QtCore.Qt.AlignCenter)
@@ -279,8 +280,24 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.projects_table.clear()
         self.projects_table2.clear()
 
-    def load_project(self):
-        pass
+    def load_project_data(self):
+        data = [self.expert_name]
+        table = None
+        if self.tabWidget.currentIndex() == 1:
+            table = self.projects_table
+        elif self.tabWidget.currentIndex() == 2:
+            table = self.projects_table2
+        row = table.currentRow()
+        num = table.item(row, 1).text()
+        data.append(num)
+        date = table.item(row, 6).text()
+        data.append(date)
+        value = check_db.get_path(data)
+        self.project_state = value[0]
+        self.path = value[1]
+        self.tabWidget.setTabEnabled(3, True)
+        self.tabWidget.setCurrentIndex(3)
+        self.create_rows()
 
     def start_project(self, num):
         self.project_num = num
@@ -292,7 +309,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.newproject_data = tuple(temp)
         self.tabWidget.setTabEnabled(3, True)
         self.tabWidget.setCurrentIndex(3)
-
 
     def create_dialog(self):
         if self.expert_name == '':
@@ -311,10 +327,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         else:
             project_num = self.enter_project_num.text()
             self.start_project(project_num)
-
-    # def default_labels(self, labels):
-    #     for k, v in labels.items():
-    #         k.setGeometry(v[1], 120, 15, 23)
 
     def reset_params(self):
         self.treeWidget.clear()
@@ -455,7 +467,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                                                                                         df['Task_Comments'][row],
                                                                                         df['State'][row]]]
                         else:
-                            dict_params[df['Parameter'][row]].append([df['Task'][row], df['Task_Comments'][row], df['State'][row]])
+                            dict_params[df['Parameter'][row]].append(
+                                [df['Task'][row], df['Task_Comments'][row], df['State'][row]])
         return dict_params
 
     def make_level_dict(self, df, params):
