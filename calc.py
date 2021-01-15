@@ -220,7 +220,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.newproject_data = tuple()
         self.saveproject_data = tuple()
 
-        self.show_user_projects()
+        # self.show_user_projects()
 
         self.btn_set_params.clicked.connect(self.set_params)
         self.btn_calculate.clicked.connect(self.calculate)
@@ -232,13 +232,18 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.btn_change_user2.clicked.connect(self.change_user)
         self.btn_load_project.clicked.connect(self.load_project)
         self.btn_new_project.clicked.connect(self.create_dialog)
-        # self.tabWidget.currentChanged()
+        self.tabWidget.currentChanged.connect(self.show_user_projects)
 
-    def show_user_projects(self):
-        drafts = check_db.load_project(self.expert_name, 'черновик')
-        self.create_table(self.projects_table, drafts)
-        complete = check_db.load_project(self.expert_name, 'итог')
-        self.create_table(self.projects_table2, complete)
+    @QtCore.pyqtSlot(int)
+    def show_user_projects(self, index):
+        if index == 1:
+            drafts = check_db.load_project(self.expert_name, 'черновик')
+            self.create_table(self.projects_table, drafts)
+        elif index == 2:
+            complete = check_db.load_project(self.expert_name, 'итог')
+            self.create_table(self.projects_table2, complete)
+        else:
+            pass
 
     def create_table(self, tab_widget, data):
         tab_widget.setRowCount(len(data))
@@ -248,12 +253,15 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             for column, cell in enumerate(form):
                 if column == 0:
                     item = QtWidgets.QTableWidgetItem(str(row+1))
+                    item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
                     tab_widget.setColumnWidth(column, 50)
                     item.setTextAlignment(QtCore.Qt.AlignCenter)
                     tab_widget.setItem(row, column, item)
                 else:
                     item = QtWidgets.QTableWidgetItem(str(cell))
+                    item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
                     tab_widget.setItem(row, column, item)
+                # tab_widget.currentItem().setFlags(QtCore.Qt.ItemIsEditable)
         tab_widget.resizeColumnsToContents()
 
     def change_user(self):

@@ -125,6 +125,7 @@ class Ui_AppWindow(object):
         self.projects_table.setColumnCount(7)
         self.projects_table.setRowCount(0)
         self.projects_table.verticalHeader().setVisible(False)
+
         # Заголовки таблицы черновиков
         item = QtWidgets.QTableWidgetItem()
         item.setTextAlignment(QtCore.Qt.AlignCenter)
