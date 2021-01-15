@@ -208,7 +208,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.tabWidget.setTabEnabled(4, False)
         self.treeWidget.itemClicked.connect(self.onItemClicked)
 
-        self.count = 1
         self.expert_name = user
         self.params = []
         self.project_num = ''
@@ -233,6 +232,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.btn_change_user2.clicked.connect(self.change_user)
         self.btn_load_project.clicked.connect(self.load_project)
         self.btn_new_project.clicked.connect(self.create_dialog)
+        # self.tabWidget.currentChanged()
 
     def show_user_projects(self):
         drafts = check_db.load_project(self.expert_name, 'черновик')
@@ -242,8 +242,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
     def create_table(self, tab_widget, data):
         tab_widget.setRowCount(len(data))
-        tab_widget.setRowHeight(0, 20)
         for row, form in enumerate(data):
+            tab_widget.setRowHeight(0, 20)
+            form = ((str(row+1)),) + form
             for column, cell in enumerate(form):
                 if column == 0:
                     item = QtWidgets.QTableWidgetItem(str(row+1))
@@ -253,6 +254,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 else:
                     item = QtWidgets.QTableWidgetItem(str(cell))
                     tab_widget.setItem(row, column, item)
+        tab_widget.resizeColumnsToContents()
 
     def change_user(self):
         self.switch_login.emit()
