@@ -16,6 +16,15 @@ from splash import Splash
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
+class TreeWidget(QtWidgets.QTreeWidget):
+    def __init__(self, parent=None):
+        super(TreeWidget, self).__init__(parent)
+
+        self.setGeometry((QtCore.QRect(0, 0, 815, 380)))
+        self.setColumnWidth(0, 150)
+        self.headerItem().setText(0, 'Параметр')
+        self.headerItem().setText(1, 'Задачи')
+
 
 class AdjusttableTextEdit(QtWidgets.QTextEdit):
     td_size_sig = pyqtSignal(QSize)
@@ -214,7 +223,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.setStyleSheet(open(style).read())
         self.tabWidget.setTabEnabled(3, False)
         self.tabWidget.setTabEnabled(4, False)
-        self.treeWidget.itemClicked.connect(self.onItemClicked)
+        # self.treeWidget.itemClicked.connect(self.onItemClicked)
 
         self.expert_name = user
         self.params = []
@@ -303,11 +312,11 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.project_num = num
         self.tabWidget.setTabEnabled(3, True)
         self.tabWidget.setCurrentIndex(3)
+        self.btn_calculate.setEnabled(True)
+        self.btn_reset_tasks.setEnabled(True)
+        self.num_calcTab.setText(self.project_num)
+        self.user_calcTab.setText(self.expert_name)
         self.set_param_check(self.params, True)
-        # for el in self.group_params.children():
-        #     for param in self.params:
-        #         if param.lower() in el.objectName().title().lower():
-        #             el.setChecked(True)
         self.create_rows()
 
     def start_project(self, num):
@@ -323,7 +332,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.newproject_data = tuple(temp)
         self.tabWidget.setTabEnabled(3, True)
         self.tabWidget.setCurrentIndex(3)
-
+        self.num_calcTab.setText(self.project_num)
+        self.user_calcTab.setText(self.expert_name)
 
     def create_dialog(self):
         if self.expert_name == '':
@@ -350,7 +360,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     el.setChecked(bool)
 
     def reset_params(self):
-        self.treeWidget.clear()
+        # self.treeWidget.clear()
         self.params = []
         self.rad = []
 
@@ -405,97 +415,107 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.params.append('ORL')
         if self.check_crl.isChecked():
             self.params.append('CRL')
-        if self.radio_hard.isChecked():
-            self.rad.append('H')
-        if self.radio_soft.isChecked():
-            self.rad.append('S')
-        if self.radio_both.isChecked():
-            self.rad.append('B')
+        # if self.radio_hard.isChecked():
+        #     self.rad.append('H')
+        # if self.radio_soft.isChecked():
+        #     self.rad.append('S')
+        # if self.radio_both.isChecked():
+        #     self.rad.append('B')
 
     def create_rows(self):
         QToolTip.setFont(QtGui.QFont('Calibri', 9))
 
-        if self.project_state in ['черновик', 'итог']:
-            self.data = pd.read_excel(self.path)
-        else:
-            self.data = pd.read_excel('New_Tasks.xlsx', sheet_name=self.rad[0])
-        val = self.make_level_dict(self.data, self.params)
-        for i, key in enumerate(val.items()):
-            textEdit_0 = AdjusttableTextEdit()  # key[1][1] - комментарий к key[1][0]
-            textEdit_0.setText(key[1][0])
-            textEdit_0.setReadOnly(True)
-            font_0 = QtGui.QFont()
-            font_0.setBold(True)
-            item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget, [f'Уровень {key[0]}', ""])
-            self.treeWidget.setItemWidget(item_0, 1, textEdit_0)
-            x = '<nobr>' + key[1][1][:80] + '</nobr>' + key[1][1][80:]
+        for param in self.params:
+            if self.project_state in ['черновик', 'итог']:
+                self.data = pd.read_excel(self.path, sheet_name=param)
+            else:
+                self.data = pd.read_excel('Param_Tasks.xlsx', sheet_name=param)
+            val = self.make_level_dict(self.data)
 
-            item_0.setToolTip(1, x)
-            textEdit_0.td_size_sig.connect(lambda size: item_0.setSizeHint(1, size))
-            item_0.setFont(0, font_0)
-            self.treeWidget.expandAll()
+            self.tw = TreeWidget()
+            self.param_tabs.addTab(self.tw, param)
+            self.param_tabs.setCurrentIndex(self.params.index(param))
+            self.param_tabs.setTabEnabled(self.params.index(param), True)
 
-            for j, v in enumerate(key[1][2].items()):
-                textEdit_1 = AdjusttableTextEdit()
-                textEdit_1.setText(v[1][0])
-                textEdit_1.setReadOnly(True)
-                item_1 = QtWidgets.QTreeWidgetItem(item_0, [v[0], ""])
-                self.treeWidget.setItemWidget(item_1, 1, textEdit_1)
-                textEdit_1.td_size_sig.connect(lambda size: item_1.setSizeHint(1, size))
-                self.treeWidget.expandAll()
-                for item in v[1][1:]:
-                    textEdit_2 = AdjusttableTextEdit()  # item[1] - комментарий к item[0]
-                    textEdit_2.setText(item[0])
-                    textEdit_2.setReadOnly(True)
-                    item_2 = QtWidgets.QTreeWidgetItem(item_1, ["", ""])
-                    if item[2] == 0:
-                        item_2.setCheckState(1, QtCore.Qt.Unchecked)
+            for key, value in val.items():
+                textEdit_0 = AdjusttableTextEdit()  # key[1][1] - комментарий к key[1][0]
+                textEdit_0.setText(value[0])
+                textEdit_0.setReadOnly(True)
+                font_0 = QtGui.QFont()
+                font_0.setBold(True)
+                self.item_0 = QtWidgets.QTreeWidgetItem(self.tw, [f'Уровень {key}', ""])
+                self.tw.setItemWidget(self.item_0, 1, textEdit_0)
+                # x = '<nobr>' + key[1][1][:80] + '</nobr>' + key[1][1][80:]
+                #
+                # item_0.setToolTip(1, x)
+                textEdit_0.td_size_sig.connect(lambda size: self.item_0.setSizeHint(1, size))
+                self.item_0.setFont(0, font_0)
+                self.tw.expandAll()
+
+                for v in value[1:]:
+                    self.combo_task = QtWidgets.QComboBox()
+                    self.combo_task.addItems(['Да', 'Нет', 'Не применимо'])
+                    self.combo_task.setFixedSize(110, 20)
+                    textEdit_1 = AdjusttableTextEdit()
+                    textEdit_1.setText(v[0])
+                    textEdit_1.setReadOnly(True)
+                    self.item_1 = QtWidgets.QTreeWidgetItem(self.item_0, ["", ""])
+                    if v[2] == 0:
+                        self.combo_task.setCurrentText('Нет')
+                    elif v[2] == 1:
+                        self.combo_task.setCurrentText('Да')
                     else:
-                        item_2.setCheckState(1, QtCore.Qt.Checked)
-                    item_2.setFlags(QtCore.Qt.ItemIsUserCheckable)
-                    item_2.setFlags(QtCore.Qt.ItemIsEnabled)
-                    self.treeWidget.setItemWidget(item_2, 1, textEdit_2)
-                    y = '<nobr>' + item[1][:80] + '</nobr>' + item[1][80:]
-                    item_2.setToolTip(1, y)
-                    textEdit_2.td_size_sig.connect(lambda size: item_2.setSizeHint(1, size))
+                        self.combo_task.setCurrentText('Не применимо')
 
-                    text_style = '''background-color: #fce6e6;
-                                    border: 0;
-                                    font-size: 13px;
-                                    color: #000;
-                                    '''
-                    textEdit_0.setStyleSheet(text_style)
-                    textEdit_1.setStyleSheet(text_style)
-                    textEdit_2.setStyleSheet(text_style)
-                    item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
+                    self.tw.setItemWidget(self.item_1, 0, self.combo_task)
+                    self.tw.setItemWidget(self.item_1, 1, textEdit_1)
+                    textEdit_1.td_size_sig.connect(lambda size: self.item_1.setSizeHint(1, size))
 
-    def make_params_dict(self, df, x, params):
-        dict_params = {}
-        for row in range(df['Level'].shape[0]):
-            if df['Level'][row] == x:
-                for p in params:
-                    if df['Parameter'][row] == p:
-                        if df['Parameter'][row] not in dict_params:
-                            dict_params[df['Parameter'][row]] = [df['Pars_Name'][row], [df['Task'][row],
-                                                                                        df['Task_Comments'][row],
-                                                                                        df['State'][row]]]
-                        else:
-                            dict_params[df['Parameter'][row]].append(
-                                [df['Task'][row], df['Task_Comments'][row], df['State'][row]])
-        return dict_params
+                    textEdit_0.setStyleSheet('''background-color: #fce6e6;
+                                                    border: 0;
+                                                    font-size: 13px;
+                                                    color: #000;
+                                                    ''')
+                    textEdit_1.setStyleSheet('''background-color: #f5f5f5;
+                                                    border: 0;
+                                                    font-size: 13px;
+                                                    color: #000;
+                                                    ''')
 
-    def make_level_dict(self, df, params):
+                    self.item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
+
+        self.param_tabs.setCurrentIndex(0)
+
+    # def make_params_dict(self, df, x, params):
+    #     dict_params = {}
+    #     for row in range(df['Level'].shape[0]):
+    #         if df['Level'][row] == x:
+    #             for p in params:
+    #                 if df['Parameter'][row] == p:
+    #                     if df['Parameter'][row] not in dict_params:
+    #                         dict_params[df['Parameter'][row]] = [df['Pars_Name'][row], [df['Task'][row],
+    #                                                                                     df['Task_Comments'][row],
+    #                                                                                     df['State'][row]]]
+    #                     else:
+    #                         dict_params[df['Parameter'][row]].append(
+    #                             [df['Task'][row], df['Task_Comments'][row], df['State'][row]])
+    #     return dict_params
+
+    def make_level_dict(self, df):
         dict_levels = {}
         for row in range(df['Level'].shape[0]):
             if df['Level'][row] not in dict_levels:
-                x = df['Level'][row]
-                dict_levels[x] = [df['Level_Name'][row], df['Level_Comments'][row],
-                                  self.make_params_dict(df, x, params)]
+                dict_levels[df['Level'][row]] = [df['Pars_Name'][row],
+                                                 [df['Task'][row],
+                                                  df['Task_Comments'][row],
+                                                  df['State'][row]]]
+            else:
+                dict_levels[df['Level'][row]].append([df['Task'][row],
+                                                      df['Task_Comments'][row],
+                                                      df['State'][row]])
         return dict_levels
 
     def create_table_rows(self, text_levels):
-        # table = QtWidgets.QTableWidget(self.frame_tprl_results)
-        # table.setObjectName('table')
 
         self.table_tprl_results.setRowCount(len(text_levels) - 1)
         self.table_tprl_results.setColumnCount(2)
@@ -508,8 +528,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             if key == 'TPRL':
                 self.label_main_tprl.setText(f'{values}')
 
-                # self.table_tprl_results.setItem(0, 1, QtWidgets.QTableWidgetItem(values))
-                # self.table_tprl_results.setSpan(0, 0, 1, 2)
 
         text_levels.pop('TPRL')
         for i, key in enumerate(text_levels.items()):
@@ -532,20 +550,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.table_tprl_results.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.table_tprl_results.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.table_tprl_results.setEnabled(True)
-
-    #
-    # def create_text_rows(self, text_levels):
-    #     self.text_other.setText("")
-    #     for key, values in text_levels.items():
-    #         if key == 'TPRL':
-    #             self.text_tprl.setText(values)
-    #     text_levels.pop('TPRL')
-    #
-    #     count_rows = 1
-    #     for k, v in text_levels.items():
-    #         self.text_other.append(f'{v}')
-    #         self.text_other.append('-' * 112)
-    #         count_rows += 1
 
     def make_text_dict(self, op_data, diction):
         new_text_dict = {}
@@ -583,7 +587,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         levels = self.treeWidget.topLevelItemCount()
         l1 = []
         for level in range(levels):
-
             childs = self.treeWidget.topLevelItem(level).childCount()
             topLevelItemText = self.treeWidget.topLevelItem(level).text(0)
             d2 = {}
@@ -803,8 +806,5 @@ class Controller:
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     controller = Controller()  # Создаем экземпляр класса
-    # window.setWindowTitle('TPRL Calculator')
-    # window.setWindowIcon(QtGui.QIcon('.\img\\rzd.png'))
-    # controller.show_login_page()
     controller.show_splash()
     sys.exit(app.exec_())
