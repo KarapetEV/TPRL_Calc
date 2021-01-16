@@ -283,6 +283,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.projects_table2.clear()
 
     def load_project_data(self):
+        self.reset_params()
         data = [self.expert_name]
         table = None
         if self.tabWidget.currentIndex() == 1:
@@ -298,21 +299,28 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.project_state = value[0]
         self.path = value[1]
         self.params = value[2].split(' ')
+        self.project_num = num
         self.tabWidget.setTabEnabled(3, True)
         self.tabWidget.setCurrentIndex(3)
+        for el in self.group_params.children():
+            for param in self.params:
+                if param.lower() in el.objectName().title().lower():
+                    el.setChecked(True)
         self.create_rows()
 
     def start_project(self, num):
         self.project_num = num
+        self.reset_params()
+        self.project_state = ''
         temp = []
         for item in self.tab_new_project.children():
             if isinstance(item, QtWidgets.QLineEdit):
                 temp.append(item.text())
                 item.setText("")
         self.newproject_data = tuple(temp)
-        self.reset_params()
         self.tabWidget.setTabEnabled(3, True)
         self.tabWidget.setCurrentIndex(3)
+
 
     def create_dialog(self):
         if self.expert_name == '':
@@ -333,6 +341,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.start_project(project_num)
 
     def reset_params(self):
+        for el in self.group_params.children():
+            for param in self.parameters:
+                if param.lower() in el.objectName().title().lower():
+                    el.setChecked(False)
         self.treeWidget.clear()
         self.params = []
         self.rad = []
