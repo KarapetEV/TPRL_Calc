@@ -66,7 +66,7 @@ def save_project(user, info):
 
     entry_data = value + info
 
-    cur.execute('INSERT INTO projects VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', entry_data)
+    cur.execute('INSERT INTO projects VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', entry_data)
     con.commit()
 
     cur.close()
@@ -96,13 +96,13 @@ def load_project(name, state):
     return value
 
 
-def get_path(data):
+def get_project(data):
     con = sqlite3.connect("data/data.db")
     cur = con.cursor()
 
     user_id = cur.execute(f"SELECT user_id FROM users WHERE name='{data[0]}'").fetchone()[0]
 
-    cur.execute(f"SELECT state, path FROM projects WHERE user_id='{user_id}' AND project_num='{data[1]}' AND save_date='{data[2]}'")
+    cur.execute(f"SELECT state, path, params FROM projects WHERE user_id='{user_id}' AND project_num='{data[1]}' AND save_date='{data[2]}'")
     value = cur.fetchone()
 
     cur.close()

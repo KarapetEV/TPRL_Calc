@@ -292,9 +292,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         data.append(num)
         date = table.item(row, 6).text()
         data.append(date)
-        value = check_db.get_path(data)
+        value = check_db.get_project(data)
         self.project_state = value[0]
         self.path = value[1]
+        self.params = value[2].split(' ')
         self.tabWidget.setTabEnabled(3, True)
         self.tabWidget.setCurrentIndex(3)
         self.create_rows()
@@ -439,21 +440,14 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     item_2.setToolTip(1, y)
                     textEdit_2.td_size_sig.connect(lambda size: item_2.setSizeHint(1, size))
 
-                    textEdit_0.setStyleSheet('''background-color: #fce6e6;
-                                                border: 0;
-                                                font-size: 13px;
-                                                color: #000;
-                                                ''')
-                    textEdit_1.setStyleSheet('''background-color: #f5f5f5;
-                                                border: 0;
-                                                font-size: 13px;
-                                                color: #000;
-                                                ''')
-                    textEdit_2.setStyleSheet('''background-color: #fce6e6;
-                                                border: 0;
-                                                font-size: 13px;
-                                                color: #000;
-                                                ''')
+                    text_style = '''background-color: #fce6e6;
+                                    border: 0;
+                                    font-size: 13px;
+                                    color: #000;
+                                    '''
+                    textEdit_0.setStyleSheet(text_style)
+                    textEdit_1.setStyleSheet(text_style)
+                    textEdit_2.setStyleSheet(text_style)
                     item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
 
     def make_params_dict(self, df, x, params):
@@ -696,7 +690,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.chart.save_chart(full_dir, project_dir)
 
         # сохранение проекта в БД
-        self.saveproject_data = (date, self.project_state, self.path)
+        params = ' '.join(self.params)
+        self.saveproject_data = (date, self.project_state, self.path, params)
         data = self.newproject_data + self.saveproject_data
         check_db.save_project(self.expert_name, data)
 
