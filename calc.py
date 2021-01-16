@@ -253,6 +253,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             pass
 
     def create_table(self, tab_widget, data):
+        tab_widget.setSortingEnabled(False)
         tab_widget.setRowCount(len(data))
         for row, form in enumerate(data):
             tab_widget.setRowHeight(0, 20)
@@ -270,6 +271,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     tab_widget.setItem(row, column, item)
         tab_widget.resizeColumnsToContents()
         tab_widget.setColumnWidth(3, 200)
+        tab_widget.setSortingEnabled(True)
 
     def change_user(self):
         self.switch_login.emit()
