@@ -20,6 +20,7 @@ class TreeWidget(QtWidgets.QTreeWidget):
         super(TreeWidget, self).__init__(parent)
 
         self.setGeometry((QtCore.QRect(0, 0, 815, 380)))
+        self.setColumnWidth(0, 150)
         self.headerItem().setText(0, 'Параметр')
         self.headerItem().setText(1, 'Задачи')
 
@@ -36,16 +37,21 @@ class AdjusttableTextEdit(QtWidgets.QTextEdit):
         self.document().documentLayout().documentSizeChanged.connect(self.resizeTextEdit)
 
     def resizeTextEdit(self):
-        docheight = int(self.document().size().height())
+        self.setMinimumHeight(0)
+        self.setMaximumHeight(0)
+
+        self.docheight = int(self.document().size().height())
         margin = int(self.document().documentMargin())
-        self.setMinimumHeight(docheight + margin)
-        self.setMaximumHeight(docheight + margin)
+        self.setMinimumHeight(self.docheight)
+        self.setMaximumHeight(self.docheight)
+        # self.setMinimumHeight(docheight + margin)
+        # self.setMaximumHeight(docheight + margin)
 
         return
 
     def resizeEvent(self, e):
         super(AdjusttableTextEdit, self).resizeEvent(e)
-        self.td_size_sig.emit(QSize(self.sizeHint().width(), self.maximumHeight()))
+        self.td_size_sig.emit(QSize(self.sizeHint().width(), self.minimumHeight()))
         return
 
 
@@ -345,6 +351,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
     def create_rows(self):
         QToolTip.setFont(QtGui.QFont('Calibri', 9))
 
+
         if self.project_state in ['черновик', 'итог']:
             self.data = pd.read_excel(self.path)
         else:
@@ -352,10 +359,11 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                 self.data = pd.read_excel('Param_Tasks.xlsx', sheet_name=param)
                 val = self.make_level_dict(self.data, param)
 
-                tw = TreeWidget()
-                self.param_tabs.addTab(tw, param)
-                self.param_tabs.setTabEnabled(0, True)
-                self.param_tabs.setCurrentIndex(0)
+                self.tw = TreeWidget()
+                self.param_tabs.addTab(self.tw, param)
+                self.param_tabs.setCurrentIndex(self.params.index(param))
+                self.param_tabs.setTabEnabled(self.params.index(param), True)
+
 
                 # self.param_tabs.setCurrentIndex(0)
                 for key, value in val.items():
@@ -364,28 +372,39 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                     textEdit_0.setReadOnly(True)
                     font_0 = QtGui.QFont()
                     font_0.setBold(True)
-                    item_0 = QtWidgets.QTreeWidgetItem(tw, [f'Уровень {key}', value[0]])
-                    tw.setItemWidget(item_0, 1, textEdit_0)
+                    # self.label_level = QtWidgets.QLabel(value[0])
+                    # label_level.setText(value[0])
+                    # self.label_level.setWordWrap(True)
+                    self.item_0 = QtWidgets.QTreeWidgetItem(self.tw, [f'Уровень {key}', ""])
+                    self.tw.setItemWidget(self.item_0, 1, textEdit_0)
                 # x = '<nobr>' + key[1][1][:80] + '</nobr>' + key[1][1][80:]
                 #
                 # item_0.setToolTip(1, x)
-                    textEdit_0.td_size_sig.connect(lambda size: item_0.setSizeHint(1, size))
-                    item_0.setFont(0, font_0)
-                    tw.expandAll()
+                    textEdit_0.td_size_sig.connect(lambda size: self.item_0.setSizeHint(1, size))
+                    self.item_0.setFont(0, font_0)
+                    self.tw.expandAll()
 
                     for v in value[1:]:
+                        self.combo_task = QtWidgets.QComboBox()
+                        self.combo_task.addItems(['Да', 'Нет', 'Не применимо'])
+                        self.combo_task.setFixedSize(110, 20)
                         textEdit_1 = AdjusttableTextEdit()
                         textEdit_1.setText(v[0])
                         textEdit_1.setReadOnly(True)
-                        item_1 = QtWidgets.QTreeWidgetItem(item_0, ["", ""])
+                        self.item_1 = QtWidgets.QTreeWidgetItem(self.item_0, ["", ""])
                         if v[2] == 0:
-                            item_1.setCheckState(1, QtCore.Qt.Unchecked)
+                            self.combo_task.setCurrentText('Нет')
+                        elif v[2] == 1:
+                            self.combo_task.setCurrentText('Да')
                         else:
-                            item_1.setCheckState(1, QtCore.Qt.Checked)
-                        item_1.setFlags(QtCore.Qt.ItemIsUserCheckable)
-                        item_1.setFlags(QtCore.Qt.ItemIsEnabled)
-                        tw.setItemWidget(item_1, 1, textEdit_1)
-                        textEdit_1.td_size_sig.connect(lambda size: item_1.setSizeHint(1, size))
+                            self.combo_task.setCurrentText('Не применимо')
+                        # self.item_1.setFlags(QtCore.Qt.ItemIsUserCheckable)
+                        # self.item_1.setFlags(QtCore.Qt.ItemIsEnabled)
+
+                        self.tw.setItemWidget(self.item_1, 0, self.combo_task)
+
+                        self.tw.setItemWidget(self.item_1, 1, textEdit_1)
+                        textEdit_1.td_size_sig.connect(lambda size: self.item_1.setSizeHint(1, size))
                     # for item in v[1][1:]:
                     #     textEdit_2 = AdjusttableTextEdit()  # item[1] - комментарий к item[0]
                     #     textEdit_2.setText(item[0])
@@ -401,7 +420,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                     #     y = '<nobr>' + item[1][:80] + '</nobr>' + item[1][80:]
                     #     item_2.setToolTip(1, y)
                     #     textEdit_2.td_size_sig.connect(lambda size: item_2.setSizeHint(1, size))
-
+                    #
                         textEdit_0.setStyleSheet('''background-color: #fce6e6;
                                                     border: 0;
                                                     font-size: 13px;
@@ -417,8 +436,9 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                     #                                 font-size: 13px;
                     #                                 color: #000;
                     #                                 ''')
-                        item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
+                        self.item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
 
+        self.param_tabs.setCurrentIndex(0)
     # def make_params_dict(self, df, x, params):
     #     dict_params = {}
     #     for row in range(df['Level'].shape[0]):
