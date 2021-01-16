@@ -307,6 +307,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 temp.append(item.text())
                 item.setText("")
         self.newproject_data = tuple(temp)
+        self.reset_params()
         self.tabWidget.setTabEnabled(3, True)
         self.tabWidget.setCurrentIndex(3)
 
@@ -399,7 +400,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         else:
             self.data = pd.read_excel('New_Tasks.xlsx', sheet_name=self.rad[0])
         val = self.make_level_dict(self.data, self.params)
-
         for i, key in enumerate(val.items()):
             textEdit_0 = AdjusttableTextEdit()  # key[1][1] - комментарий к key[1][0]
             textEdit_0.setText(key[1][0])
