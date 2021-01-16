@@ -426,7 +426,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             textEdit_0.setReadOnly(True)
             font_0 = QtGui.QFont()
             font_0.setBold(True)
-            item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget, [f'Уровень {key[0]}', key[1][0]])
+            item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget, [f'Уровень {key[0]}', ""])
             self.treeWidget.setItemWidget(item_0, 1, textEdit_0)
             x = '<nobr>' + key[1][1][:80] + '</nobr>' + key[1][1][80:]
 
