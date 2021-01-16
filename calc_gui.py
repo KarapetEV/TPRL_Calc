@@ -265,7 +265,7 @@ class Ui_AppWindow(object):
         font.setPointSize(14)
         self.btn_calculate.setFont(font)
         self.btn_calculate.setObjectName("btn_calculate")
-        self.btn_calculate.setEnabled(False)
+        self.btn_calculate.setEnabled(True)
         self.btn_reset_tasks = QtWidgets.QPushButton(self.frame_tasks)
         self.btn_reset_tasks.setGeometry(QtCore.QRect(486, 400, 180, 30))
         font = QtGui.QFont()
@@ -273,7 +273,7 @@ class Ui_AppWindow(object):
         font.setPointSize(14)
         self.btn_reset_tasks.setFont(font)
         self.btn_reset_tasks.setObjectName("btn_reset_tasks")
-        self.btn_reset_tasks.setEnabled(False)
+        self.btn_reset_tasks.setEnabled(True)
         #----------------------Вкладка результатов-----------------------------
         self.tab_results = QtWidgets.QWidget()
         self.tab_results.setObjectName("tab_results")
