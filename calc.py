@@ -283,6 +283,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.projects_table2.clear()
 
     def load_project_data(self):
+        self.set_param_check(self.parameters, False)
         self.reset_params()
         data = [self.expert_name]
         table = None
@@ -302,14 +303,16 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.project_num = num
         self.tabWidget.setTabEnabled(3, True)
         self.tabWidget.setCurrentIndex(3)
-        for el in self.group_params.children():
-            for param in self.params:
-                if param.lower() in el.objectName().title().lower():
-                    el.setChecked(True)
+        self.set_param_check(self.params, True)
+        # for el in self.group_params.children():
+        #     for param in self.params:
+        #         if param.lower() in el.objectName().title().lower():
+        #             el.setChecked(True)
         self.create_rows()
 
     def start_project(self, num):
         self.project_num = num
+        self.set_param_check(self.parameters, False)
         self.reset_params()
         self.project_state = ''
         temp = []
@@ -340,11 +343,13 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             project_num = self.enter_project_num.text()
             self.start_project(project_num)
 
-    def reset_params(self):
+    def set_param_check(self, params, bool):
         for el in self.group_params.children():
-            for param in self.parameters:
+            for param in self.params:
                 if param.lower() in el.objectName().title().lower():
-                    el.setChecked(False)
+                    el.setChecked(bool)
+
+    def reset_params(self):
         self.treeWidget.clear()
         self.params = []
         self.rad = []
