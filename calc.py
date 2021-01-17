@@ -381,37 +381,19 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
     def reset_tasks(self):
         text = "сбросить все отметки"
-        d3 = {}
-        res_list = []
         if self.confirm_msg(text):
             tab_count = self.param_tabs.count()
             for i in range(tab_count):
                 self.param_tabs.setCurrentIndex(i)
-                tab_index = self.param_tabs.currentIndex()
                 tree = self.param_tabs.currentWidget()
-                if self.param_tabs.tabText(i) not in d3:
-                    d3[self.param_tabs.tabText(i)] = res_list
                 root = tree.invisibleRootItem()
-                res_list = []
                 for level_num in range(root.childCount()):
                     level = root.child(level_num)
-                    checks = []
                     for j in range(level.childCount()):
                         child = level.child(j)
                         el = tree.itemWidget(child, 0)
                         if isinstance(el, QtWidgets.QComboBox):
-                            combo_text = el.currentText()
-                            if combo_text == 'Да':
-                                checks.append('1')
-                            elif combo_text == 'Нет':
-                                checks.append('0')
-                            else:
-                                checks.append('-1')
                             el.setCurrentText('Нет')
-                    res_list.append(checks)
-                d3[self.param_tabs.tabText(i)] = res_list
-                # print(d3)
-
 
     def set_params(self):
         self.reset_params()
@@ -607,7 +589,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         l2 = []
         for param in self.params:
             self.param_tabs.setCurrentIndex(self.params.index(param))
-            tab_index = self.param_tabs.currentIndex()
             tree = self.param_tabs.currentWidget()
             root = tree.invisibleRootItem()
             levels = root.childCount()
