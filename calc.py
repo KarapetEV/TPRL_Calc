@@ -596,8 +596,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
         self.label_expert_name.setText(self.expert_name)
-        self.tabWidget.setTabEnabled(2, True)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setTabEnabled(4, True)
+        self.tabWidget.setCurrentIndex(4)
         self.check_draft.setEnabled(True)
         self.check_draft.setChecked(False)
         self.btn_save_results.setEnabled(True)
@@ -675,6 +675,13 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         for iter_k, iter_v in self.d3.items():
             iter_v = float(iter_v)
         print('После обработки', self.d3)
+        if float(max(self.d3.values())) - float(min(self.d3.values())) > 2:
+            x = float(max(self.d3.values()))
+        for d3_k, d3_v in self.d3.items():
+            if float(d3_v) == x:
+                self.d3[d3_k] = str(float(d3_v) - 1)
+            else:
+                self.d3[d3_k] = d3_v
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
         self.chart = Chart(self.d3, self.lay)
@@ -819,7 +826,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.check_draft.setEnabled(False)
 
     def show_results(self, res):
-        summa = 0
         res_list = []
         for k_res, v_res in res.items():
             if k_res == 'TRL':
@@ -833,9 +839,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             elif k_res == 'CRL':
                 self.label_crl_result.setText(v_res)
             res_list.append(float(v_res))
-        if max(res_list) - min(res_list) > 2:
-            idx = res_list.index(max(res_list))
-            res_list[idx] -= 1
 
 
         self.tprl_average = float(sum(res_list) / len(res_list))
