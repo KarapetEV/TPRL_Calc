@@ -556,6 +556,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             for rank in range(op_data['Уровень'].shape[0]):
                 if (key == 'TPRL') & (value == '0'):
                     new_text_dict['TPRL'] = 'Уровень зрелости инновационного проекта/технологии  = 0'
+                elif (key == 'TPRL') & (value == '--'):
+                    new_text_dict['TPRL'] = 'Уровень зрелости инновационного проекта/технологии не рассчитан, т.к. не были выбраны все параметры'
                 elif op_data['Уровень'][rank] == int(float(value)):
                     new_text_dict[key] = op_data[key][rank]
         return new_text_dict
@@ -655,6 +657,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         print('После обработки', self.d3)
         if float(max(self.d3.values())) - float(min(self.d3.values())) > 2:
             x = float(max(self.d3.values()))
+        else:
+            x = -1
         for d3_k, d3_v in self.d3.items():
             if float(d3_v) == x:
                 self.d3[d3_k] = str(float(d3_v) - 1)
@@ -663,6 +667,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
         self.chart = Chart(self.d3, self.lay)
+        self.make_text()
         # d1 = {}
         # self.d3 = {}
         # l2 = []
@@ -817,12 +822,19 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             elif k_res == 'CRL':
                 self.label_crl_result.setText(v_res)
             res_list.append(float(v_res))
+        if len(self.params) < 5:
+            self.tprl_average = '--'
+            self.tprl_min = '--'
+            self.label_tprl_average_result.setText(self.tprl_average)
+            self.label_tprl_min_result.setText(self.tprl_min)
+        else:
+            self.tprl_average = float(sum(res_list) / len(res_list))
+            self.tprl_min = int(self.tprl_average)
+
+            self.label_tprl_average_result.setText(str(self.tprl_average))
+            self.label_tprl_min_result.setText(str(self.tprl_min))
 
 
-        self.tprl_average = float(sum(res_list) / len(res_list))
-        self.tprl_min = int(self.tprl_average)
-        self.label_tprl_average_result.setText(str(self.tprl_average))
-        self.label_tprl_min_result.setText(str(self.tprl_min))
 
     def show_help(self):
         self.help_dialog = HelpDialog(self)
