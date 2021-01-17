@@ -360,7 +360,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     el.setChecked(bool)
 
     def reset_params(self):
-        # self.treeWidget.clear()
+        self.param_tabs.clear()
         self.params = []
         self.rad = []
 
