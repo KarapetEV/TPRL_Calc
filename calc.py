@@ -652,11 +652,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         for new_key, new_values in d2.items():
             l_n = []
             for new_value in new_values:
-                print(new_value)
                 new_value = round(sum(new_value) / len(new_value), 1)
-                print(new_value)
                 l_n.append(new_value)
-                print(new_values)
             d2[new_key] = l_n
 
         print('D1 - ', d1)
