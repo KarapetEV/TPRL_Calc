@@ -596,12 +596,13 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
         self.label_expert_name.setText(self.expert_name)
-        self.tabWidget.setTabEnabled(4, True)
-        self.tabWidget.setCurrentIndex(4)
+        self.tabWidget.setTabEnabled(2, True)
+        self.tabWidget.setCurrentIndex(2)
         self.check_draft.setEnabled(True)
         self.check_draft.setChecked(False)
         self.btn_save_results.setEnabled(True)
         d1 = {}
+        d2 = {}
         self.d3 = {}
         l2 = []
         for param in self.params:
@@ -621,7 +622,12 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     el = tree.itemWidget(child, 0)
                     if isinstance(el, QtWidgets.QComboBox):
                         combo_text = el.currentText()
-                        l1.append(combo_text)
+                        if combo_text == 'Да':
+                            l1.append(1)
+                        elif combo_text == 'Нет':
+                            l1.append(0)
+                        else:
+                            l1.append(-1)
                 if param not in d1:
                     l2 = []
                     l2.append(l1)
@@ -629,7 +635,52 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 else:
                     d1[param].append(l1)
 
-        print(d1)
+            # print(d1)
+
+            for key, values in d1.items():
+                first_list = []
+                for value in values:
+                    new_list = []
+                    for v in range(len(value)):
+                        if value[v] == 1:
+                            new_list.append(1)
+                        if value[v] == 0:
+                            new_list.append(0)
+                    first_list.append(new_list)
+                d2[key] = first_list
+
+        for new_key, new_values in d2.items():
+            l_n = []
+            for new_value in new_values:
+                print(new_value)
+                new_value = round(sum(new_value) / len(new_value), 1)
+                print(new_value)
+                l_n.append(new_value)
+                print(new_values)
+            d2[new_key] = l_n
+
+        print('D1 - ', d1)
+        print('D2 - ', d2)
+        for d2_keys, d2_values in d2.items():
+            summary = 0
+            for d2_value in range(len(d2_values)):
+                if d2_values[d2_value] == 1:
+                    summary += 1
+                elif 0 < d2_values[d2_value] < 1:
+                    summary += d2_values[d2_value]
+                    break
+                else:
+                    break
+            self.d3[d2_keys] = str(summary)
+        for par in Window.parameters:
+            if par not in self.d3.keys():
+                self.d3[par] = '0'
+        for iter_k, iter_v in self.d3.items():
+            iter_v = float(iter_v)
+        print('После обработки', self.d3)
+        self.frame_results.setEnabled(True)
+        self.show_results(self.d3)
+        self.chart = Chart(self.d3, self.lay)
         # d1 = {}
         # self.d3 = {}
         # l2 = []
