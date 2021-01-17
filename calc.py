@@ -410,7 +410,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                             el.setCurrentText('Нет')
                     res_list.append(checks)
                 d3[self.param_tabs.tabText(i)] = res_list
-                print(d3)
+                # print(d3)
 
 
     def set_params(self):
@@ -591,9 +591,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.create_table_rows(text_levels)
 
     def calculate(self):
-        self.save_data = self.data.copy()
-        self.save_data = self.save_data.loc[self.save_data['Parameter'].isin(self.params)]
-        self.save_data.drop(['State'], axis='columns', inplace=True)
+        # self.save_data = self.data.copy()
+        # self.save_data = self.save_data.loc[self.save_data['Parameter'].isin(self.params)]
+        # self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
         self.label_expert_name.setText(self.expert_name)
         self.tabWidget.setTabEnabled(4, True)
@@ -604,72 +604,101 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         d1 = {}
         self.d3 = {}
         l2 = []
-        levels = self.treeWidget.topLevelItemCount()
-        l1 = []
-        for level in range(levels):
-            childs = self.treeWidget.topLevelItem(level).childCount()
-            topLevelItemText = self.treeWidget.topLevelItem(level).text(0)
-            d2 = {}
-            for child in range(childs):
-                kids = self.treeWidget.topLevelItem(level).child(child).childCount()
-                p = self.treeWidget.topLevelItem(level).child(child).text(0)
-                for kid in range(kids):
-                    kid_item = self.treeWidget.topLevelItem(level).child(child).child(kid)
-                    # ch_item = self.treeWidget.topLevelItem(level).child(child)
-                    # -----------------Добавляем в новый State значение (0/1)
-                    if kid_item.checkState(1) == QtCore.Qt.Checked:
-                        l1.append(1)
-                    else:
-                        l1.append(0)
-                    # ------------Продолжаем формировать словарь---------------
-                    if p not in d2:
-                        l2 = []
-                        if kid_item.checkState(1) == QtCore.Qt.Checked:
-                            l2.append(1)
-                        else:
-                            l2.append(0)
-                        d2[p] = l2
-                    else:
-                        if kid_item.checkState(1) == QtCore.Qt.Checked:
-                            d2[p].append(1)
-                        else:
-                            d2[p].append(0)
+        for param in self.params:
+            self.param_tabs.setCurrentIndex(self.params.index(param))
+            tab_index = self.param_tabs.currentIndex()
+            tree = self.param_tabs.currentWidget()
+            root = tree.invisibleRootItem()
+            levels = root.childCount()
+            # l2 = []
+            for level_num in range(levels):
+                level = root.child(level_num)
+                # print(param, level)
+                #     d2 = {}
+                l1 = []
+                for kid in range(level.childCount()):
+                    child = level.child(kid)
+                    el = tree.itemWidget(child, 0)
+                    if isinstance(el, QtWidgets.QComboBox):
+                        combo_text = el.currentText()
+                        l1.append(combo_text)
+                if param not in d1:
+                    l2 = []
+                    l2.append(l1)
+                    d1[param] = l2
+                else:
+                    d1[param].append(l1)
 
-            for k, v in d2.items():
-                v = round(sum(v) / len(v), 1)
-                d2[k] = v
-                if k not in self.d3:
-                    self.d3[k] = [v]
-                else:
-                    self.d3[k].append(v)
-            if level not in d1:
-                d1[topLevelItemText] = d2
-        self.save_data['State'] = l1
-        for key, values in self.d3.items():
-            summary = 0
-            for iter_value in range(len(values)):
-                if values[iter_value] == 1:
-                    summary += 1
-                elif 0 < values[iter_value] < 1:
-                    summary += values[iter_value]
-                    # self.d3[key] = str(summary)
-                    break
-                else:
-                    # self.d3[key] = str(summary)
-                    break
-            self.d3[key] = str(summary)
-        for param in Window.parameters:
-            if param not in self.d3.keys():
-                self.d3[param] = '0'
-        for iter_k, iter_v in self.d3.items():
-            iter_v = float(iter_v)
-            # self.d3[iter_k] = iter_v
-        # print('После обработки', self.d3)
-        self.frame_results.setEnabled(True)
-        self.show_results(self.d3)
-        self.chart = Chart(self.d3, self.lay)
-        # self.save_graph_btn.setEnabled(True)
-        self.make_text()
+        print(d1)
+        # d1 = {}
+        # self.d3 = {}
+        # l2 = []
+        # levels = self.treeWidget.topLevelItemCount()
+        # l1 = []
+        # for level in range(levels):
+        #     childs = self.treeWidget.topLevelItem(level).childCount()
+        #     topLevelItemText = self.treeWidget.topLevelItem(level).text(0)
+        #     d2 = {}
+        #     for child in range(childs):
+        #         kids = self.treeWidget.topLevelItem(level).child(child).childCount()
+        #         p = self.treeWidget.topLevelItem(level).child(child).text(0)
+        #         for kid in range(kids):
+        #             kid_item = self.treeWidget.topLevelItem(level).child(child).child(kid)
+        #             # ch_item = self.treeWidget.topLevelItem(level).child(child)
+        #             # -----------------Добавляем в новый State значение (0/1)
+        #             if kid_item.checkState(1) == QtCore.Qt.Checked:
+        #                 l1.append(1)
+        #             else:
+        #                 l1.append(0)
+        #             # ------------Продолжаем формировать словарь---------------
+        #             if p not in d2:
+        #                 l2 = []
+        #                 if kid_item.checkState(1) == QtCore.Qt.Checked:
+        #                     l2.append(1)
+        #                 else:
+        #                     l2.append(0)
+        #                 d2[p] = l2
+        #             else:
+        #                 if kid_item.checkState(1) == QtCore.Qt.Checked:
+        #                     d2[p].append(1)
+        #                 else:
+        #                     d2[p].append(0)
+        #
+        #     for k, v in d2.items():
+        #         v = round(sum(v) / len(v), 1)
+        #         d2[k] = v
+        #         if k not in self.d3:
+        #             self.d3[k] = [v]
+        #         else:
+        #             self.d3[k].append(v)
+        #     if level not in d1:
+        #         d1[topLevelItemText] = d2
+        # self.save_data['State'] = l1
+        # for key, values in self.d3.items():
+        #     summary = 0
+        #     for iter_value in range(len(values)):
+        #         if values[iter_value] == 1:
+        #             summary += 1
+        #         elif 0 < values[iter_value] < 1:
+        #             summary += values[iter_value]
+        #             # self.d3[key] = str(summary)
+        #             break
+        #         else:
+        #             # self.d3[key] = str(summary)
+        #             break
+        #     self.d3[key] = str(summary)
+        # for param in Window.parameters:
+        #     if param not in self.d3.keys():
+        #         self.d3[param] = '0'
+        # for iter_k, iter_v in self.d3.items():
+        #     iter_v = float(iter_v)
+        #     # self.d3[iter_k] = iter_v
+        # # print('После обработки', self.d3)
+        # self.frame_results.setEnabled(True)
+        # self.show_results(self.d3)
+        # self.chart = Chart(self.d3, self.lay)
+        # # self.save_graph_btn.setEnabled(True)
+        # self.make_text()
 
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
