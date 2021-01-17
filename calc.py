@@ -820,6 +820,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
     def show_results(self, res):
         summa = 0
+        res_list = []
         for k_res, v_res in res.items():
             if k_res == 'TRL':
                 self.label_trl_result.setText(v_res)
@@ -831,10 +832,14 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 self.label_orl_result.setText(v_res)
             elif k_res == 'CRL':
                 self.label_crl_result.setText(v_res)
-            summa += float(v_res)
+            res_list.append(float(v_res))
+        if max(res_list) - min(res_list) > 2:
+            idx = res_list.index(max(res_list))
+            res_list[idx] -= 1
 
-        self.tprl_average = float(summa / len(res.values()))
-        self.tprl_min = int(float(min(res.values())))
+
+        self.tprl_average = float(sum(res_list) / len(res_list))
+        self.tprl_min = int(self.tprl_average)
         self.label_tprl_average_result.setText(str(self.tprl_average))
         self.label_tprl_min_result.setText(str(self.tprl_min))
 
