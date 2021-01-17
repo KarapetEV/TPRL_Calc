@@ -381,17 +381,37 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
     def reset_tasks(self):
         text = "сбросить все отметки"
+        d3 = {}
+        res_list = []
         if self.confirm_msg(text):
-            levels_count = self.treeWidget.topLevelItemCount()
-            for i in range(levels_count):
-                level = self.treeWidget.topLevelItem(i)
-                childs_count = level.childCount()
-                for j in range(childs_count):
-                    pars = level.child(j)
-                    task_count = pars.childCount()
-                    for gamma in range(task_count):
-                        task = pars.child(gamma)
-                        task.setCheckState(1, QtCore.Qt.Unchecked)
+            tab_count = self.param_tabs.count()
+            for i in range(tab_count):
+                self.param_tabs.setCurrentIndex(i)
+                tab_index = self.param_tabs.currentIndex()
+                tree = self.param_tabs.currentWidget()
+                if self.param_tabs.tabText(i) not in d3:
+                    d3[self.param_tabs.tabText(i)] = res_list
+                root = tree.invisibleRootItem()
+                res_list = []
+                for level_num in range(root.childCount()):
+                    level = root.child(level_num)
+                    checks = []
+                    for j in range(level.childCount()):
+                        child = level.child(j)
+                        el = tree.itemWidget(child, 0)
+                        if isinstance(el, QtWidgets.QComboBox):
+                            combo_text = el.currentText()
+                            if combo_text == 'Да':
+                                checks.append('1')
+                            elif combo_text == 'Нет':
+                                checks.append('0')
+                            else:
+                                checks.append('-1')
+                            el.setCurrentText('Нет')
+                    res_list.append(checks)
+                d3[self.param_tabs.tabText(i)] = res_list
+                print(d3)
+
 
     def set_params(self):
         self.reset_params()
