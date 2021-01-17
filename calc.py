@@ -394,6 +394,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                         el = tree.itemWidget(child, 0)
                         if isinstance(el, QtWidgets.QComboBox):
                             el.setCurrentText('Нет')
+            self.param_tabs.setCurrentIndex(0)
 
     def set_params(self):
         self.reset_params()
@@ -472,17 +473,13 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     self.tw.setItemWidget(self.item_1, 0, self.combo_task)
                     self.tw.setItemWidget(self.item_1, 1, textEdit_1)
                     textEdit_1.td_size_sig.connect(lambda size: self.item_1.setSizeHint(1, size))
-
-                    textEdit_0.setStyleSheet('''background-color: #fce6e6;
-                                                    border: 0;
-                                                    font-size: 13px;
-                                                    color: #000;
-                                                    ''')
-                    textEdit_1.setStyleSheet('''background-color: #f5f5f5;
-                                                    border: 0;
-                                                    font-size: 13px;
-                                                    color: #000;
-                                                    ''')
+                    text_style = '''background-color: #fce6e6;
+                                    border: 0;
+                                    font-size: 13px;
+                                    color: #000;
+                                    '''
+                    textEdit_0.setStyleSheet(text_style)
+                    textEdit_1.setStyleSheet(text_style)
 
                     self.item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
 
