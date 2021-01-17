@@ -249,7 +249,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.btn_load_project2.clicked.connect(self.load_project_data)
         self.btn_new_project.clicked.connect(self.create_dialog)
         self.tabWidget.currentChanged.connect(self.show_user_projects)
-
+        self.save_data = pd.DataFrame(
+            columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
     @QtCore.pyqtSlot(int)
     def show_user_projects(self, index):
         if index == 1:
@@ -360,6 +361,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     el.setChecked(bool)
 
     def reset_params(self):
+        self.save_data = pd.DataFrame(
+            columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
         self.param_tabs.clear()
         self.params = []
         self.rad = []
@@ -433,6 +436,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 self.data = pd.read_excel(self.path, sheet_name=param)
             else:
                 self.data = pd.read_excel('Param_Tasks.xlsx', sheet_name=param)
+            self.data['Parameter'] = param
             val = self.make_level_dict(self.data)
 
             self.tw = TreeWidget()
@@ -482,7 +486,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     textEdit_1.setStyleSheet(text_style)
 
                     self.item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
-
+            self.save_data.append(self.data)
         self.param_tabs.setCurrentIndex(0)
 
     # def make_params_dict(self, df, x, params):
@@ -574,7 +578,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
     def calculate(self):
         # self.save_data = self.data.copy()
         # self.save_data = self.save_data.loc[self.save_data['Parameter'].isin(self.params)]
-        # self.save_data.drop(['State'], axis='columns', inplace=True)
+        self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
         self.label_expert_name.setText(self.expert_name)
         self.tabWidget.setTabEnabled(4, True)
@@ -585,6 +589,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         d1 = {}
         d2 = {}
         self.d3 = {}
+        new_state = []
         l2 = []
         for param in self.params:
             self.param_tabs.setCurrentIndex(self.params.index(param))
@@ -604,10 +609,13 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                         combo_text = el.currentText()
                         if combo_text == 'Да':
                             l1.append(1)
+                            new_state.append(1)
                         elif combo_text == 'Нет':
                             l1.append(0)
+                            new_state.append(0)
                         else:
                             l1.append(-1)
+                            new_state.append(-1)
                 if param not in d1:
                     l2 = []
                     l2.append(l1)
@@ -628,7 +636,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                             new_list.append(0)
                     first_list.append(new_list)
                 d2[key] = first_list
-
+        self.save_data['State'] = new_state
         for new_key, new_values in d2.items():
             l_n = []
             for new_value in new_values:
@@ -636,8 +644,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 l_n.append(new_value)
             d2[new_key] = l_n
 
-        print('D1 - ', d1)
-        print('D2 - ', d2)
         for d2_keys, d2_values in d2.items():
             summary = 0
             for d2_value in range(len(d2_values)):
@@ -654,7 +660,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 self.d3[par] = '0'
         for iter_k, iter_v in self.d3.items():
             iter_v = float(iter_v)
-        print('После обработки', self.d3)
         if float(max(self.d3.values())) - float(min(self.d3.values())) > 2:
             x = float(max(self.d3.values()))
         else:
@@ -785,7 +790,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             os.mkdir(f"Projects/{self.expert_name}/Черновики/{project_dir}")
             self.path = f"Projects/{self.expert_name}/Черновики/{project_dir}/{new_file_name}"
             new_file = open(self.path, 'w')
-            self.save_data.to_excel(self.path, index=False)
+            for param in self.params:
+                new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
+                new_save_data.drop(['Parameter'], axis='columns', inplace=True)
+                new_save_data.to_excel(self.path, index=False, sheet_name=param)
             new_file.close()
         else:
             if not os.path.isdir(f"Projects/{self.expert_name}/Завершенные"):
@@ -794,7 +802,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.path = f"Projects/{self.expert_name}/Завершенные/{project_dir}/{new_file_name}"
             full_dir = f"Projects/{self.expert_name}/Завершенные/{project_dir}"
             new_file = open(self.path, 'w')
-            self.save_data.to_excel(self.path, index=False)
+            for param in self.params:
+                new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
+                new_save_data.drop(['Parameter'], axis='columns', inplace=True)
+                new_save_data.to_excel(self.path, index=False, sheet_name=param)
             new_file.close()
             self.chart.save_chart(full_dir, project_dir)
 
