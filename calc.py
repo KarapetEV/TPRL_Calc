@@ -486,7 +486,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     textEdit_1.setStyleSheet(text_style)
 
                     self.item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
-            self.save_data.append(self.data)
+            self.save_data = self.save_data.append(self.data)
         self.param_tabs.setCurrentIndex(0)
 
     # def make_params_dict(self, df, x, params):
