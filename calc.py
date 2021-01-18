@@ -251,6 +251,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.tabWidget.currentChanged.connect(self.show_user_projects)
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
+
     @QtCore.pyqtSlot(int)
     def show_user_projects(self, index):
         if index == 1:
@@ -789,24 +790,32 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 os.mkdir(f"Projects/{self.expert_name}/Черновики")
             os.mkdir(f"Projects/{self.expert_name}/Черновики/{project_dir}")
             self.path = f"Projects/{self.expert_name}/Черновики/{project_dir}/{new_file_name}"
-            new_file = open(self.path, 'w')
+            # new_file = open(self.path, 'w')
+            writer = pd.ExcelWriter(self.path)
             for param in self.params:
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
                 new_save_data.drop(['Parameter'], axis='columns', inplace=True)
-                new_save_data.to_excel(self.path, index=False, sheet_name=param)
-            new_file.close()
+                # new_save_data.to_excel(self.path, index=False, sheet_name=param)
+                new_save_data.to_excel(writer, sheet_name=param)
+                writer.save()
+            writer.close()
+            # new_file.close()
         else:
             if not os.path.isdir(f"Projects/{self.expert_name}/Завершенные"):
                 os.mkdir(f"Projects/{self.expert_name}/Завершенные")
             os.mkdir(f"Projects/{self.expert_name}/Завершенные/{project_dir}")
             self.path = f"Projects/{self.expert_name}/Завершенные/{project_dir}/{new_file_name}"
             full_dir = f"Projects/{self.expert_name}/Завершенные/{project_dir}"
-            new_file = open(self.path, 'w')
+            # new_file = open(self.path, 'w')
+            writer = pd.ExcelWriter(self.path)
             for param in self.params:
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
                 new_save_data.drop(['Parameter'], axis='columns', inplace=True)
-                new_save_data.to_excel(self.path, index=False, sheet_name=param)
-            new_file.close()
+                # new_save_data.to_excel(self.path, index=False, sheet_name=param)
+                new_save_data.to_excel(writer, sheet_name=param)
+                writer.save()
+            writer.close()
+            # new_file.close()
             self.chart.save_chart(full_dir, project_dir)
 
         # сохранение проекта в БД
@@ -844,8 +853,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
             self.label_tprl_average_result.setText(str(self.tprl_average))
             self.label_tprl_min_result.setText(str(self.tprl_min))
-
-
 
     def show_help(self):
         self.help_dialog = HelpDialog(self)
