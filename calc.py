@@ -796,7 +796,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
                 new_save_data.drop(['Parameter'], axis='columns', inplace=True)
                 # new_save_data.to_excel(self.path, index=False, sheet_name=param)
-                new_save_data.to_excel(writer, sheet_name=param, ignore_index=True)
+                new_save_data.to_excel(writer, sheet_name=param, index=False)
                 writer.save()
             writer.close()
             # new_file.close()
@@ -812,7 +812,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
                 new_save_data.drop(['Parameter'], axis='columns', inplace=True)
                 # new_save_data.to_excel(self.path, index=False, sheet_name=param)
-                new_save_data.to_excel(writer, sheet_name=param, ignore_index=True)
+                new_save_data.to_excel(writer, sheet_name=param, index=False)
                 writer.save()
             writer.close()
             # new_file.close()
