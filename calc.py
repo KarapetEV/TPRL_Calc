@@ -362,6 +362,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     el.setChecked(bool)
 
     def reset_params(self):
+        self.path = 'Param_Tasks.xlsx'
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
         self.param_tabs.clear()
@@ -433,10 +434,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         QToolTip.setFont(QtGui.QFont('Calibri', 9))
 
         for param in self.params:
-            if self.project_state in ['черновик', 'итог']:
-                self.data = pd.read_excel(self.path, sheet_name=param)
-            else:
-                self.data = pd.read_excel('Param_Tasks.xlsx', sheet_name=param)
+            self.data = pd.read_excel(self.path, sheet_name=param)
             self.data['Parameter'] = param
             val = self.make_level_dict(self.data)
 
@@ -748,7 +746,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # ---------------Формируем dataframe с результатами------------------------
         now = datetime.datetime.now()
         date = now.strftime("%d.%m.%Y %H:%M")
-        file_date = now.strftime("%d.%m.%Y")
+        file_date = now.strftime("%d.%m.%Y %H-%M")
         if self.check_draft.isChecked():
             self.project_state = 'черновик'
         else:
@@ -788,8 +786,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         if self.project_state == 'черновик':
             if not os.path.isdir(f"Projects/{self.expert_name}/Черновики"):
                 os.mkdir(f"Projects/{self.expert_name}/Черновики")
-            os.mkdir(f"Projects/{self.expert_name}/Черновики/{project_dir}")
-            self.path = f"Projects/{self.expert_name}/Черновики/{project_dir}/{new_file_name}"
+            if not os.path.isdir(f"Projects/{self.expert_name}/Черновики/{saved_file_name}"):
+                os.mkdir(f"Projects/{self.expert_name}/Черновики/{saved_file_name}")
+            self.path = f"Projects/{self.expert_name}/Черновики/{saved_file_name}/{new_file_name}"
             # new_file = open(self.path, 'w')
             writer = pd.ExcelWriter(self.path)
             for param in self.params:
@@ -803,9 +802,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         else:
             if not os.path.isdir(f"Projects/{self.expert_name}/Завершенные"):
                 os.mkdir(f"Projects/{self.expert_name}/Завершенные")
-            os.mkdir(f"Projects/{self.expert_name}/Завершенные/{project_dir}")
-            self.path = f"Projects/{self.expert_name}/Завершенные/{project_dir}/{new_file_name}"
-            full_dir = f"Projects/{self.expert_name}/Завершенные/{project_dir}"
+            if not os.path.isdir(f"Projects/{self.expert_name}/Завершенные/{saved_file_name}"):
+                os.mkdir(f"Projects/{self.expert_name}/Завершенные/{saved_file_name}")
+            self.path = f"Projects/{self.expert_name}/Завершенные/{saved_file_name}/{new_file_name}"
+            full_dir = f"Projects/{self.expert_name}/Завершенные/{saved_file_name}"
             # new_file = open(self.path, 'w')
             writer = pd.ExcelWriter(self.path)
             for param in self.params:
