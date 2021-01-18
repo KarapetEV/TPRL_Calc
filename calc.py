@@ -532,7 +532,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             if key == 'TPRL':
                 self.label_main_tprl.setText(f'{values}')
 
-
         text_levels.pop('TPRL')
         for i, key in enumerate(text_levels.items()):
             label1 = QtWidgets.QLabel(key[0])
@@ -670,6 +669,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 self.d3[d3_k] = str(float(d3_v) - 1)
             else:
                 self.d3[d3_k] = d3_v
+        self.param_tabs.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
         self.chart = Chart(self.d3, self.lay)
@@ -796,7 +796,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
                 new_save_data.drop(['Parameter'], axis='columns', inplace=True)
                 # new_save_data.to_excel(self.path, index=False, sheet_name=param)
-                new_save_data.to_excel(writer, sheet_name=param)
+                new_save_data.to_excel(writer, sheet_name=param, ignore_index=True)
                 writer.save()
             writer.close()
             # new_file.close()
@@ -812,7 +812,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
                 new_save_data.drop(['Parameter'], axis='columns', inplace=True)
                 # new_save_data.to_excel(self.path, index=False, sheet_name=param)
-                new_save_data.to_excel(writer, sheet_name=param)
+                new_save_data.to_excel(writer, sheet_name=param, ignore_index=True)
                 writer.save()
             writer.close()
             # new_file.close()
