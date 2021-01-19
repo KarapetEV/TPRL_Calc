@@ -653,7 +653,6 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
                 new_save_data.drop(['Parameter'], axis='columns', inplace=True)
                 new_save_data.to_excel(writer, sheet_name=param, index=False)
-                self.pdf_data.append([param, new_save_data])
                 writer.save()
             writer.close()
         else:
@@ -667,7 +666,6 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
                 new_save_data.drop(['Parameter'], axis='columns', inplace=True)
                 new_save_data.to_excel(writer, sheet_name=param, index=False)
-                self.pdf_data.append([param, new_save_data])
                 writer.save()
             writer.close()
             self.chart.save_chart(full_dir, project_dir)
@@ -681,6 +679,14 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.check_draft.setEnabled(False)
 
     def create_pdf(self):
+        results = [float(self.label_trl_result.text()),
+                   float(self.label_mrl_result.text()),
+                   float(self.label_erl_result.text()),
+                   float(self.label_orl_result.text()),
+                   float(self.label_crl_result.text())]
+        for el in results:
+            if el == 0:
+                results.remove(el)
         data = []
         date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         # total = [[self.expert_name, self.project_num, date, self.label_tprl_min_result.text(),
@@ -696,8 +702,8 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
             new_save_data.drop(['Parameter'], axis='columns', inplace=True)
             data.append([param, new_save_data])
         self.pdf_data = ([date, self.project_num, self.expert_name, self.params], data)
-        new_pdf = CreatePDF(self.pdf_data)
-        new_pdf.create_file()
+        new_pdf = CreatePDF(self.pdf_data, results)
+        new_pdf.set_data()
 
     def show_results(self, res):
         res_list = []
