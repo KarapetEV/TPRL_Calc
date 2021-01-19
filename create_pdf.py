@@ -4,11 +4,13 @@ from math import ceil
 
 
 class CreatePDF:
-    def __init__(self, data, results, param_results):
+
+    def __init__(self, data, param_results):
         self.pdf = None
+        self.path = ''
         self.data = data
-        self.results = results
-        self.param_results = param_results
+        self.res = {}
+        self.results = self.data[0][4]
         self.header = ["Экспертное заключение",
                       "по оценке информации о результатах",
                       "инновационного проекта в области железнодорожного транспорта"]
@@ -18,6 +20,10 @@ class CreatePDF:
                      '4.    Тип параметра: ']
         self.table_header = '5.    Статус выполнения оцениваемого уровня и его подуровней '
         self.sign = '6.    Подпись эксперта: _____________________'
+        self.param_results = self.data[1]
+        print(self.param_results[0][1][0])
+
+
 
     def set_data(self):
         new_data = []
@@ -29,11 +35,31 @@ class CreatePDF:
 
         self.create_pdf(new_data)
 
+    def make_states_dict(self):
+        d2 = {}
+        # state = {1: 'Да', 0: 'Нет', -1: 'Не применимо'}
+        # for k, v in self.param_results.items():
+        #     index = self.res[k]
+        #     l1 = []
+        #     if index > 1:
+        #         for i in range(index - 2, index):
+        #             l2 = []
+        #             for el in v[i]:
+        #                 l2.append(state[el])
+        #             l1.append(l2)
+        #     else:
+        #         l2 = []
+        #         for el in v[index - 1]:
+        #             l2.append(state[el])
+        #         l1.append(l2)
+        #     d2[k] = l1
+        return d2
+
     def create_pdf(self, data):
-        res = {}
+        self.res = {}
         self.pdf = FPDF(unit='mm', format='A4')
         self.pdf.add_page()
-        self.pdf.add_font('timesbd', '', r"c:\mypython\test\fonts\times\timesbd.ttf", uni=True)
+        self.pdf.add_font('timesbd', '', r"fonts/times/timesbd.ttf", uni=True)
         self.pdf.set_font("timesbd", size=12)
         for i in range(len(self.header)):
             self.pdf.cell(200, 5, txt=self.header[i], ln=1, align="C")
@@ -42,71 +68,103 @@ class CreatePDF:
         self.pdf.ln()
         for i in range(4):
             text = self.text[i] + data[i]
-            self.pdf.add_font('times', '', r"c:\mypython\test\fonts\times\times.ttf", uni=True)
+            self.pdf.add_font('times', '', r"fonts/times/times.ttf", uni=True)
             self.pdf.set_font("times", size=12)
             self.pdf.cell(200, 8, txt=text, ln=1, align="L")
         self.pdf.cell(200, 8, txt=self.table_header, ln=1, align="L")
         params = self.data[0][3]
 
         for i in range(len(params)):
-            res[params[i]] = int(ceil(self.results[i]))
+            self.res[params[i]] = int(ceil(self.results[i]))
 
-        for k, v in res.items():
+        for k, v in self.res.items():
             self.create_table(k, v)
 
         self.pdf.ln()
         self.pdf.ln()
         self.pdf.cell(200, 8, txt=self.sign, ln=1, align="L")
+        file_path = self.get_path()
+        self.pdf.output(file_path, "F")
 
-        self.pdf.output("demo.pdf", "F")
+    def get_path(self):
+        date = self.data[0][0]
+        self.project_num = self.data[0][1]
+        expert_name = self.data[0][2]
+        saved_file_name = self.project_num
+        for ch in chars:
+            if ch in saved_file_name:
+                saved_file_name = saved_file_name.replace(ch, '_')
+        if '\\' in saved_file_name:
+            saved_file_name = saved_file_name.replace('\\', '_')
+        project_dir = f'{saved_file_name}_{file_date}'
+        new_file_name = f'{saved_file_name}_{file_date}.pdf'
+        if not os.path.isdir("Reports"):
+            os.mkdir("Reports")
+        if not os.path.isdir(f"Reports/{expert_name}"):
+            os.mkdir(f"Reports/{expert_name}")
+        if not os.path.isdir(f"Reports/{expert_name}/{saved_file_name}"):
+            os.mkdir(f"Reports/{expert_name}/{saved_file_name}")
+        self.path = f"Reports/{expert_name}/{saved_file_name}/{new_file_name}"
+        return self.path
 
     def create_table(self, param, lvl):
         df = pd.read_excel("Param_Tasks.xlsx", sheet_name=param)
-
+        # param_states= self.make_states_dict()[param]
         count = 0
         if lvl > 1:
             count = 2
             lvl -= 1
         else:
             count = 1
+
         self.pdf.ln()
+        self.pdf.set_font("times", 'U', size=12)
         self.pdf.cell(190, 5, txt=param, ln=1, align="L")
         self.pdf.ln()
-        self.pdf.cell(30, 5, 'Уровень', 1, 0, align="C")
-        self.pdf.cell(130, 5, 'Наименование задачи', 1, 0, align="C")
+        self.pdf.set_font("times", size=10)
+        self.pdf.cell(20, 5, 'Уровень', 1, 0, align="C")
+        self.pdf.cell(140, 5, 'Наименование задачи', 1, 0, align="C")
         self.pdf.cell(30, 5, 'Статус', 1, 0, align="C")
         self.pdf.ln()
 
         for i in range(count):
+            # states_list = param_states[i]
+
             levels = df.loc[df['Level'] == (lvl+i)]
             level = levels.iat[0, 0]
             level_name = levels.iat[0, 1]
             level_count = levels.shape[0]
             tasks = levels['Task'].tolist()
-            level_text = f'Уровень {level}: {level_name}'
-            level_text1 = level_text[:80]
-            level_text2 = level_text[80:160]
-            level_text3 = level_text[160:]
-            self.pdf.cell(190, 5, level_text1, 'LTR', 0, align="L")
+
+            level_text1 = level_name[:90]
+            level_text2 = level_name[90:180]
+            level_text3 = level_name[180:]
+
+            self.pdf.set_font("times", 'U', size=10)
+            self.pdf.cell(20, 5, f'Уровень {level}', 'LT', 0, align="L")
+            self.pdf.set_font("times", size=10)
+            self.pdf.cell(170, 5, level_text1, 'TR', 0, align="L")
             self.pdf.ln()
-            self.pdf.cell(190, 5, level_text2, 'LR', 0, align="L")
+            self.pdf.cell(20, 5, '', 'L', 0, align="L")
+            self.pdf.cell(170, 5, level_text2, 'R', 0, align="L")
             self.pdf.ln()
-            self.pdf.cell(190, 5, level_text3, 'LRB', 0, align="L")
+            self.pdf.cell(20, 5, '', 'LB', 0, align="L")
+            self.pdf.cell(170, 5, level_text3, 'RB', 0, align="L")
             self.pdf.ln()
             for j in range(level_count):
                 task = f'{tasks[j]}'
-                task1 = task[:50]
-                task2 = task[50:100]
-                task3 = task[100:]
-                self.pdf.cell(30, 5, f'№ {j + 1}', 'LTR', 0, align="C")
-                self.pdf.cell(130, 5, task1, 'LTR', 0, align="L")
+                task1 = task[:80]
+                task2 = task[80:160]
+                task3 = task[160:]
+                self.pdf.cell(20, 5, f'№ {j + 1}', 'LTR', 0, align="C")
+                self.pdf.cell(140, 5, task1, 'LTR', 0, align="L")
                 self.pdf.cell(30, 5, 'Да', 'LTR', 0, align="C")
                 self.pdf.ln()
-                self.pdf.cell(30, 5, '', 'LR', 0, align="C")
-                self.pdf.cell(130, 5, task2, 'LR', 0, align="L")
+                self.pdf.cell(20, 5, '', 'LR', 0, align="C")
+                self.pdf.cell(140, 5, task2, 'LR', 0, align="L")
                 self.pdf.cell(30, 5, '', 'LR', 0, align="C")
                 self.pdf.ln()
-                self.pdf.cell(30, 5, '', 'LRB', 0, align="C")
-                self.pdf.cell(130, 5, task3, 'LRB', 0, align="L")
+                self.pdf.cell(20, 5, '', 'LRB', 0, align="C")
+                self.pdf.cell(140, 5, task3, 'LRB', 0, align="L")
                 self.pdf.cell(30, 5, '', 'LRB', 0, align="C")
                 self.pdf.ln()

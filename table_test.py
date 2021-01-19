@@ -317,6 +317,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                     el.setChecked(bool)
 
     def reset_params(self):
+        self.path = 'Param_Tasks.xlsx'
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
         self.param_tabs.clear()
@@ -608,7 +609,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         # ---------------Формируем dataframe с результатами------------------------
         now = datetime.datetime.now()
         date = now.strftime("%d.%m.%Y %H:%M")
-        file_date = now.strftime("%d.%m.%Y")
+        file_date = now.strftime("%d.%m.%Y %H-%M")
         if self.check_draft.isChecked():
             self.project_state = 'черновик'
         else:
@@ -648,34 +649,44 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         if self.project_state == 'черновик':
             if not os.path.isdir(f"Projects/{self.expert_name}/Черновики"):
                 os.mkdir(f"Projects/{self.expert_name}/Черновики")
-            os.mkdir(f"Projects/{self.expert_name}/Черновики/{project_dir}")
-            self.path = f"Projects/{self.expert_name}/Черновики/{project_dir}/{new_file_name}"
+            if not os.path.isdir(f"Projects/{self.expert_name}/Черновики/{saved_file_name}"):
+                os.mkdir(f"Projects/{self.expert_name}/Черновики/{saved_file_name}")
+            self.path = f"Projects/{self.expert_name}/Черновики/{saved_file_name}/{new_file_name}"
+            # new_file = open(self.path, 'w')
             writer = pd.ExcelWriter(self.path)
             for param in self.params:
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
                 new_save_data.drop(['Parameter'], axis='columns', inplace=True)
+                # new_save_data.to_excel(self.path, index=False, sheet_name=param)
                 new_save_data.to_excel(writer, sheet_name=param, index=False)
                 writer.save()
             writer.close()
+            # new_file.close()
         else:
             if not os.path.isdir(f"Projects/{self.expert_name}/Завершенные"):
                 os.mkdir(f"Projects/{self.expert_name}/Завершенные")
-            os.mkdir(f"Projects/{self.expert_name}/Завершенные/{project_dir}")
-            self.path = f"Projects/{self.expert_name}/Завершенные/{project_dir}/{new_file_name}"
-            full_dir = f"Projects/{self.expert_name}/Завершенные/{project_dir}"
+            if not os.path.isdir(f"Projects/{self.expert_name}/Завершенные/{saved_file_name}"):
+                os.mkdir(f"Projects/{self.expert_name}/Завершенные/{saved_file_name}")
+            self.path = f"Projects/{self.expert_name}/Завершенные/{saved_file_name}/{new_file_name}"
+            full_dir = f"Projects/{self.expert_name}/Завершенные/{saved_file_name}"
+            # new_file = open(self.path, 'w')
             writer = pd.ExcelWriter(self.path)
             for param in self.params:
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
                 new_save_data.drop(['Parameter'], axis='columns', inplace=True)
+                # new_save_data.to_excel(self.path, index=False, sheet_name=param)
                 new_save_data.to_excel(writer, sheet_name=param, index=False)
                 writer.save()
             writer.close()
+            # new_file.close()
             self.chart.save_chart(full_dir, project_dir)
+
         # сохранение проекта в БД
         params = ' '.join(self.params)
         self.saveproject_data = (date, self.project_state, self.path, params)
         data = self.newproject_data + self.saveproject_data
         check_db.save_project(self.expert_name, data)
+
         QtWidgets.QMessageBox.about(self, 'Сохранение результатов', 'Результаты успешно сохранены')
         self.btn_save_results.setEnabled(False)
         self.check_draft.setEnabled(False)
@@ -693,22 +704,14 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         for el in results:
             if el == 0:
                 results.remove(el)
-        data = []
         date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
-        # total = [[self.expert_name, self.project_num, date, self.label_tprl_min_result.text(),
-        #           self.label_tprl_average_result.text(), self.label_trl_result.text(),
-        #           self.label_mrl_result.text(), self.label_erl_result.text(),
-        #           self.label_orl_result.text(), self.label_crl_result.text(), self.project_state]]
-        # features = np.array(total)
-        # columns = ['Expert', 'Project Number', 'Date', 'TPRLmin', 'TPRLaverage', 'TRL', 'MRL', 'ERL', 'ORL', 'CRL',
-        #            'Статус']
-        # frame = pd.DataFrame(data=features, columns=columns)
+        data = []
         for param in self.params:
             new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
             new_save_data.drop(['Parameter'], axis='columns', inplace=True)
             data.append([param, new_save_data])
-        self.pdf_data = ([date, self.project_num, self.expert_name, self.params], data)
-        new_pdf = CreatePDF(self.pdf_data, results, self.param_results)
+        self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results], data)
+        new_pdf = CreatePDF(self.pdf_data, self.param_results)
         new_pdf.set_data()
 
     def show_results(self, res):
