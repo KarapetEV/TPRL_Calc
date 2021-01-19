@@ -184,6 +184,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.rad = []
         self.tprl_min = 0
         self.project_state = ''
+        self.param_results = {}
         self.label_user_name.setText(user)
         self.label_user_name1.setText(user)
         self.label_user_name2.setText(user)
@@ -563,6 +564,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                             new_list.append(0)
                     first_list.append(new_list)
                 d2[key] = first_list
+            self.param_results = d2
         self.save_data['State'] = new_state
         for new_key, new_values in d2.items():
             l_n = []
@@ -678,6 +680,10 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.btn_save_results.setEnabled(False)
         self.check_draft.setEnabled(False)
 
+    def check_saved(self):
+        pass
+
+
     def create_pdf(self):
         results = [float(self.label_trl_result.text()),
                    float(self.label_mrl_result.text()),
@@ -702,7 +708,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
             new_save_data.drop(['Parameter'], axis='columns', inplace=True)
             data.append([param, new_save_data])
         self.pdf_data = ([date, self.project_num, self.expert_name, self.params], data)
-        new_pdf = CreatePDF(self.pdf_data, results)
+        new_pdf = CreatePDF(self.pdf_data, results, self.param_results)
         new_pdf.set_data()
 
     def show_results(self, res):
