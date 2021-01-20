@@ -310,6 +310,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         date = table.item(row, 6).text()
         data.append(date)
         value = check_db.get_project(data)
+        self.newproject_data = (value[3:])
         self.project_state = value[0]
         self.path = value[1]
         self.params = value[2].split(' ')

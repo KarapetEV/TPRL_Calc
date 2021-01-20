@@ -102,7 +102,7 @@ def get_project(data):
 
     user_id = cur.execute(f"SELECT user_id FROM users WHERE name='{data[0]}'").fetchone()[0]
 
-    cur.execute(f"SELECT state, path, params FROM projects WHERE user_id='{user_id}' AND project_num='{data[1]}' AND save_date='{data[2]}'")
+    cur.execute(f"SELECT state, path, params, project_num, date, theme, initiator, customer FROM projects WHERE user_id='{user_id}' AND project_num='{data[1]}' AND save_date='{data[2]}'")
     value = cur.fetchone()
 
     cur.close()
