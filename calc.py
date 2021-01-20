@@ -659,17 +659,19 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             if par not in self.d3.keys():
                 self.d3[par] = '0'
         for iter_k, iter_v in self.d3.items():
-            iter_v = float(iter_v)
+            iter_v = round(float(iter_v), 1)
+            self.d3[iter_k] = str(iter_v)
         if float(max(self.d3.values())) - float(min(self.d3.values())) > 2:
             x = float(max(self.d3.values()))
         else:
             x = -1
         for d3_k, d3_v in self.d3.items():
             if float(d3_v) == x:
-                self.d3[d3_k] = str(float(d3_v) - 1)
+                d3_v = round(float(d3_v) - 1, 1)
+                self.d3[d3_k] = str(d3_v)
             else:
                 self.d3[d3_k] = d3_v
-        print(self.d1)
+        # print(self.d1)
         self.param_tabs.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
@@ -871,6 +873,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.label_tprl_min_result.setText(self.tprl_min)
         else:
             self.tprl_average = float(sum(res_list) / len(res_list))
+            self.tprl_average = round(self.tprl_average, 1)
             self.tprl_min = int(self.tprl_average)
 
             self.label_tprl_average_result.setText(str(self.tprl_average))
