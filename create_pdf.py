@@ -57,6 +57,7 @@ class CreatePDF:
     def create_pdf(self, data):
         self.res = {}
         self.pdf = FPDF(unit='mm', format='A4')
+        self.pdf.add_font('times', '', r"fonts/times/times.ttf", uni=True)
         self.pdf.add_page()
         self.pdf.add_font('timesbd', '', r"fonts/times/timesbd.ttf", uni=True)
         self.pdf.set_font("timesbd", size=12)
@@ -66,10 +67,14 @@ class CreatePDF:
         self.pdf.ln()
         self.pdf.ln()
         for i in range(4):
-            text = self.text[i] + data[i]
-            self.pdf.add_font('times', '', r"fonts/times/times.ttf", uni=True)
+            text = self.text[i]
             self.pdf.set_font("times", size=12)
-            self.pdf.cell(200, 8, txt=text, ln=1, align="L")
+            self.pdf.cell(100, 8, text, '', 0, align="L")
+            self.pdf.set_font("times", 'U', size=12)
+            self.pdf.cell(80, 8, data[i], '', 0, align="L")
+            self.pdf.ln()
+        self.pdf.ln()
+        self.pdf.set_font("times", size=12)
         self.pdf.cell(200, 8, txt=self.table_header, ln=1, align="L")
         params = self.data[0][3]
 
@@ -79,7 +84,6 @@ class CreatePDF:
         for k, v in self.res.items():
             self.create_table(k, v)
 
-        self.pdf.ln()
         self.pdf.ln()
         self.pdf.set_font("times", size=12)
         self.pdf.cell(200, 8, txt=self.sign, ln=1, align="L")
