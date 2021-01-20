@@ -94,6 +94,15 @@ class CreatePDF:
         os.chdir(self.get_path()[0])
         open_path = os.getcwd() + f"\\{self.get_path()[1]}"
         os.startfile(open_path)
+        self.remove_pkl()
+
+    def remove_pkl(self):
+        os.chdir("../../..")
+        dir = os.getcwd() + "\\fonts\\times\\"
+        files = os.listdir(dir)
+        for file in files:
+            if file.endswith(".pkl"):
+                os.remove(dir+file)
 
     def get_path(self):
         file_date = self.data[0][0]
