@@ -584,7 +584,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.check_draft.setEnabled(True)
         self.check_draft.setChecked(False)
         self.btn_save_results.setEnabled(True)
-        d1 = {}
+        self.d1 = {}
         d2 = {}
         self.d3 = {}
         new_state = []
@@ -614,16 +614,16 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                         else:
                             l1.append(-1)
                             new_state.append(-1)
-                if param not in d1:
+                if param not in self.d1:
                     l2 = []
                     l2.append(l1)
-                    d1[param] = l2
+                    self.d1[param] = l2
                 else:
-                    d1[param].append(l1)
+                    self.d1[param].append(l1)
 
-            # print(d1)
+            # print(self.d1)
 
-            for key, values in d1.items():
+            for key, values in self.d1.items():
                 first_list = []
                 for value in values:
                     new_list = []
@@ -667,6 +667,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 self.d3[d3_k] = str(float(d3_v) - 1)
             else:
                 self.d3[d3_k] = d3_v
+        print(self.d1)
         self.param_tabs.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
