@@ -13,6 +13,7 @@ import pandas as pd
 from chart import Chart
 from PyQt5.QtCore import pyqtSignal, QSize
 from splash import Splash
+from create_pdf import CreatePDF
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
@@ -249,6 +250,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.btn_load_project2.clicked.connect(self.load_project_data)
         self.btn_new_project.clicked.connect(self.create_dialog)
         self.tabWidget.currentChanged.connect(self.show_user_projects)
+        self.btn_pdf.clicked.connect(self.create_pdf)
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
 
@@ -828,6 +830,25 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         QtWidgets.QMessageBox.about(self, 'Сохранение результатов', 'Результаты успешно сохранены')
         self.btn_save_results.setEnabled(False)
         self.check_draft.setEnabled(False)
+
+    def create_pdf(self):
+        results = [float(self.label_trl_result.text()),
+                   float(self.label_mrl_result.text()),
+                   float(self.label_erl_result.text()),
+                   float(self.label_orl_result.text()),
+                   float(self.label_crl_result.text())]
+        for el in results:
+            if el == 0:
+                results.remove(el)
+        date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
+        data = []
+        for param in self.params:
+            new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
+            new_save_data.drop(['Parameter'], axis='columns', inplace=True)
+            data.append([param, new_save_data])
+        self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results], data)
+        new_pdf = CreatePDF(self.pdf_data, self.d1)
+        new_pdf.set_data()
 
     def show_results(self, res):
         res_list = []

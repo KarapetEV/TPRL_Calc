@@ -1,6 +1,8 @@
 from fpdf import FPDF
 import pandas as pd
 from math import ceil
+import os
+
 
 
 class CreatePDF:
@@ -11,6 +13,7 @@ class CreatePDF:
         self.data = data
         self.res = {}
         self.results = self.data[0][4]
+        self.param_results = param_results
         self.header = ["Экспертное заключение",
                       "по оценке информации о результатах",
                       "инновационного проекта в области железнодорожного транспорта"]
@@ -19,11 +22,7 @@ class CreatePDF:
                      '3.    ФИО эксперта: ',
                      '4.    Тип параметра: ']
         self.table_header = '5.    Статус выполнения оцениваемого уровня и его подуровней '
-        self.sign = '6.    Подпись эксперта: _____________________'
-        self.param_results = self.data[1]
-        print(self.param_results[0][1][0])
-
-
+        self.sign = '6.    Подпись эксперта: ________________________'
 
     def set_data(self):
         new_data = []
@@ -37,22 +36,22 @@ class CreatePDF:
 
     def make_states_dict(self):
         d2 = {}
-        # state = {1: 'Да', 0: 'Нет', -1: 'Не применимо'}
-        # for k, v in self.param_results.items():
-        #     index = self.res[k]
-        #     l1 = []
-        #     if index > 1:
-        #         for i in range(index - 2, index):
-        #             l2 = []
-        #             for el in v[i]:
-        #                 l2.append(state[el])
-        #             l1.append(l2)
-        #     else:
-        #         l2 = []
-        #         for el in v[index - 1]:
-        #             l2.append(state[el])
-        #         l1.append(l2)
-        #     d2[k] = l1
+        state = {1: 'Да', 0: 'Нет', -1: 'Не применимо'}
+        for k, v in self.param_results.items():
+            index = self.res[k]
+            l1 = []
+            if index > 1:
+                for i in range(index - 2, index):
+                    l2 = []
+                    for el in v[i]:
+                        l2.append(state[el])
+                    l1.append(l2)
+            else:
+                l2 = []
+                for el in v[index - 1]:
+                    l2.append(state[el])
+                l1.append(l2)
+            d2[k] = l1
         return d2
 
     def create_pdf(self, data):
@@ -82,34 +81,40 @@ class CreatePDF:
 
         self.pdf.ln()
         self.pdf.ln()
+        self.pdf.set_font("times", size=12)
         self.pdf.cell(200, 8, txt=self.sign, ln=1, align="L")
-        file_path = self.get_path()
+        file_path = self.get_path()[0] + self.get_path()[1]
         self.pdf.output(file_path, "F")
+        os.chdir(self.get_path()[0])
+        open_path = os.getcwd() + f"\\{self.get_path()[1]}"
+        os.startfile(open_path)
 
     def get_path(self):
-        date = self.data[0][0]
+        file_date = self.data[0][0]
         self.project_num = self.data[0][1]
         expert_name = self.data[0][2]
-        saved_file_name = self.project_num
-        for ch in chars:
-            if ch in saved_file_name:
-                saved_file_name = saved_file_name.replace(ch, '_')
-        if '\\' in saved_file_name:
-            saved_file_name = saved_file_name.replace('\\', '_')
-        project_dir = f'{saved_file_name}_{file_date}'
-        new_file_name = f'{saved_file_name}_{file_date}.pdf'
+        saved_file_name = self.check_filename(self.project_num)
+        new_file_name = self.check_filename(f'{saved_file_name}_{file_date}.pdf')
         if not os.path.isdir("Reports"):
             os.mkdir("Reports")
         if not os.path.isdir(f"Reports/{expert_name}"):
             os.mkdir(f"Reports/{expert_name}")
         if not os.path.isdir(f"Reports/{expert_name}/{saved_file_name}"):
             os.mkdir(f"Reports/{expert_name}/{saved_file_name}")
-        self.path = f"Reports/{expert_name}/{saved_file_name}/{new_file_name}"
-        return self.path
+        self.path = f"Reports/{expert_name}/{saved_file_name}/"
+
+        return [self.path, new_file_name]
+
+    def check_filename(self, line):
+        chars = ':\/*?<>"|'
+        for ch in chars:
+            if ch in line:
+                line = line.replace(ch, '_')
+        return line
 
     def create_table(self, param, lvl):
         df = pd.read_excel("Param_Tasks.xlsx", sheet_name=param)
-        # param_states= self.make_states_dict()[param]
+        param_states = self.make_states_dict()[param]
         count = 0
         if lvl > 1:
             count = 2
@@ -128,7 +133,7 @@ class CreatePDF:
         self.pdf.ln()
 
         for i in range(count):
-            # states_list = param_states[i]
+            states_list = param_states[i]
 
             levels = df.loc[df['Level'] == (lvl+i)]
             level = levels.iat[0, 0]
@@ -158,7 +163,7 @@ class CreatePDF:
                 task3 = task[160:]
                 self.pdf.cell(20, 5, f'№ {j + 1}', 'LTR', 0, align="C")
                 self.pdf.cell(140, 5, task1, 'LTR', 0, align="L")
-                self.pdf.cell(30, 5, 'Да', 'LTR', 0, align="C")
+                self.pdf.cell(30, 5, states_list[j], 'LTR', 0, align="C")
                 self.pdf.ln()
                 self.pdf.cell(20, 5, '', 'LR', 0, align="C")
                 self.pdf.cell(140, 5, task2, 'LR', 0, align="L")
