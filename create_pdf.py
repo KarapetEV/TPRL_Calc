@@ -296,6 +296,7 @@ class CreatePDF:
                 res = line[start + 1:index]
                 l1.append(res)
                 start = index
+            l1.append(line[start:])
         else:
             l1.append(line)
         return l1
