@@ -716,7 +716,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
             new_save_data.drop(['Parameter'], axis='columns', inplace=True)
             data.append([param, new_save_data])
-        self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results], data)
+        self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]], data)
         new_pdf = CreatePDF(self.pdf_data, self.d1)
         new_pdf.set_data()
 

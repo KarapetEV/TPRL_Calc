@@ -14,6 +14,8 @@ class CreatePDF:
         self.res = {}
         self.results = self.data[0][4]
         self.param_results = param_results
+        self.tprl = self.data[0][5][0]
+        self.tprl_name = f"Уровень {self.tprl}. {self.data[0][5][1]}"
         self.header = ["Экспертное заключение",
                       "по оценке информации о результатах",
                       "инновационного проекта в области железнодорожного транспорта"]
@@ -21,8 +23,9 @@ class CreatePDF:
                      '2.    Идентификационный номер проекта: ',
                      '3.    ФИО эксперта: ',
                      '4.    Тип параметра: ']
-        self.table_header = '5.    Статус выполнения оцениваемого уровня и его подуровней '
-        self.sign = '6.    Подпись эксперта: ________________________'
+        self.tprl_text = '5.    Комплексная оценка уровня готовности проекта/технологии: '
+        self.table_header = '6.    Статус выполнения оцениваемого уровня и его подуровней '
+        self.sign = '7.    Подпись эксперта: ________________________'
 
     def set_data(self):
         new_data = []
@@ -73,6 +76,13 @@ class CreatePDF:
             self.pdf.set_font("times", 'U', size=12)
             self.pdf.cell(80, 8, data[i], '', 0, align="L")
             self.pdf.ln()
+        self.pdf.set_font("times", size=12)
+        self.pdf.cell(100, 8, self.tprl_text, ln=1, align="L")
+        self.pdf.set_font("times", 'U', size=12)
+        tprl_name_list = self.word_wrap(self.tprl_name, 95)
+        for i in range(len(tprl_name_list)):
+            self.pdf.cell(100, 5, tprl_name_list[i].strip(), '', 0, align="L")
+            self.pdf.ln()
         self.pdf.ln()
         self.pdf.set_font("times", size=12)
         self.pdf.cell(200, 8, txt=self.table_header, ln=1, align="L")
@@ -84,7 +94,6 @@ class CreatePDF:
         for k, v in self.res.items():
             self.create_table(k, v)
 
-        self.pdf.ln()
         self.pdf.ln()
         self.pdf.ln()
         self.pdf.set_font("times", size=12)
@@ -154,7 +163,7 @@ class CreatePDF:
             levels = df.loc[df['Level'] == (lvl+i)]
             level = levels.iat[0, 0]
             lvls = levels.iat[0, 1]
-            level_name_list = self.word_wrap(lvls, 90, True)
+            level_name_list = self.word_wrap(lvls, 95)
             level_count = levels.shape[0]
             tasks = levels['Task'].tolist()
             level_num_list = self.make_line_list(f'Уровень {level}', len(level_name_list))
@@ -180,7 +189,7 @@ class CreatePDF:
                 self.pdf.cell(170, 5, level_name, border_lvl, 0, align="L")
                 self.pdf.ln()
             for j in range(level_count):
-                task_list = self.word_wrap(f'{tasks[j]}', 80, False)
+                task_list = self.word_wrap(f'{tasks[j]}', 80)
                 num_list = self.make_line_list(f'№ {j + 1}', len(task_list))
                 states_list = self.make_line_list(states[j], len(task_list))
                 for k in range(len(task_list)):
@@ -202,15 +211,10 @@ class CreatePDF:
                     self.pdf.cell(30, 5, state, border, 0, align="C")
                     self.pdf.ln()
 
-    def word_wrap(self, line, x, is_level):
+    def word_wrap(self, line, x):
         start = 0
         l1 = []
-        length = 0
-        if is_level:
-            length = 90
-        else:
-            length = 80
-        if len(line) > length:
+        if len(line) > x:
             while len(line) > (start + x):
                 index = line.rfind(' ', start, start + x)
                 res = line[start:index]
