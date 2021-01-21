@@ -2,7 +2,7 @@
 
 #  Copyright 2020 Aleksey Karapyshev, Evgeniy Karapyshev ©
 # E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
-
+from decimal import Decimal
 import sys, os, datetime
 import login, register, check_db
 import calc_gui
@@ -810,8 +810,11 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 else:
                     show_res[d3_k] = d3_v
                 res_list.append(float(d3_v))
+            print(res_list)
             self.tprl_average = float(sum(res_list) / len(res_list))
-            self.tprl_average = round(self.tprl_average, 1)
+            number = Decimal(f'{self.tprl_average}')
+            print(self.tprl_average)
+            self.tprl_average = number.quantize(Decimal("1.0"), rounding='ROUND_DOWN')
             self.tprl_min = int(self.tprl_average)
             self.label_tprl_average_result.setText(str(self.tprl_average))
             self.label_tprl_min_result.setText(str(self.tprl_min))
