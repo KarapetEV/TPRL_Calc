@@ -592,12 +592,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             summary = 0
             for d2_value in range(len(d2_values)):
                 if d2_values[d2_value] == 1:
-                    summary += 1
+                    summary = d2_value + 1
                 elif 0 < d2_values[d2_value] < 1:
-                    summary += d2_values[d2_value]
-                    break
-                else:
-                    break
+                    if summary == d2_value:
+                        summary += d2_values[d2_value]
             self.d3[d2_keys] = str(summary)
         for par in Window.parameters:
             if par not in self.d3.keys():
