@@ -85,11 +85,13 @@ class CreatePDF:
             self.pdf.ln()
         self.pdf.ln()
         self.pdf.set_font("times", size=12)
-        self.pdf.cell(200, 8, txt=self.table_header, ln=1, align="L")
-        params = self.data[0][3]
+        self.pdf.cell(200, 8, txt=self.table_header, align="L")
 
-        for i in range(len(params)):
-            self.res[params[i]] = int(ceil(self.results[i]))
+        self.params = self.data[0][3]
+        self.param_float = {}
+        for i in range(len(self.params)):
+            self.res[self.params[i]] = int(ceil(self.results[i]))
+            self.param_float[self.params[i]] = self.results[i]
 
         for k, v in self.res.items():
             self.create_table(k, v)
@@ -147,7 +149,7 @@ class CreatePDF:
 
         self.pdf.ln()
         self.pdf.set_font("times", 'U', size=12)
-        self.pdf.cell(190, 5, txt=param, ln=1, align="L")
+        self.pdf.cell(190, 5, txt=f"{param} - {self.param_float[param]}", ln=1, align="L")
         self.pdf.ln()
         self.pdf.set_font("times", size=10)
         self.pdf.cell(20, 5, 'Уровень', 1, 0, align="C")
