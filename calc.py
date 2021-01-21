@@ -706,9 +706,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                    float(self.label_orl_result.text()),
                    float(self.label_crl_result.text())]
         results = []
-        for el in res_list:
-            if el != 0:
-                results.append(el)
+        for i in range(len(self.parameters)):
+            for param in self.params:
+                if self.parameters[i] == param:
+                    results.append(res_list[i])
         date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         data = []
         for param in self.params:
