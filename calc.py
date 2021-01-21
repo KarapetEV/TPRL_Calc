@@ -572,6 +572,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # text_dict = {'TPRL': str(self.ugtSlider.value())}
         text_dict = {'TPRL': str(self.tprl_min)}
         text_dict.update(self.d3)
+        print('Text dict = ', text_dict)
         text_levels = self.make_text_dict(op_data, text_dict)
         # self.create_text_rows(text_levels)
         self.create_table_rows(text_levels)
@@ -662,91 +663,14 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         for iter_k, iter_v in self.d3.items():
             iter_v = round(float(iter_v), 1)
             self.d3[iter_k] = str(iter_v)
-        if float(max(self.d3.values())) - float(min(self.d3.values())) > 2:
-            x = float(max(self.d3.values()))
-        else:
-            x = -1
-        for d3_k, d3_v in self.d3.items():
-            if float(d3_v) == x:
-                d3_v = round(float(d3_v) - 1, 1)
-                self.d3[d3_k] = str(d3_v)
-            else:
-                self.d3[d3_k] = d3_v
-        # print(self.d1)
+
+        print('D3 = ', self.d3)
         self.param_tabs.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
         self.chart = Chart(self.d3, self.lay)
         self.make_text()
-        # d1 = {}
-        # self.d3 = {}
-        # l2 = []
-        # levels = self.treeWidget.topLevelItemCount()
-        # l1 = []
-        # for level in range(levels):
-        #     childs = self.treeWidget.topLevelItem(level).childCount()
-        #     topLevelItemText = self.treeWidget.topLevelItem(level).text(0)
-        #     d2 = {}
-        #     for child in range(childs):
-        #         kids = self.treeWidget.topLevelItem(level).child(child).childCount()
-        #         p = self.treeWidget.topLevelItem(level).child(child).text(0)
-        #         for kid in range(kids):
-        #             kid_item = self.treeWidget.topLevelItem(level).child(child).child(kid)
-        #             # ch_item = self.treeWidget.topLevelItem(level).child(child)
-        #             # -----------------Добавляем в новый State значение (0/1)
-        #             if kid_item.checkState(1) == QtCore.Qt.Checked:
-        #                 l1.append(1)
-        #             else:
-        #                 l1.append(0)
-        #             # ------------Продолжаем формировать словарь---------------
-        #             if p not in d2:
-        #                 l2 = []
-        #                 if kid_item.checkState(1) == QtCore.Qt.Checked:
-        #                     l2.append(1)
-        #                 else:
-        #                     l2.append(0)
-        #                 d2[p] = l2
-        #             else:
-        #                 if kid_item.checkState(1) == QtCore.Qt.Checked:
-        #                     d2[p].append(1)
-        #                 else:
-        #                     d2[p].append(0)
-        #
-        #     for k, v in d2.items():
-        #         v = round(sum(v) / len(v), 1)
-        #         d2[k] = v
-        #         if k not in self.d3:
-        #             self.d3[k] = [v]
-        #         else:
-        #             self.d3[k].append(v)
-        #     if level not in d1:
-        #         d1[topLevelItemText] = d2
-        # self.save_data['State'] = l1
-        # for key, values in self.d3.items():
-        #     summary = 0
-        #     for iter_value in range(len(values)):
-        #         if values[iter_value] == 1:
-        #             summary += 1
-        #         elif 0 < values[iter_value] < 1:
-        #             summary += values[iter_value]
-        #             # self.d3[key] = str(summary)
-        #             break
-        #         else:
-        #             # self.d3[key] = str(summary)
-        #             break
-        #     self.d3[key] = str(summary)
-        # for param in Window.parameters:
-        #     if param not in self.d3.keys():
-        #         self.d3[param] = '0'
-        # for iter_k, iter_v in self.d3.items():
-        #     iter_v = float(iter_v)
-        #     # self.d3[iter_k] = iter_v
-        # # print('После обработки', self.d3)
-        # self.frame_results.setEnabled(True)
-        # self.show_results(self.d3)
-        # self.chart = Chart(self.d3, self.lay)
-        # # self.save_graph_btn.setEnabled(True)
-        # self.make_text()
+
 
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
@@ -854,6 +778,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         new_pdf.set_data()
 
     def show_results(self, res):
+        print('RES = ', res)
+
         res_list = []
         for k_res, v_res in res.items():
             if k_res == 'TRL':
@@ -866,17 +792,27 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 self.label_orl_result.setText(v_res)
             elif k_res == 'CRL':
                 self.label_crl_result.setText(v_res)
-            res_list.append(float(v_res))
+        show_res = res.copy()
         if len(self.params) < 5:
             self.tprl_average = '--'
             self.tprl_min = '--'
             self.label_tprl_average_result.setText(self.tprl_average)
             self.label_tprl_min_result.setText(self.tprl_min)
         else:
+            if float(max(show_res.values())) - float(min(show_res.values())) > 2:
+                x = float(max(show_res.values()))
+            else:
+                x = -1
+            for d3_k, d3_v in show_res.items():
+                if float(d3_v) == x:
+                    d3_v = round(float(d3_v) - 1, 1)
+                    show_res[d3_k] = str(d3_v)
+                else:
+                    show_res[d3_k] = d3_v
+                res_list.append(float(d3_v))
             self.tprl_average = float(sum(res_list) / len(res_list))
             self.tprl_average = round(self.tprl_average, 1)
             self.tprl_min = int(self.tprl_average)
-
             self.label_tprl_average_result.setText(str(self.tprl_average))
             self.label_tprl_min_result.setText(str(self.tprl_min))
 
