@@ -699,6 +699,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.check_draft.setEnabled(False)
 
     def create_pdf(self):
+        self.chart.save_chart('', "chart_pdf")
         results = [float(self.label_trl_result.text()),
                    float(self.label_mrl_result.text()),
                    float(self.label_erl_result.text()),

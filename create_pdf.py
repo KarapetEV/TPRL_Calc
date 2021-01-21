@@ -59,6 +59,8 @@ class CreatePDF:
 
     def create_pdf(self, data):
         self.res = {}
+        self.params = self.data[0][3]
+        self.param_float = {}
         self.pdf = FPDF(unit='mm', format='A4')
         self.pdf.add_font('times', '', r"fonts/times/times.ttf", uni=True)
         self.pdf.add_page()
@@ -83,12 +85,12 @@ class CreatePDF:
         for i in range(len(tprl_name_list)):
             self.pdf.cell(100, 5, tprl_name_list[i].strip(), '', 0, align="L")
             self.pdf.ln()
+        if len(self.params) == 5:
+            self.pdf.image('chart_pdf.png', 50, 0, 100, 100)
         self.pdf.ln()
         self.pdf.set_font("times", size=12)
         self.pdf.cell(200, 8, txt=self.table_header, align="L")
 
-        self.params = self.data[0][3]
-        self.param_float = {}
         for i in range(len(self.params)):
             self.res[self.params[i]] = int(ceil(self.results[i]))
             self.param_float[self.params[i]] = self.results[i]
