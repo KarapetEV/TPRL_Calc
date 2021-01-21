@@ -405,17 +405,28 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.param_tabs.setCurrentIndex(0)
 
     def set_params(self):
-        self.reset_params()
-        self.get_params()
-        if len(self.params) == 0:
-            QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
+        text = 'изменить параметры (текущие отметки будут сброшены)'
+        if self.project_state in ['черновик', 'итог']:
+            if self.confirm_msg(text):
+                self.reset_params()
+                self.get_params()
+                if len(self.params) == 0:
+                    QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
+                else:
+                    self.create_rows()
+                    self.btn_calculate.setEnabled(True)
+                    self.btn_reset_tasks.setEnabled(True)
         else:
-            self.create_rows()
-            self.btn_calculate.setEnabled(True)
-            self.btn_reset_tasks.setEnabled(True)
+            self.reset_params()
+            self.get_params()
+            if len(self.params) == 0:
+                QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
+            else:
+                self.create_rows()
+                self.btn_calculate.setEnabled(True)
+                self.btn_reset_tasks.setEnabled(True)
 
     def get_params(self):
-
         if self.check_trl.isChecked():
             self.params.append('TRL')
         if self.check_mrl.isChecked():
