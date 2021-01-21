@@ -700,14 +700,15 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
     def create_pdf(self):
         self.chart.save_chart('', "chart_pdf")
-        results = [float(self.label_trl_result.text()),
+        res_list = [float(self.label_trl_result.text()),
                    float(self.label_mrl_result.text()),
                    float(self.label_erl_result.text()),
                    float(self.label_orl_result.text()),
                    float(self.label_crl_result.text())]
-        for el in results:
-            if el == 0:
-                results.remove(el)
+        results = []
+        for el in res_list:
+            if el != 0:
+                results.append(el)
         date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         data = []
         for param in self.params:
@@ -717,6 +718,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]], data)
         new_pdf = CreatePDF(self.pdf_data, self.d1)
         new_pdf.set_data()
+        os.remove(os.getcwd() + "\\chart_pdf.png")
 
     def show_results(self, res):
         res_list = []

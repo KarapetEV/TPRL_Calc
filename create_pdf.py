@@ -86,7 +86,9 @@ class CreatePDF:
             self.pdf.cell(100, 5, tprl_name_list[i].strip(), '', 0, align="L")
             self.pdf.ln()
         if len(self.params) == 5:
-            self.pdf.image('chart_pdf.png', 50, 0, 100, 100)
+            self.pdf.image('chart_pdf.png', 60, 90, 84, 50)
+            for _ in range(10):
+                self.pdf.ln()
         self.pdf.ln()
         self.pdf.set_font("times", size=12)
         self.pdf.cell(200, 8, txt=self.table_header, align="L")
@@ -98,6 +100,8 @@ class CreatePDF:
         for k, v in self.res.items():
             self.create_table(k, v)
 
+        self.pdf.ln()
+        self.pdf.ln()
         self.pdf.ln()
         self.pdf.set_font("times", size=12)
         self.pdf.cell(200, 8, txt=self.sign, ln=1, align="L")
@@ -153,11 +157,12 @@ class CreatePDF:
         self.pdf.set_font("times", 'U', size=12)
         self.pdf.cell(190, 5, txt=f"{param} - {self.param_float[param]}", ln=1, align="L")
         self.pdf.ln()
-        self.pdf.set_font("times", size=10)
+        self.pdf.set_font("timesbd", size=10)
         self.pdf.cell(20, 5, 'Уровень', 1, 0, align="C")
         self.pdf.cell(140, 5, 'Наименование задачи', 1, 0, align="C")
         self.pdf.cell(30, 5, 'Статус', 1, 0, align="C")
         self.pdf.ln()
+        self.pdf.set_font("times", size=10)
 
         df = pd.read_excel("Param_Tasks.xlsx", sheet_name=param)
         for i in range(count):
