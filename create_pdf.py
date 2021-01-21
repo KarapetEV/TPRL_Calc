@@ -146,6 +146,12 @@ class CreatePDF:
 
     def create_table(self, param, lvl):
         param_states = self.make_states_dict()[param]
+
+        self.pdf.ln()
+        self.pdf.set_font("times", 'U', size=12)
+        self.pdf.cell(190, 5, txt=f"{param} - {self.param_float[param]}", ln=1, align="L")
+        self.pdf.ln()
+
         count = 0
         if lvl > 1:
             count = 2
@@ -153,71 +159,68 @@ class CreatePDF:
         else:
             count = 1
 
-        self.pdf.ln()
-        self.pdf.set_font("times", 'U', size=12)
-        self.pdf.cell(190, 5, txt=f"{param} - {self.param_float[param]}", ln=1, align="L")
-        self.pdf.ln()
-        self.pdf.set_font("timesbd", size=10)
-        self.pdf.cell(20, 5, 'Уровень', 1, 0, align="C")
-        self.pdf.cell(140, 5, 'Наименование задачи', 1, 0, align="C")
-        self.pdf.cell(30, 5, 'Статус', 1, 0, align="C")
-        self.pdf.ln()
-        self.pdf.set_font("times", size=10)
+        if lvl != 0:
+            self.pdf.set_font("timesbd", size=10)
+            self.pdf.cell(20, 5, 'Уровень', 1, 0, align="C")
+            self.pdf.cell(140, 5, 'Наименование задачи', 1, 0, align="C")
+            self.pdf.cell(30, 5, 'Статус', 1, 0, align="C")
+            self.pdf.ln()
+            self.pdf.set_font("times", size=10)
 
-        df = pd.read_excel("Param_Tasks.xlsx", sheet_name=param)
-        for i in range(count):
-            states = param_states[i]
+            df = pd.read_excel("Param_Tasks.xlsx", sheet_name=param)
+            for i in range(count):
+                states = param_states[i]
 
-            levels = df.loc[df['Level'] == (lvl+i)]
-            level = levels.iat[0, 0]
-            lvls = levels.iat[0, 1]
-            level_name_list = self.word_wrap(lvls, 95)
-            level_count = levels.shape[0]
-            tasks = levels['Task'].tolist()
-            level_num_list = self.make_line_list(f'Уровень {level}', len(level_name_list))
-            for lvl_line in range(len(level_name_list)):
-                level_num = level_num_list[lvl_line]
-                level_name = level_name_list[lvl_line]
-                border_num = 'L'
-                border_lvl = 'R'
-                if lvl_line == 0:
-                    border_num = 'LT'
-                    border_lvl = 'TR'
-                elif lvl_line == len(level_name_list)-1:
-                    border_num = 'LB'
-                    border_lvl = 'RB'
-                if len(level_name_list) == 1:
-                    border_num = 'LTB'
-                    border_lvl = 'TRB'
-                    level_num = f'Уровень {level}'
-                    level_name = lvls
-                self.pdf.set_font("times", 'U', size=10)
-                self.pdf.cell(20, 5, level_num, border_num, 0, align="L")
-                self.pdf.set_font("times", size=10)
-                self.pdf.cell(170, 5, level_name, border_lvl, 0, align="L")
-                self.pdf.ln()
-            for j in range(level_count):
-                task_list = self.word_wrap(f'{tasks[j]}', 80)
-                num_list = self.make_line_list(f'№ {j + 1}', len(task_list))
-                states_list = self.make_line_list(states[j], len(task_list))
-                for k in range(len(task_list)):
-                    num = num_list[k]
-                    task = task_list[k]
-                    state = states_list[k]
-                    border = 'LR'
-                    if k == 0:
-                        border = 'LTR'
-                    elif k == len(task_list)-1:
-                        border = 'LRB'
-                    if len(task_list) == 1:
-                        border = 1
-                        num = f'№ {j + 1}'
-                        task = f'{tasks[j]}'
-                        state = states[j]
-                    self.pdf.cell(20, 5, num, border, 0, align="C")
-                    self.pdf.cell(140, 5, task, border, 0, align="L")
-                    self.pdf.cell(30, 5, state, border, 0, align="C")
+                levels = df.loc[df['Level'] == (lvl+i)]
+                level = levels.iat[0, 0]
+                lvls = levels.iat[0, 1]
+                level_name_list = self.word_wrap(lvls, 95)
+                level_count = levels.shape[0]
+                tasks = levels['Task'].tolist()
+                level_num_list = self.make_line_list(f'Уровень {level}', len(level_name_list))
+                for lvl_line in range(len(level_name_list)):
+                    level_num = level_num_list[lvl_line]
+                    level_name = level_name_list[lvl_line]
+                    border_num = 'L'
+                    border_lvl = 'R'
+                    if lvl_line == 0:
+                        border_num = 'LT'
+                        border_lvl = 'TR'
+                    elif lvl_line == len(level_name_list)-1:
+                        border_num = 'LB'
+                        border_lvl = 'RB'
+                    if len(level_name_list) == 1:
+                        border_num = 'LTB'
+                        border_lvl = 'TRB'
+                        level_num = f'Уровень {level}'
+                        level_name = lvls
+                    self.pdf.set_font("times", 'U', size=10)
+                    self.pdf.cell(20, 5, level_num, border_num, 0, align="L")
+                    self.pdf.set_font("times", size=10)
+                    self.pdf.cell(170, 5, level_name, border_lvl, 0, align="L")
                     self.pdf.ln()
+                for j in range(level_count):
+                    task_list = self.word_wrap(f'{tasks[j]}', 80)
+                    num_list = self.make_line_list(f'№ {j + 1}', len(task_list))
+                    states_list = self.make_line_list(states[j], len(task_list))
+                    for k in range(len(task_list)):
+                        num = num_list[k]
+                        task = task_list[k]
+                        state = states_list[k]
+                        border = 'LR'
+                        if k == 0:
+                            border = 'LTR'
+                        elif k == len(task_list)-1:
+                            border = 'LRB'
+                        if len(task_list) == 1:
+                            border = 1
+                            num = f'№ {j + 1}'
+                            task = f'{tasks[j]}'
+                            state = states[j]
+                        self.pdf.cell(20, 5, num, border, 0, align="C")
+                        self.pdf.cell(140, 5, task, border, 0, align="L")
+                        self.pdf.cell(30, 5, state, border, 0, align="C")
+                        self.pdf.ln()
 
     def word_wrap(self, line, x):
         start = 0
