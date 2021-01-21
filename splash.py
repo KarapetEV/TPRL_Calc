@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QLabel, QSplashScreen
 from PyQt5.QtGui import QMovie, QPixmap
+from PyQt5.QtCore import Qt
 
 
 class Splash(QSplashScreen):
@@ -14,8 +15,9 @@ class Splash(QSplashScreen):
         self.label_title.setGeometry(0, 30, 500, 100)
         self.label_title.setPixmap(QPixmap("img/splash_appname.png"))
         self.label_msg = QLabel(self)
-        self.label_msg.setGeometry(200, 150, 100, 100)
-        self.label_msg.setText("Скоро поедем...")
+        self.label_msg.setGeometry(150, 150, 200, 100)
+        self.label_msg.setText("Загрузка компонентов интерфейса...")
+        self.label_msg.setAlignment(Qt.AlignCenter)
         self.label_animation = QLabel(self)
         self.label_animation.setGeometry(200, 250, 100, 100)
         self.movie = QMovie("img/load1.gif")
