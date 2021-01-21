@@ -515,7 +515,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # text_dict = {'TPRL': str(self.ugtSlider.value())}
         text_dict = {'TPRL': str(self.tprl_min)}
         text_dict.update(self.d3)
-        print('Text dict = ', text_dict)
         text_levels = self.make_text_dict(op_data, text_dict)
         # self.create_text_rows(text_levels)
         self.create_table_rows(text_levels)
@@ -606,8 +605,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         for iter_k, iter_v in self.d3.items():
             iter_v = round(float(iter_v), 1)
             self.d3[iter_k] = str(iter_v)
-
-        print('D3 = ', self.d3)
         self.param_tabs.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
@@ -721,8 +718,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         new_pdf.set_data()
 
     def show_results(self, res):
-        print('RES = ', res)
-
         res_list = []
         for k_res, v_res in res.items():
             if k_res == 'TRL':
@@ -753,10 +748,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 else:
                     show_res[d3_k] = d3_v
                 res_list.append(float(d3_v))
-            print(res_list)
             self.tprl_average = float(sum(res_list) / len(res_list))
             number = Decimal(f'{self.tprl_average}')
-            print(self.tprl_average)
             self.tprl_average = number.quantize(Decimal("1.0"), rounding='ROUND_DOWN')
             self.tprl_min = int(self.tprl_average)
             self.label_tprl_average_result.setText(str(self.tprl_average))
