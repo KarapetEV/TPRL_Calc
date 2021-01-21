@@ -89,10 +89,11 @@ class CreatePDF:
         self.pdf.ln()
         self.pdf.set_font("times", size=12)
         self.pdf.cell(200, 8, txt=self.sign, ln=1, align="L")
-        file_path = self.get_path()[0] + self.get_path()[1]
+        path_list = self.get_path()
+        file_path = path_list[0] + path_list[1]
         self.pdf.output(file_path, "F")
-        os.chdir(self.get_path()[0])
-        open_path = os.getcwd() + f"\\{self.get_path()[1]}"
+        os.chdir(path_list[0])
+        open_path = os.getcwd() + f"\\{path_list[1]}"
         os.startfile(open_path)
         self.remove_pkl()
 
