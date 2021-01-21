@@ -17,6 +17,7 @@ from create_pdf import CreatePDF
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
+
 class TreeWidget(QtWidgets.QTreeWidget):
     def __init__(self, parent=None):
         super(TreeWidget, self).__init__(parent)
@@ -163,54 +164,6 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
 
     def signal_handler(self, value):
         QtWidgets.QMessageBox.about(self, 'Ошибка', value)
-
-
-# class ProjectDialog(QtWidgets.QDialog):
-#     enter_data = pyqtSignal(str)
-#
-#     def __init__(self, parent=None):
-#
-#         super(ProjectDialog, self).__init__(parent)
-#         self.setWindowFlag(QtCore.Qt.FramelessWindowHint)
-#         self.setStyleSheet('''
-#                            border-radius: 5px;
-#                            border: 1px solid red;
-#                            ''')
-#         self.setWindowTitle('Ввод данных')
-#         x = self.parent().x() + int(self.parent().width() / 2) - 175
-#         y = self.parent().y() + int(self.parent().height() / 2) - 50
-#         self.setGeometry(x, y, 350, 100)
-#         self.line_project_num = QtWidgets.QLineEdit()
-#         self.line_project_num.setStyleSheet('''
-#                                             border: 1px solid red;
-#                                             font-size: 14px;
-#                                             ''')
-#         self.line_project_num.setMaximumWidth(300)
-#         self.line_project_num.setPlaceholderText('Введите номер проекта...')
-#         self.btn_ok = QtWidgets.QPushButton('OK')
-#         self.btn_cancel = QtWidgets.QPushButton('Отмена')
-#         self.hbox = QtWidgets.QHBoxLayout()
-#         self.hbox.addWidget(self.btn_ok)
-#         self.hbox.addWidget(self.btn_cancel)
-#         self.form = QtWidgets.QFormLayout()
-#         self.form.setSpacing(20)
-#         self.form.addRow("&Номер проекта:", self.line_project_num)
-#         self.form.addRow(self.hbox)
-#         self.form.labelForField(self.line_project_num).setStyleSheet('''
-#                                                                      border: none;
-#                                                                      font-size: 14px;
-#                                                                      font-weight: bold;
-#                                                                      ''')
-#         self.setLayout(self.form)
-#         self.btn_ok.clicked.connect(self.send_data)
-#         self.btn_cancel.clicked.connect(self.close)
-#
-#     def send_data(self):
-#         if not self.line_project_num.text():
-#             pass
-#         else:
-#             self.enter_data.emit(self.line_project_num.text())
-#             self.close()
 
 
 class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
@@ -360,7 +313,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
     def set_param_check(self, params, bool):
         for el in self.group_params.children():
-            for param in self.params:
+            for param in params:
                 if param.lower() in el.objectName().title().lower():
                     el.setChecked(bool)
 
@@ -426,12 +379,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.params.append('ORL')
         if self.check_crl.isChecked():
             self.params.append('CRL')
-        # if self.radio_hard.isChecked():
-        #     self.rad.append('H')
-        # if self.radio_soft.isChecked():
-        #     self.rad.append('S')
-        # if self.radio_both.isChecked():
-        #     self.rad.append('B')
 
     def create_rows(self):
         QToolTip.setFont(QtGui.QFont('Calibri', 9))
@@ -490,21 +437,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     self.item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
             self.save_data = self.save_data.append(self.data)
         self.param_tabs.setCurrentIndex(0)
-
-    # def make_params_dict(self, df, x, params):
-    #     dict_params = {}
-    #     for row in range(df['Level'].shape[0]):
-    #         if df['Level'][row] == x:
-    #             for p in params:
-    #                 if df['Parameter'][row] == p:
-    #                     if df['Parameter'][row] not in dict_params:
-    #                         dict_params[df['Parameter'][row]] = [df['Pars_Name'][row], [df['Task'][row],
-    #                                                                                     df['Task_Comments'][row],
-    #                                                                                     df['State'][row]]]
-    #                     else:
-    #                         dict_params[df['Parameter'][row]].append(
-    #                             [df['Task'][row], df['Task_Comments'][row], df['State'][row]])
-    #     return dict_params
 
     def make_level_dict(self, df):
         dict_levels = {}
