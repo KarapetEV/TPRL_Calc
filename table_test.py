@@ -2,7 +2,7 @@
 
 #  Copyright 2020 Aleksey Karapyshev, Evgeniy Karapyshev ©
 # E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
-
+from decimal import Decimal
 import sys, os, datetime
 import login, register, check_db
 import table_test_gui
@@ -16,6 +16,7 @@ from splash import Splash
 from create_pdf import CreatePDF
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
+
 
 class TreeWidget(QtWidgets.QTreeWidget):
     def __init__(self, parent=None):
@@ -80,7 +81,6 @@ class HelpDialog(QtWidgets.QDialog):
         self.help_text.setReadOnly(True)
         self.help_text.setWordWrapMode(QtGui.QTextOption.WordWrap)
         self.btn_ok = QtWidgets.QPushButton(self)
-        # self.btn_ok.setStyleSheet(open(style).read())
         self.btn_ok.setGeometry(150, 205, 100, 30)
         self.btn_ok.setText("OK")
         self.btn_ok.clicked.connect(self.close)
@@ -184,7 +184,6 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.rad = []
         self.tprl_min = 0
         self.project_state = ''
-        self.param_results = {}
         self.label_user_name.setText(user)
         self.label_user_name1.setText(user)
         self.label_user_name2.setText(user)
@@ -241,12 +240,12 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
 
     def change_user(self):
         self.switch_login.emit()
-        self.expert_name = ''
-        self.label_user_name.setText("")
-        self.label_user_name1.setText("")
-        self.label_user_name2.setText("")
-        self.projects_table.clear()
-        self.projects_table2.clear()
+        # self.expert_name = ''
+        # self.label_user_name.setText("")
+        # self.label_user_name1.setText("")
+        # self.label_user_name2.setText("")
+        # self.projects_table.clear()
+        # self.projects_table2.clear()
 
     def load_project_data(self):
         self.set_param_check(self.parameters, False)
@@ -263,6 +262,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         date = table.item(row, 6).text()
         data.append(date)
         value = check_db.get_project(data)
+        self.newproject_data = (value[3:])
         self.project_state = value[0]
         self.path = value[1]
         self.params = value[2].split(' ')
@@ -312,7 +312,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
 
     def set_param_check(self, params, bool):
         for el in self.group_params.children():
-            for param in self.params:
+            for param in params:
                 if param.lower() in el.objectName().title().lower():
                     el.setChecked(bool)
 
@@ -357,17 +357,28 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
             self.param_tabs.setCurrentIndex(0)
 
     def set_params(self):
-        self.reset_params()
-        self.get_params()
-        if len(self.params) == 0:
-            QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
+        text = 'изменить параметры (текущие отметки будут сброшены)'
+        if self.project_state in ['черновик', 'итог']:
+            if self.confirm_msg(text):
+                self.reset_params()
+                self.get_params()
+                if len(self.params) == 0:
+                    QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
+                else:
+                    self.create_rows()
+                    self.btn_calculate.setEnabled(True)
+                    self.btn_reset_tasks.setEnabled(True)
         else:
-            self.create_rows()
-            self.btn_calculate.setEnabled(True)
-            self.btn_reset_tasks.setEnabled(True)
+            self.reset_params()
+            self.get_params()
+            if len(self.params) == 0:
+                QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
+            else:
+                self.create_rows()
+                self.btn_calculate.setEnabled(True)
+                self.btn_reset_tasks.setEnabled(True)
 
     def get_params(self):
-
         if self.check_trl.isChecked():
             self.params.append('TRL')
         if self.check_mrl.isChecked():
@@ -383,10 +394,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         QToolTip.setFont(QtGui.QFont('Calibri', 9))
 
         for param in self.params:
-            if self.project_state in ['черновик', 'итог']:
-                self.data = pd.read_excel(self.path, sheet_name=param)
-            else:
-                self.data = pd.read_excel('Param_Tasks.xlsx', sheet_name=param)
+            self.data = pd.read_excel(self.path, sheet_name=param)
             self.data['Parameter'] = param
             val = self.make_level_dict(self.data)
 
@@ -396,24 +404,33 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
             self.param_tabs.setTabEnabled(self.params.index(param), True)
 
             for key, value in val.items():
-                textEdit_0 = AdjusttableTextEdit()  # key[1][1] - комментарий к key[1][0]
-                textEdit_0.setText(value[0])
-                textEdit_0.setReadOnly(True)
+                # textEdit_0 = AdjusttableTextEdit()  # key[1][1] - комментарий к key[1][0]
+                # textEdit_0.setText(value[0])
+                # textEdit_0.setReadOnly(True)
                 font_0 = QtGui.QFont()
                 font_0.setBold(True)
-                self.item_0 = QtWidgets.QTreeWidgetItem(self.tw, [f'Уровень {key}', ""])
-                self.tw.setItemWidget(self.item_0, 1, textEdit_0)
-                textEdit_0.td_size_sig.connect(lambda size: self.item_0.setSizeHint(1, size))
+                self.item_0 = QtWidgets.QTreeWidgetItem(self.tw)
                 self.item_0.setFont(0, font_0)
+                self.item_0.setBackground(0,QtGui.QColor("#dcdcdc"))
+                self.item_0.setText(0, f'Уровень {key}')
+                self.item_0.setBackground(1, QtGui.QColor("#dcdcdc"))
+                text = self.word_wrap(value[0], 95)
+                self.item_0.setText(1, text)
+
+                # self.tw.setItemWidget(self.item_0, 1, textEdit_0)
+                # x = '<nobr>' + key[1][1][:80] + '</nobr>' + key[1][1][80:]
+                #
+                # item_0.setToolTip(1, x)
+                # textEdit_0.td_size_sig.connect(lambda size: self.item_0.setSizeHint(1, size))
                 self.tw.expandAll()
 
                 for v in value[1:]:
                     self.combo_task = QtWidgets.QComboBox()
                     self.combo_task.addItems(['Да', 'Нет', 'Не применимо'])
                     self.combo_task.setFixedSize(110, 20)
-                    textEdit_1 = AdjusttableTextEdit()
-                    textEdit_1.setText(v[0])
-                    textEdit_1.setReadOnly(True)
+                    # textEdit_1 = AdjusttableTextEdit()
+                    # textEdit_1.setText(v[0])
+                    # textEdit_1.setReadOnly(True)
                     self.item_1 = QtWidgets.QTreeWidgetItem(self.item_0, ["", ""])
                     if v[2] == 0:
                         self.combo_task.setCurrentText('Нет')
@@ -423,19 +440,35 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                         self.combo_task.setCurrentText('Не применимо')
 
                     self.tw.setItemWidget(self.item_1, 0, self.combo_task)
-                    self.tw.setItemWidget(self.item_1, 1, textEdit_1)
-                    textEdit_1.td_size_sig.connect(lambda size: self.item_1.setSizeHint(1, size))
+                    # self.tw.setItemWidget(self.item_1, 1, textEdit_1)
+                    # textEdit_1.td_size_sig.connect(lambda size: self.item_1.setSizeHint(1, size))
                     text_style = '''background-color: #fce6e6;
                                     border: 0;
                                     font-size: 13px;
                                     color: #000;
                                     '''
-                    textEdit_0.setStyleSheet(text_style)
-                    textEdit_1.setStyleSheet(text_style)
-
+                    # textEdit_0.setStyleSheet(text_style)
+                    # textEdit_1.setStyleSheet(text_style)
+                    text = self.word_wrap(v[0], 95)
+                    self.item_1.setText(1, text)
                     self.item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
             self.save_data = self.save_data.append(self.data)
         self.param_tabs.setCurrentIndex(0)
+
+    def word_wrap(self, line, x):
+        start = 0
+        l1 = []
+        new_line = ''
+        if len(line) > x:
+            while len(line) > (start + x):
+                index = line.rfind(' ', start, start + x)
+                l1.append(line[start:index].strip())
+                start = index
+            l1.append(line[start:].strip())
+        else:
+            l1.append(line)
+        new_line = '\n'.join(l1)
+        return new_line
 
     def make_level_dict(self, df):
         dict_levels = {}
@@ -500,13 +533,16 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
 
     def make_text(self):
         op_data = pd.read_excel('Levels.xlsx')
+        # text_dict = {'TPRL': str(self.ugtSlider.value())}
         text_dict = {'TPRL': str(self.tprl_min)}
         text_dict.update(self.d3)
         text_levels = self.make_text_dict(op_data, text_dict)
+        # self.create_text_rows(text_levels)
         self.create_table_rows(text_levels)
 
     def calculate(self):
-
+        # self.save_data = self.data.copy()
+        # self.save_data = self.save_data.loc[self.save_data['Parameter'].isin(self.params)]
         self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
         self.label_expert_name.setText(self.expert_name)
@@ -565,7 +601,6 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                             new_list.append(0)
                     first_list.append(new_list)
                 d2[key] = first_list
-            self.param_results = d2
         self.save_data['State'] = new_state
         for new_key, new_values in d2.items():
             l_n = []
@@ -578,32 +613,23 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
             summary = 0
             for d2_value in range(len(d2_values)):
                 if d2_values[d2_value] == 1:
-                    summary += 1
+                    summary = d2_value + 1
                 elif 0 < d2_values[d2_value] < 1:
-                    summary += d2_values[d2_value]
-                    break
-                else:
-                    break
+                    if summary == d2_value:
+                        summary += d2_values[d2_value]
             self.d3[d2_keys] = str(summary)
         for par in Window.parameters:
             if par not in self.d3.keys():
                 self.d3[par] = '0'
         for iter_k, iter_v in self.d3.items():
-            iter_v = float(iter_v)
-        if float(max(self.d3.values())) - float(min(self.d3.values())) > 2:
-            x = float(max(self.d3.values()))
-        else:
-            x = -1
-        for d3_k, d3_v in self.d3.items():
-            if float(d3_v) == x:
-                self.d3[d3_k] = str(float(d3_v) - 1)
-            else:
-                self.d3[d3_k] = d3_v
+            iter_v = round(float(iter_v), 1)
+            self.d3[iter_k] = str(iter_v)
         self.param_tabs.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
         self.chart = Chart(self.d3, self.lay)
         self.make_text()
+
 
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
@@ -692,23 +718,27 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.check_draft.setEnabled(False)
 
     def create_pdf(self):
-        results = [float(self.label_trl_result.text()),
+        self.chart.save_chart('', "chart_pdf")
+        res_list = [float(self.label_trl_result.text()),
                    float(self.label_mrl_result.text()),
                    float(self.label_erl_result.text()),
                    float(self.label_orl_result.text()),
                    float(self.label_crl_result.text())]
-        for el in results:
-            if el == 0:
-                results.remove(el)
+        results = []
+        for i in range(len(self.parameters)):
+            for param in self.params:
+                if self.parameters[i] == param:
+                    results.append(res_list[i])
         date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         data = []
         for param in self.params:
             new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
             new_save_data.drop(['Parameter'], axis='columns', inplace=True)
             data.append([param, new_save_data])
-        self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results], data)
+        self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]], data)
         new_pdf = CreatePDF(self.pdf_data, self.d1)
         new_pdf.set_data()
+        os.remove(os.getcwd() + "\\chart_pdf.png")
 
     def show_results(self, res):
         res_list = []
@@ -723,16 +753,28 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                 self.label_orl_result.setText(v_res)
             elif k_res == 'CRL':
                 self.label_crl_result.setText(v_res)
-            res_list.append(float(v_res))
+        show_res = res.copy()
         if len(self.params) < 5:
             self.tprl_average = '--'
             self.tprl_min = '--'
             self.label_tprl_average_result.setText(self.tprl_average)
             self.label_tprl_min_result.setText(self.tprl_min)
         else:
+            if float(max(show_res.values())) - float(min(show_res.values())) > 2:
+                x = float(max(show_res.values()))
+            else:
+                x = -1
+            for d3_k, d3_v in show_res.items():
+                if float(d3_v) == x:
+                    d3_v = round(float(d3_v) - 1, 1)
+                    show_res[d3_k] = str(d3_v)
+                else:
+                    show_res[d3_k] = d3_v
+                res_list.append(float(d3_v))
             self.tprl_average = float(sum(res_list) / len(res_list))
+            number = Decimal(f'{self.tprl_average}')
+            self.tprl_average = number.quantize(Decimal("1.0"), rounding='ROUND_DOWN')
             self.tprl_min = int(self.tprl_average)
-
             self.label_tprl_average_result.setText(str(self.tprl_average))
             self.label_tprl_min_result.setText(str(self.tprl_min))
 
@@ -740,18 +782,18 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
         self.help_dialog = HelpDialog(self)
         self.help_dialog.show()
 
-    @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
-    def onItemClicked(self, item):
-        if item.childCount() > 0:
-            if item.isExpanded():
-                item.setExpanded(False)
-            else:
-                item.setExpanded(True)
-        else:
-            if item.checkState(1) == QtCore.Qt.Unchecked:
-                item.setCheckState(1, QtCore.Qt.Checked)
-            else:
-                item.setCheckState(1, QtCore.Qt.Unchecked)
+    # @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
+    # def onItemClicked(self, item):
+    #     if item.childCount() > 0:
+    #         if item.isExpanded():
+    #             item.setExpanded(False)
+    #         else:
+    #             item.setExpanded(True)
+    #     else:
+    #         if item.checkState(1) == QtCore.Qt.Unchecked:
+    #             item.setCheckState(1, QtCore.Qt.Checked)
+    #         else:
+    #             item.setCheckState(1, QtCore.Qt.Unchecked)
 
     def closeEvent(self, event):
         text = "закрыть программу"

@@ -509,12 +509,12 @@ class Ui_AppWindow(object):
         self.table_tprl_results.verticalHeader().setVisible(False)
         #-------------------------Draft_CheckBox-------------------------
         self.check_draft = QtWidgets.QCheckBox(self.frame_tprl_results)
-        self.check_draft.setGeometry(QtCore.QRect(385, 310, 180, 30))
+        self.check_draft.setGeometry(QtCore.QRect(335, 310, 180, 30))
         self.check_draft.setObjectName("check_draft")
         self.check_draft.setChecked(False)
         #----------------------Save_results Button-----------------------
         self.btn_save_results = QtWidgets.QPushButton(self.frame_tprl_results)
-        self.btn_save_results.setGeometry(QtCore.QRect(200, 310, 180, 30))
+        self.btn_save_results.setGeometry(QtCore.QRect(150, 310, 180, 30))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(14)
@@ -522,7 +522,7 @@ class Ui_AppWindow(object):
         self.btn_save_results.setObjectName("btn_save_results")
 
         self.btn_pdf = QtWidgets.QPushButton(self.frame_tprl_results)
-        self.btn_pdf.setGeometry(QtCore.QRect(450, 310, 180, 30))
+        self.btn_pdf.setGeometry(QtCore.QRect(480, 310, 180, 30))
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
         font.setPointSize(14)

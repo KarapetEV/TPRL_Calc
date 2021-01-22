@@ -823,4 +823,5 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     controller = Controller()  # Создаем экземпляр класса
     controller.show_splash()
+    app.processEvents()
     sys.exit(app.exec_())
