@@ -37,13 +37,13 @@ class CreatePDF:
 
         self.create_pdf(new_data)
 
-    def make_states_dict(self):
+    def make_states_dict(self, count):
         d2 = {}
         state = {1: 'Да', 0: 'Нет', -1: 'Не применимо'}
         for k, v in self.param_results.items():
             index = self.res[k]
             l1 = []
-            if index > 1:
+            if index > 1 and count == 2:
                 for i in range(index - 2, index):
                     l2 = []
                     for el in v[i]:
@@ -149,7 +149,6 @@ class CreatePDF:
         return line
 
     def create_table(self, param, lvl):
-        param_states = self.make_states_dict()[param]
 
         self.pdf.ln()
         self.pdf.set_font("times", 'U', size=12)
@@ -157,12 +156,12 @@ class CreatePDF:
         self.pdf.ln()
 
         count = 0
-        if lvl > 1:
+        if lvl > 1 and float(lvl) != self.param_float[param]:
             count = 2
             lvl -= 1
         else:
             count = 1
-
+        param_states = self.make_states_dict(count)[param]
         if lvl != 0:
             self.pdf.set_font("timesbd", size=10)
             self.pdf.cell(20, 5, 'Уровень', 1, 0, align="C")
@@ -235,7 +234,7 @@ class CreatePDF:
                 res = line[start:index]
                 l1.append(res.strip())
                 start = index
-            l1.append(line[start:])
+            l1.append(line[start:].strip())
         else:
             l1.append(line)
         return l1
