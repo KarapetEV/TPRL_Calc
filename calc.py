@@ -295,26 +295,29 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.create_rows()
 
     def remove_project(self):
-        text = "удалить выбранный проект"
-        if self.confirm_msg(text):
-            data = [self.expert_name]
-            table = self.projects_table
-            row = table.currentRow()
-            num = table.item(row, 1).text()
-            data.append(num)
-            date = table.item(row, 6).text()
-            data.append(date)
-            file_path = check_db.remove_project(data)
-            index = file_path.rfind('/')
-            line = file_path.replace('/', '\\')
-            if os.path.isfile(file_path):
-                os.remove(file_path)
-            dir_path = f'\\{line[:index]}'
-            dir = os.getcwd() + dir_path
-            files = os.listdir(dir)
-            if len(files) == 0:
-                os.rmdir(dir)
-        self.show_user_projects(self.tabWidget.currentIndex())
+        table = self.projects_table
+        if len(self.projects_table.selectedItems()) == 0:
+            QtWidgets.QMessageBox.about(self, "Внимание!", "Не выбран проект для удаления!")
+        else:
+            text = "удалить выбранный проект"
+            if self.confirm_msg(text):
+                data = [self.expert_name]
+                row = table.currentRow()
+                num = table.item(row, 1).text()
+                data.append(num)
+                date = table.item(row, 6).text()
+                data.append(date)
+                file_path = check_db.remove_project(data)
+                index = file_path.rfind('/')
+                line = file_path.replace('/', '\\')
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                dir_path = f'\\{line[:index]}'
+                dir = os.getcwd() + dir_path
+                files = os.listdir(dir)
+                if len(files) == 0:
+                    os.rmdir(dir)
+            self.show_user_projects(self.tabWidget.currentIndex())
 
     def create_dialog(self):
         if self.expert_name == '':
