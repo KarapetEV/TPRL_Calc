@@ -28,29 +28,29 @@ class TreeWidget(QtWidgets.QTreeWidget):
         self.headerItem().setText(1, 'Задачи')
 
 
-class AdjusttableTextEdit(QtWidgets.QTextEdit):
-    td_size_sig = pyqtSignal(QSize)
-
-    def __init__(self, parent=None):
-        super(AdjusttableTextEdit, self).__init__(parent)
-
-        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-        self.textChanged.connect(self.resizeTextEdit)
-        self.document().documentLayout().documentSizeChanged.connect(self.resizeTextEdit)
-
-    def resizeTextEdit(self):
-        docheight = int(self.document().size().height())
-        margin = int(self.document().documentMargin())
-        self.setMinimumHeight(docheight + margin)
-        self.setMaximumHeight(docheight + margin)
-
-        return
-
-    def resizeEvent(self, e):
-        super(AdjusttableTextEdit, self).resizeEvent(e)
-        self.td_size_sig.emit(QSize(self.sizeHint().width(), self.maximumHeight()))
-        return
+# class AdjusttableTextEdit(QtWidgets.QTextEdit):
+#     td_size_sig = pyqtSignal(QSize)
+#
+#     def __init__(self, parent=None):
+#         super(AdjusttableTextEdit, self).__init__(parent)
+#
+#         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+#         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+#         self.textChanged.connect(self.resizeTextEdit)
+#         self.document().documentLayout().documentSizeChanged.connect(self.resizeTextEdit)
+#
+#     def resizeTextEdit(self):
+#         docheight = int(self.document().size().height())
+#         margin = int(self.document().documentMargin())
+#         self.setMinimumHeight(docheight + margin)
+#         self.setMaximumHeight(docheight + margin)
+#
+#         return
+#
+#     def resizeEvent(self, e):
+#         super(AdjusttableTextEdit, self).resizeEvent(e)
+#         self.td_size_sig.emit(QSize(self.sizeHint().width(), self.maximumHeight()))
+#         return
 
 
 class HelpDialog(QtWidgets.QDialog):
@@ -405,27 +405,34 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.param_tabs.setTabEnabled(self.params.index(param), True)
 
             for key, value in val.items():
-                textEdit_0 = AdjusttableTextEdit()  # key[1][1] - комментарий к key[1][0]
-                textEdit_0.setText(value[0])
-                textEdit_0.setReadOnly(True)
+                # textEdit_0 = AdjusttableTextEdit()  # key[1][1] - комментарий к key[1][0]
+                # textEdit_0.setText(value[0])
+                # textEdit_0.setReadOnly(True)
                 font_0 = QtGui.QFont()
                 font_0.setBold(True)
-                self.item_0 = QtWidgets.QTreeWidgetItem(self.tw, [f'Уровень {key}', ""])
-                self.tw.setItemWidget(self.item_0, 1, textEdit_0)
+                # self.item_0 = QtWidgets.QTreeWidgetItem(self.tw, [f'Уровень {key}', ""])
+                # self.tw.setItemWidget(self.item_0, 1, textEdit_0)
                 # x = '<nobr>' + key[1][1][:80] + '</nobr>' + key[1][1][80:]
                 #
                 # item_0.setToolTip(1, x)
-                textEdit_0.td_size_sig.connect(lambda size: self.item_0.setSizeHint(1, size))
+                # textEdit_0.td_size_sig.connect(lambda size: self.item_0.setSizeHint(1, size))
+                # self.item_0.setFont(0, font_0)
+                # self.tw.expandAll()
+                self.item_0 = QtWidgets.QTreeWidgetItem(self.tw)
                 self.item_0.setFont(0, font_0)
-                self.tw.expandAll()
+                self.item_0.setBackground(0,QtGui.QColor("#dcdcdc"))
+                self.item_0.setText(0, f'Уровень {key}')
+                self.item_0.setBackground(1, QtGui.QColor("#dcdcdc"))
+                text = self.word_wrap(value[0], 95)
+                self.item_0.setText(1, text)
 
                 for v in value[1:]:
                     self.combo_task = QtWidgets.QComboBox()
                     self.combo_task.addItems(['Да', 'Нет', 'Не применимо'])
                     self.combo_task.setFixedSize(110, 20)
-                    textEdit_1 = AdjusttableTextEdit()
-                    textEdit_1.setText(v[0])
-                    textEdit_1.setReadOnly(True)
+                    # textEdit_1 = AdjusttableTextEdit()
+                    # textEdit_1.setText(v[0])
+                    # textEdit_1.setReadOnly(True)
                     self.item_1 = QtWidgets.QTreeWidgetItem(self.item_0, ["", ""])
                     if v[2] == 0:
                         self.combo_task.setCurrentText('Нет')
@@ -435,19 +442,36 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                         self.combo_task.setCurrentText('Не применимо')
 
                     self.tw.setItemWidget(self.item_1, 0, self.combo_task)
-                    self.tw.setItemWidget(self.item_1, 1, textEdit_1)
-                    textEdit_1.td_size_sig.connect(lambda size: self.item_1.setSizeHint(1, size))
-                    text_style = '''background-color: #fce6e6;
-                                    border: 0;
-                                    font-size: 13px;
-                                    color: #000;
-                                    '''
-                    textEdit_0.setStyleSheet(text_style)
-                    textEdit_1.setStyleSheet(text_style)
-
+                    # self.tw.setItemWidget(self.item_1, 1, textEdit_1)
+                    # textEdit_1.td_size_sig.connect(lambda size: self.item_1.setSizeHint(1, size))
+                    # text_style = '''background-color: #fce6e6;
+                    #                 border: 0;
+                    #                 font-size: 13px;
+                    #                 color: #000;
+                    #                 '''
+                    # textEdit_0.setStyleSheet(text_style)
+                    # textEdit_1.setStyleSheet(text_style)
+                    text = self.word_wrap(v[0], 95)
+                    self.item_1.setText(1, text)
                     self.item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
+                    self.item_1.setBackground(1, QtGui.QColor('#f5f5f5'))
             self.save_data = self.save_data.append(self.data)
         self.param_tabs.setCurrentIndex(0)
+
+    def word_wrap(self, line, x):
+        start = 0
+        l1 = []
+        new_line = ''
+        if len(line) > x:
+            while len(line) > (start + x):
+                index = line.rfind(' ', start, start + x)
+                l1.append(line[start:index].strip())
+                start = index
+            l1.append(line[start:].strip())
+        else:
+            l1.append(line)
+        new_line = '\n'.join(l1)
+        return new_line
 
     def make_level_dict(self, df):
         dict_levels = {}
