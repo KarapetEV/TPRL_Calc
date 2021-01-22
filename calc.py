@@ -310,13 +310,13 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 file_path = check_db.remove_project(data)
                 index = file_path.rfind('/')
                 line = file_path.replace('/', '\\')
-                if os.path.isfile(file_path):
-                    os.remove(file_path)
                 dir_path = f'\\{line[:index]}'
                 dir = os.getcwd() + dir_path
-                files = os.listdir(dir)
-                if len(files) == 0:
+                try:
+                    os.remove(file_path)
                     os.rmdir(dir)
+                except:
+                    pass
             self.show_user_projects(self.tabWidget.currentIndex())
 
     def create_dialog(self):
@@ -767,7 +767,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]], data)
         new_pdf = CreatePDF(self.pdf_data, self.d1)
         new_pdf.set_data()
-        os.remove(os.getcwd() + "\\chart_pdf.png")
+        try:
+            os.remove(os.getcwd() + "\\chart_pdf.png")
+        except:
+            pass
 
     def show_results(self, res):
         res_list = []
