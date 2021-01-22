@@ -200,6 +200,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.btn_change_user1.clicked.connect(self.change_user)
         self.btn_change_user2.clicked.connect(self.change_user)
         self.btn_load_project.clicked.connect(self.load_project_data)
+        self.btn_remove_project.clicked.connect(self.remove_project)
         self.btn_load_project2.clicked.connect(self.load_project_data)
         self.btn_new_project.clicked.connect(self.create_dialog)
         self.tabWidget.currentChanged.connect(self.show_user_projects)
@@ -248,6 +249,22 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         # self.projects_table.clear()
         # self.projects_table2.clear()
 
+    def start_project(self, num):
+        self.project_num = num
+        self.set_param_check(self.parameters, False)
+        self.reset_params()
+        self.project_state = ''
+        temp = []
+        for item in self.tab_new_project.children():
+            if isinstance(item, QtWidgets.QLineEdit):
+                temp.append(item.text())
+                item.setText("")
+        self.newproject_data = tuple(temp)
+        self.tabWidget.setTabEnabled(3, True)
+        self.tabWidget.setCurrentIndex(3)
+        self.num_calcTab.setText(self.project_num)
+        self.user_calcTab.setText(self.expert_name)
+
     def load_project_data(self):
         self.set_param_check(self.parameters, False)
         self.reset_params()
@@ -277,21 +294,27 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.set_param_check(self.params, True)
         self.create_rows()
 
-    def start_project(self, num):
-        self.project_num = num
-        self.set_param_check(self.parameters, False)
-        self.reset_params()
-        self.project_state = ''
-        temp = []
-        for item in self.tab_new_project.children():
-            if isinstance(item, QtWidgets.QLineEdit):
-                temp.append(item.text())
-                item.setText("")
-        self.newproject_data = tuple(temp)
-        self.tabWidget.setTabEnabled(3, True)
-        self.tabWidget.setCurrentIndex(3)
-        self.num_calcTab.setText(self.project_num)
-        self.user_calcTab.setText(self.expert_name)
+    def remove_project(self):
+        text = "удалить выбранный проект"
+        if self.confirm_msg(text):
+            data = [self.expert_name]
+            table = self.projects_table
+            row = table.currentRow()
+            num = table.item(row, 1).text()
+            data.append(num)
+            date = table.item(row, 6).text()
+            data.append(date)
+            file_path = check_db.remove_project(data)
+            index = file_path.rfind('/')
+            line = file_path.replace('/', '\\')
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+            dir_path = f'\\{line[:index]}'
+            dir = os.getcwd() + dir_path
+            files = os.listdir(dir)
+            if len(files) == 0:
+                os.rmdir(dir)
+        self.show_user_projects(self.tabWidget.currentIndex())
 
     def create_dialog(self):
         if self.expert_name == '':

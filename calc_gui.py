@@ -146,8 +146,12 @@ class Ui_AppWindow(object):
         self.projects_table.setHorizontalHeaderItem(6, item)
         # Кнопка загрузки черновика
         self.btn_load_project = QtWidgets.QPushButton(self.frame_user_tab)
-        self.btn_load_project.setGeometry(QtCore.QRect(335, 535, 150, 30))
+        self.btn_load_project.setGeometry(QtCore.QRect(130, 535, 150, 30))
         self.btn_load_project.setObjectName("btn_load_project")
+        # Кнопка удаления проекта из черновиков
+        self.btn_remove_project = QtWidgets.QPushButton(self.frame_user_tab)
+        self.btn_remove_project.setGeometry(QtCore.QRect(540, 535, 150, 30))
+        self.btn_remove_project.setObjectName("btn_remove_project")
         # -----------------------Вкладка проектов (завершенные)---------------------------
         self.tab_user2 = QtWidgets.QWidget()
         self.tab_user2.setObjectName("tab_user2")
@@ -544,8 +548,9 @@ class Ui_AppWindow(object):
         self.btn_change_user.setText(_translate("AppWindow", "Сменить пользователя"))
         self.btn_change_user1.setText(_translate("AppWindow", "Сменить пользователя"))
         self.btn_change_user2.setText(_translate("AppWindow", "Сменить пользователя"))
-        self.btn_load_project.setText(_translate("AppWindow", "Загрузить проект"))
         self.btn_new_project.setText(_translate("AppWindow", "Начать новый проект"))
+        self.btn_load_project.setText(_translate("AppWindow", "Загрузить проект"))
+        self.btn_remove_project.setText(_translate("AppWindow", "Удалить проект"))
         self.btn_load_project2.setText(_translate("AppWindow", "Загрузить проект"))
         # self.btn_new_project2.setText(_translate("AppWindow", "Новый проект"))
         self.group_params.setTitle(_translate("AppWindow", "Параметры оценки"))

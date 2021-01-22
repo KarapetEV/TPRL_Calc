@@ -110,6 +110,24 @@ def get_project(data):
 
     return value
 
+def remove_project(data):
+    con = sqlite3.connect("data/data.db")
+    cur = con.cursor()
+
+    user_id = cur.execute(f"SELECT user_id FROM users WHERE name='{data[0]}'").fetchone()[0]
+
+    cur.execute(f"SELECT path "
+                f"FROM projects "
+                f"WHERE user_id='{user_id}' AND project_num='{data[1]}' AND save_date='{data[2]}'")
+    value = cur.fetchone()[0]
+
+    cur.execute(f"DELETE FROM projects WHERE user_id='{user_id}' AND project_num='{data[1]}' AND save_date='{data[2]}'")
+    con.commit()
+
+    cur.close()
+    con.close()
+
+    return value
 
 def encrypt(line):
     result = ""
