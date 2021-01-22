@@ -57,34 +57,41 @@ class HelpDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
         super(HelpDialog, self).__init__(parent)
-        self.setWindowFlag(QtCore.Qt.WindowCloseButtonHint)
         self.setStyleSheet(open(style).read())
+        self.setWindowFlags(
+            QtCore.Qt.Window |
+            QtCore.Qt.WindowCloseButtonHint |
+            QtCore.Qt.WindowStaysOnTopHint
+        )
         self.setWindowTitle('Информация о программе')
         x = self.parent().x() + int(self.parent().width() / 2) - 200
         y = self.parent().y() + int(self.parent().height() / 2) - 125
-        self.setGeometry(x, y, 400, 250)
+        self.setGeometry(x, y, 470, 200)
         self.help_text = QtWidgets.QTextEdit(self)
-        self.help_text.setGeometry(10, 10, 380, 180)
-        self.help_text.setStyleSheet('background-color: #f3f3f3;')
+        self.help_text.setGeometry(10, 10, 450, 130)
+        self.help_text.setStyleSheet('font-size: 12px;')
         self.help_text.setAlignment(QtCore.Qt.AlignHCenter)
         self.help_text.insertPlainText('Инструкция!\n')
         self.help_text.setAlignment(QtCore.Qt.AlignLeft)
-        self.help_text.insertPlainText('Для расчета уровня зрелости инновационного проекта/технологии к '
-                                       'внедрению в ОАО «РЖД» необходимо выбрать параметры оценки, по которым производится '
-                                       'расчет и нажать кнопку «Установить параметры». В открывшемся поле необходимо '
-                                       'отметить те задачи, которые были выполнены в полном объеме на каждом уровне. '
-                                       'Результат рассчитывается нажатием кнопки «Расчитать» и представлен в отдельной '
-                                       'вкладке «Результаты». Уровень зрелости результата проекта считается достигнутым, '
-                                       'если все задачи, относящиеся к различным унифицированным параметрам, отмечены. '
-                                       'Общая оценка зрелости проекта принимается равным минимальному достигнутому уровню '
-                                       'зрелости по отдельному выбранному параметру.')
+        self.help_text.insertPlainText('Программа "TPRL Calculator" предназначена для расчета уровня готовности '
+                                       'проекта/технологии к внедрению в ОАО"РЖД."\n'
+                                       'Все расчеты и результаты формируются в соответствии с представленной методикой.')
         self.help_text.setReadOnly(True)
         self.help_text.setWordWrapMode(QtGui.QTextOption.WordWrap)
+        self.btn_methodology = QtWidgets.QPushButton(self.help_text)
+        self.btn_methodology.setGeometry(140, 100, 150, 20)
+        self.btn_methodology.setObjectName("btn_methodology")
+        self.btn_methodology.setText("Открыть методику")
         self.btn_ok = QtWidgets.QPushButton(self)
-        # self.btn_ok.setStyleSheet(open(style).read())
-        self.btn_ok.setGeometry(150, 205, 100, 30)
+        self.btn_ok.setGeometry(175, 155, 100, 30)
         self.btn_ok.setText("OK")
+
+        self.btn_methodology.clicked.connect(self.open_methodology)
         self.btn_ok.clicked.connect(self.close)
+
+    def open_methodology(self):
+        open_path = os.getcwd() + "\\data\\methodology.pdf"
+        os.startfile(open_path)
 
 
 class Login(QtWidgets.QDialog, login.Ui_Login):
@@ -344,7 +351,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     el.setChecked(bool)
 
     def reset_params(self):
-        self.path = 'Param_Tasks.xlsx'
+        self.path = 'data/Param_Tasks.xlsx'
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
         self.param_tabs.clear()
@@ -561,7 +568,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         return new_text_dict
 
     def make_text(self):
-        op_data = pd.read_excel('Levels.xlsx')
+        op_data = pd.read_excel('data/Levels.xlsx')
         # text_dict = {'TPRL': str(self.ugtSlider.value())}
         text_dict = {'TPRL': str(self.tprl_min)}
         text_dict.update(self.d3)
