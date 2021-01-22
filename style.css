@@ -50,16 +50,16 @@ QTreeWidget	{
 }
 
 QPushButton	{
-	background: #f24437;
-  	background-image: -webkit-linear-gradient(top, #f24437, #c62d1f);
-  	background-image: -moz-linear-gradient(top, #f24437, #c62d1f);
-  	background-image: -ms-linear-gradient(top, #f24437, #c62d1f);
-  	background-image: -o-linear-gradient(top, #f24437, #c62d1f);
-  	background-image: linear-gradient(to bottom, #f24437, #c62d1f);
+	background: #e31b1a;
+  	background-image: -webkit-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: -moz-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: -ms-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: -o-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: linear-gradient(to bottom, #e31b1a, #c62d1f);
 
   	border-radius: 5px;
   	font-family: Arial;
-  	color: #f8e7e9;
+  	color: #ffffff;
   	font-size: 14px;
   	font-weight: bold;
   	padding: 5px 10px 5px 10px;
@@ -70,6 +70,38 @@ QPushButton	{
 	font-size: 10px;
   	padding: 1px 2px 1px 2px;
 }
+
+#btn_methodology {
+	background: #e31b1a;
+  	background-image: -webkit-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: -moz-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: -ms-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: -o-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: linear-gradient(to bottom, #e31b1a, #c62d1f);
+
+	border-radius: 3px;
+	color: #f8e7e9;
+  	font-size: 12px;
+  	font-weight: bold;
+  	padding: 2px 5px 2px 5px;
+  	text-decoration: none;
+}
+
+#btn_methodology:pressed	{
+	background-color: #e31b1a;
+}
+
+#btn_methodology:hover	{
+	background: #c62d1f;
+  	background-image: -webkit-linear-gradient(top, #c62d1f, #f24437);
+  	background-image: -moz-linear-gradient(top, #c62d1f, #f24437);
+  	background-image: -ms-linear-gradient(top, #c62d1f, #f24437);
+  	background-image: -o-linear-gradient(top, #c62d1f, #f24437);
+  	background-image: linear-gradient(to bottom, #c62d1f, #f24437);
+  	color: #ffffff;
+  	text-decoration: none;
+}
+
 
 QPushButton:pressed	{
 	background-color: #e31b1a;
