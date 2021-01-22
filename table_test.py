@@ -422,7 +422,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
                 #
                 # item_0.setToolTip(1, x)
                 # textEdit_0.td_size_sig.connect(lambda size: self.item_0.setSizeHint(1, size))
-                self.tw.expandAll()
+                # self.tw.expandAll()
 
                 for v in value[1:]:
                     self.combo_task = QtWidgets.QComboBox()
