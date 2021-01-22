@@ -241,12 +241,12 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
     def change_user(self):
         self.switch_login.emit()
-        self.expert_name = ''
-        self.label_user_name.setText("")
-        self.label_user_name1.setText("")
-        self.label_user_name2.setText("")
-        self.projects_table.clear()
-        self.projects_table2.clear()
+        # self.expert_name = ''
+        # self.label_user_name.setText("")
+        # self.label_user_name1.setText("")
+        # self.label_user_name2.setText("")
+        # self.projects_table.clear()
+        # self.projects_table2.clear()
 
     def load_project_data(self):
         self.set_param_check(self.parameters, False)
