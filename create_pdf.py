@@ -170,7 +170,7 @@ class CreatePDF:
             self.pdf.ln()
             self.pdf.set_font("times", size=10)
 
-            df = pd.read_excel("Param_Tasks.xlsx", sheet_name=param)
+            df = pd.read_excel("data/Param_Tasks.xlsx", sheet_name=param)
             for i in range(count):
                 states = param_states[i]
 
