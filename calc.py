@@ -420,9 +420,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 # self.tw.expandAll()
                 self.item_0 = QtWidgets.QTreeWidgetItem(self.tw)
                 self.item_0.setFont(0, font_0)
-                self.item_0.setBackground(0,QtGui.QColor("#dcdcdc"))
+                self.item_0.setBackground(0,QtGui.QColor("#ebebeb"))
                 self.item_0.setText(0, f'Уровень {key}')
-                self.item_0.setBackground(1, QtGui.QColor("#dcdcdc"))
+                self.item_0.setBackground(1, QtGui.QColor("#ebebeb"))
                 text = self.word_wrap(value[0], 95)
                 self.item_0.setText(1, text)
 
@@ -453,8 +453,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     # textEdit_1.setStyleSheet(text_style)
                     text = self.word_wrap(v[0], 95)
                     self.item_1.setText(1, text)
-                    self.item_1.setBackground(0, QtGui.QColor('#f5f5f5'))
-                    self.item_1.setBackground(1, QtGui.QColor('#f5f5f5'))
+                    self.item_1.setBackground(0, QtGui.QColor('#fcfcfc'))
+                    self.item_1.setBackground(1, QtGui.QColor('#fcfcfc'))
             self.save_data = self.save_data.append(self.data)
         self.param_tabs.setCurrentIndex(0)
 
