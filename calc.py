@@ -532,17 +532,19 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
         for key, values in text_levels.items():
             if key == 'TPRL':
-                self.label_main_tprl.setText(f'{values}')
+                self.label_main_tprl.setText(self.word_wrap(values, 100))
 
         text_levels.pop('TPRL')
         for i, key in enumerate(text_levels.items()):
             label1 = QtWidgets.QLabel(key[0])
-            label1.setStyleSheet("border-bottom: 1px solid;")
-            label1.setMaximumHeight(50)
-            label2 = QtWidgets.QLabel(key[1])
-            label2.setStyleSheet("border-bottom: 1px solid;")
-            label2.setMaximumHeight(50)
-            label2.setWordWrap(True)
+            label1.setStyleSheet("border-bottom: 1px solid grey;")
+            # label1.setMaximumHeight(50)
+            label_text = self.word_wrap(key[1], 90)
+            label2 = QtWidgets.QLabel(label_text)
+            label2.setStyleSheet("border-bottom: 1px solid grey;")
+            # label2.setMaximumHeight(50)
+            # label2.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
+            # label2.setWordWrap(True)
             self.table_tprl_results.setCellWidget(i, 0, label1)
             self.table_tprl_results.setCellWidget(i, 1, label2)
             # self.table_tprl_results.setItem(i, 0, QtWidgets.QTableWidgetItem(key[0]))
@@ -555,6 +557,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.table_tprl_results.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.table_tprl_results.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.table_tprl_results.setEnabled(True)
+        self.table_tprl_results.setFrameStyle(QtWidgets.QFrame.NoFrame)
 
     def make_text_dict(self, op_data, diction):
         new_text_dict = {}
