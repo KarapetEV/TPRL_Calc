@@ -72,7 +72,7 @@ class Ui_Register(object):
         _translate = QtCore.QCoreApplication.translate
         Register.setWindowTitle(_translate("Register", "Регистрация пользователя"))
         self.label_register_title.setText(_translate("Register", "Регистрация пользователя"))
-        self.lineEdit_login_create.setPlaceholderText(_translate("Register", "Введите логин..."))
+        self.lineEdit_login_create.setPlaceholderText(_translate("Register", "Введите ФИО..."))
         self.lineEdit_password_create.setPlaceholderText(_translate("Register", "Введите пароль..."))
         self.lineEdit_password_confirm.setPlaceholderText(_translate("Register", "Подтвердите пароль..."))
         self.btn_register.setText(_translate("Register", "Зарегистрировать"))

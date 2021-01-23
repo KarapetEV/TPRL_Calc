@@ -425,7 +425,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.params.append('CRL')
 
     def create_rows(self):
-        QToolTip.setFont(QtGui.QFont('Calibri', 9))
+        QToolTip.setFont(QtGui.QFont('fonts/RussianRail/RussianRail_Regular.otf', 9))
 
         for param in self.params:
             self.data = pd.read_excel(self.path, sheet_name=param)
@@ -884,4 +884,8 @@ if __name__ == '__main__':
     controller = Controller()  # Создаем экземпляр класса
     controller.show_splash()
     app.processEvents()
+    id = QtGui.QFontDatabase.addApplicationFont("fonts/RussianRail/RussianRail_Regular.otf")
+    _fontstr = QtGui.QFontDatabase.applicationFontFamilies(id)[0]
+    _font = QtGui.QFont(_fontstr, 8)
+    app.setFont(_font)
     sys.exit(app.exec_())
