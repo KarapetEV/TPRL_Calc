@@ -1,33 +1,30 @@
 /* Обычный */
 @font-face {
-	font-family: 'RussianRail'; 
-	src: url(/fonts/RussianRail/RussianRail_Regular.otf); 
-}
- 
-/* Жирный */
-@font-face {
-	font-family: 'RussianRail bold'; 
-	src: url(/fonts/RussianRail/RussianRail_Bold.otf); 
+	font-family: "Russian Rail G Pro";
+	src: url("fonts/RussianRail/RussianRail G Regular.otf");
 }
 
 QSplashScreen {
-	font-family: RussianRail;
+	font-family: "Russian Rail G Pro";
 }
 
+AppWindow {
+	font-family: "Russian Rail G Pro";
+}
 
 QMainWindow	{
 	border-radius: 2px;
-	font-family: RussianRail;
+	font-family: "Russian Rail G Pro";
 }
 
 QWidget	{
 	background-color: #f3f3f3;
 	color: #e21a1a;
-	font-family: RussianRail;
+	font-family: "Russian Rail G Pro";
 }
 
 QTabWidget	{
-	font-family: RussianRail bold;
+	font-family: "Russian Rail G Pro";
 	font-weight: bold;
 	font-size: 14px;
 }
@@ -45,17 +42,17 @@ QTabWidget	{
 #labelCalc	{
 	background-color: #e21a1a;
 	color: #ffffff;
-	font-family: RussianRail;
+	font-family: "Russian Rail G Pro";
 }
 
 #label_project_num	{
 	text-decoration: underline;
-	font-family: RussianRail;
+	font-family: "Russian Rail G Pro";
 }
 
 #label_expert_name	{
 	text-decoration: underline;
-	font-family: RussianRail;
+	font-family: "Russian Rail G Pro";
 }
 
 QCheckBox	{
@@ -70,7 +67,7 @@ QTreeWidget	{
 	border: 1px solid grey;
 	border-radius: 4px;
 	font-size: 13px;
-	font-family: RussianRail;
+	font-family: "Russian Rail G Pro";
 	color: #000;
 }
 
@@ -85,14 +82,14 @@ QPushButton	{
   	border-radius: 5px;
   	color: #ffffff;
   	font-size: 14px;
-  	font-family: RussianRail bold;
+  	font-family: "Russian Rail G Pro";
   	font-weight: bold;
   	padding: 5px 10px 5px 10px;
   	text-decoration: none;
 }
 
 #btn_manual	{
-	font-family: RussianRail;
+	font-family: "Russian Rail G Pro";
 	font-size: 10px;
   	padding: 1px 2px 1px 2px;
 }
@@ -108,7 +105,7 @@ QPushButton	{
 	border-radius: 3px;
 	color: #f8e7e9;
   	font-size: 12px;
-  	font-family: RussianRail bold;
+  	font-family: "Russian Rail G Pro";
   	font-weight: bold;
   	padding: 2px 5px 2px 5px;
   	text-decoration: none;
@@ -146,12 +143,14 @@ QPushButton:hover	{
 }
 
 QLabel	{
-	font-family: RussianRail;
+	font-family: "Russian Rail G Pro";
 	padding: 0px 0px 0px 0px;
 }
 
 QHeaderView::section	{
-	font-family: RussianRail;
+	background-color: #82898E;
+	font-family: "Russian Rail G Pro";
 	font-size: 14px;
 	font-weight: bold;
+	color: #ffffff;
 }

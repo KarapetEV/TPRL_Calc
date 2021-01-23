@@ -229,8 +229,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
     def create_table(self, tab_widget, data):
         tab_widget.setSortingEnabled(False)
         tab_widget.setRowCount(len(data))
+        for i in range(len(data)):
+            tab_widget.setRowHeight(i, 20)
         for row, form in enumerate(data):
-            tab_widget.setRowHeight(0, 20)
             form = ((str(row + 1)),) + form
             for column, cell in enumerate(form):
                 if column == 0:
@@ -881,11 +882,13 @@ class Controller:
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+    # id = QtGui.QFontDatabase.addApplicationFont("fonts/RussianRail/RussianRail_Bold.otf")
+    # if id == -1:
+    #     print("Problem loading font")
+    # _fontstr = QtGui.QFontDatabase.applicationFontFamilies(id)[0]
+    # _font = QtGui.QFont(_fontstr, 8)
+    # app.setFont(_font)
     controller = Controller()  # Создаем экземпляр класса
     controller.show_splash()
     app.processEvents()
-    id = QtGui.QFontDatabase.addApplicationFont("fonts/RussianRail/RussianRail_Regular.otf")
-    _fontstr = QtGui.QFontDatabase.applicationFontFamilies(id)[0]
-    _font = QtGui.QFont(_fontstr, 8)
-    app.setFont(_font)
     sys.exit(app.exec_())
