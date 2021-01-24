@@ -6,11 +6,8 @@
 
 import os
 import numpy as np
-from PyQt5 import QtCore, QtWidgets, uic
-import matplotlib
+from PyQt5.QtCore import Qt
 import matplotlib.pyplot as plt
-from pyqtgraph import PlotWidget, plot
-import pyqtgraph as pg
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 
@@ -51,9 +48,7 @@ class Chart:
         plt.plot(theta, results)
         plt.fill(theta, results, 'b', alpha=0.1)
         plotWidget = FigureCanvas(self.figure)
-        self.layout.addWidget(plotWidget, QtCore.Qt.AlignVCenter)
+        self.layout.addWidget(plotWidget, Qt.AlignVCenter)
 
     def save_chart(self, dir, file_name):
-        # if not os.path.isdir("Charts"):
-        #     os.mkdir("Charts")
         self.figure.savefig(f".\{dir}\\{file_name}.png", dpi=300)

@@ -7,13 +7,13 @@ from decimal import Decimal
 import sys, os, datetime
 import login, register, check_db
 import calc_gui
-from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtWidgets import QToolTip
-from PyQt5.QtGui import QFontDatabase, QFont
 import numpy as np
 import pandas as pd
 from chart import Chart
-from PyQt5.QtCore import pyqtSignal, QSize
+from PyQt5.QtGui import QTextOption, QColor
+from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem, QTabWidget, QDialog, \
+    QTextEdit, QLabel, QPushButton, QMessageBox, QTableWidgetItem, QLineEdit, QComboBox, QFrame
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
 from create_pdf import CreatePDF
 
@@ -21,17 +21,17 @@ from create_pdf import CreatePDF
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
 
-class TreeWidget(QtWidgets.QTreeWidget):
+class TreeWidget(QTreeWidget):
     def __init__(self, parent=None):
         super(TreeWidget, self).__init__(parent)
 
-        self.setGeometry((QtCore.QRect(0, 0, 815, 380)))
+        self.setGeometry((QRect(0, 0, 815, 380)))
         self.setColumnWidth(0, 150)
         self.headerItem().setText(0, 'Параметр')
         self.headerItem().setText(1, 'Задачи')
         self.itemClicked.connect(self.onItemClicked)
 
-    @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
+    @pyqtSlot(QTreeWidgetItem)
     def onItemClicked(self, item):
         if item.isExpanded():
             item.setExpanded(False)
@@ -39,37 +39,37 @@ class TreeWidget(QtWidgets.QTreeWidget):
             item.setExpanded(True)
 
 
-class HelpDialog(QtWidgets.QDialog):
+class HelpDialog(QDialog):
 
     def __init__(self, parent=None):
         super(HelpDialog, self).__init__(parent)
         self.setStyleSheet(open(style).read())
         self.setWindowFlags(
-            QtCore.Qt.Window |
-            QtCore.Qt.WindowCloseButtonHint |
-            QtCore.Qt.WindowStaysOnTopHint
+            Qt.Window |
+            Qt.WindowCloseButtonHint |
+            Qt.WindowStaysOnTopHint
         )
         self.setWindowTitle('Информация о программе')
         x = self.parent().x() + int(self.parent().width() / 2) - 200
         y = self.parent().y() + int(self.parent().height() / 2) - 125
         self.setGeometry(x, y, 470, 200)
-        self.help_text = QtWidgets.QTextEdit(self)
+        self.help_text = QTextEdit(self)
         self.help_text.setGeometry(10, 10, 450, 130)
         # self.help_text.setFont(_font)
         self.help_text.setStyleSheet('font-size: 12px;')
-        self.help_text.setAlignment(QtCore.Qt.AlignHCenter)
+        self.help_text.setAlignment(Qt.AlignHCenter)
         self.help_text.insertPlainText('Инструкция!\n')
-        self.help_text.setAlignment(QtCore.Qt.AlignLeft)
+        self.help_text.setAlignment(Qt.AlignLeft)
         self.help_text.insertPlainText('Программа "TPRL Calculator" предназначена для расчета уровня готовности '
                                        'проекта/технологии к внедрению в ОАО"РЖД."\n'
                                        'Все расчеты и результаты формируются в соответствии с представленной методикой.')
         self.help_text.setReadOnly(True)
-        self.help_text.setWordWrapMode(QtGui.QTextOption.WordWrap)
-        self.btn_methodology = QtWidgets.QPushButton(self.help_text)
+        self.help_text.setWordWrapMode(QTextOption.WordWrap)
+        self.btn_methodology = QPushButton(self.help_text)
         self.btn_methodology.setGeometry(140, 100, 150, 20)
         self.btn_methodology.setObjectName("btn_methodology")
         self.btn_methodology.setText("Открыть методику")
-        self.btn_ok = QtWidgets.QPushButton(self)
+        self.btn_ok = QPushButton(self)
         self.btn_ok.setGeometry(175, 155, 100, 30)
         self.btn_ok.setText("OK")
 
@@ -81,7 +81,7 @@ class HelpDialog(QtWidgets.QDialog):
         os.startfile(open_path)
 
 
-class Login(QtWidgets.QDialog, login.Ui_Login):
+class Login(QDialog, login.Ui_Login):
     switch_register = pyqtSignal()
     switch_mainwindow = pyqtSignal(str)
 
@@ -98,13 +98,13 @@ class Login(QtWidgets.QDialog, login.Ui_Login):
     def choose_user(self):
         user = self.comboBox_users.currentText()
         if not user:
-            QtWidgets.QMessageBox.about(self, 'Ошибка', 'Пользователь не выбран!')
+            QMessageBox.about(self, 'Ошибка', 'Пользователь не выбран!')
         else:
             password = self.lineEdit_password.text()
             if check_db.login(user, password):
                 self.switch_mainwindow.emit(user)
             else:
-                QtWidgets.QMessageBox.about(self, 'Ошибка', 'Неверный пароль!')
+                QMessageBox.about(self, 'Ошибка', 'Неверный пароль!')
                 self.reset_passw()
 
     def register(self):
@@ -114,7 +114,7 @@ class Login(QtWidgets.QDialog, login.Ui_Login):
         self.lineEdit_password.setText("")
 
 
-class Register(QtWidgets.QDialog, register.Ui_Register):
+class Register(QDialog, register.Ui_Register):
     mysignal = pyqtSignal(str)
     switch_login = pyqtSignal()
 
@@ -132,7 +132,7 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
         if self.lineEdit_login_create.text():
             for ch in chars:
                 if ch in self.lineEdit_login_create.text():
-                    QtWidgets.QMessageBox.about(self, 'Ошибка', 'Имя не должно содержать символы :\/*?<>"| !')
+                    QMessageBox.about(self, 'Ошибка', 'Имя не должно содержать символы :\/*?<>"| !')
                     self.lineEdit_login_create.setText("")
                     self.lineEdit_password_create.setText("")
                     self.lineEdit_password_confirm.setText("")
@@ -144,11 +144,11 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
                 user.append(password)
                 check_db.register(user, self.mysignal)
             else:
-                QtWidgets.QMessageBox.about(self, 'Ошибка', 'Пароль не подтвержден!')
+                QMessageBox.about(self, 'Ошибка', 'Пароль не подтвержден!')
                 self.lineEdit_password_create.setText("")
                 self.lineEdit_password_confirm.setText("")
         else:
-            QtWidgets.QMessageBox.about(self, 'Ошибка', 'Не введен логин!')
+            QMessageBox.about(self, 'Ошибка', 'Не введен логин!')
             self.lineEdit_password_create.setText("")
             self.lineEdit_password_confirm.setText("")
         self.switch_login.emit()
@@ -157,16 +157,16 @@ class Register(QtWidgets.QDialog, register.Ui_Register):
         self.switch_login.emit()
 
     def signal_handler(self, value):
-        QtWidgets.QMessageBox.about(self, 'Ошибка', value)
+        QMessageBox.about(self, 'Ошибка', value)
 
 
-class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
+class Window(QWidget, calc_gui.Ui_AppWindow):
     switch_login = pyqtSignal()
 
     parameters = ['TRL', 'MRL', 'ERL', 'ORL', 'CRL']
 
     def __init__(self, user):
-        QtWidgets.QWidget.__init__(self)
+        QWidget.__init__(self)
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
 
@@ -202,7 +202,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
 
-    @QtCore.pyqtSlot(int)
+    @pyqtSlot(int)
     def show_user_projects(self, index):
         if index == 1:
             drafts = check_db.load_project(self.expert_name, 'черновик')
@@ -222,14 +222,14 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             form = ((str(row + 1)),) + form
             for column, cell in enumerate(form):
                 if column == 0:
-                    item = QtWidgets.QTableWidgetItem(str(row + 1))
-                    item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
+                    item = QTableWidgetItem(str(row + 1))
+                    item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
                     tab_widget.setColumnWidth(column, 50)
-                    item.setTextAlignment(QtCore.Qt.AlignCenter)
+                    item.setTextAlignment(Qt.AlignCenter)
                     tab_widget.setItem(row, column, item)
                 else:
-                    item = QtWidgets.QTableWidgetItem(str(cell))
-                    item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsDragEnabled | QtCore.Qt.ItemIsEnabled)
+                    item = QTableWidgetItem(str(cell))
+                    item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsEnabled)
                     tab_widget.setItem(row, column, item)
         tab_widget.resizeColumnsToContents()
         tab_widget.setColumnWidth(3, 200)
@@ -245,7 +245,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.project_state = ''
         temp = []
         for item in self.tab_new_project.children():
-            if isinstance(item, QtWidgets.QLineEdit):
+            if isinstance(item, QLineEdit):
                 temp.append(item.text())
                 item.setText("")
         self.newproject_data = tuple(temp)
@@ -286,7 +286,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
     def remove_project(self):
         table = self.projects_table
         if len(self.projects_table.selectedItems()) == 0:
-            QtWidgets.QMessageBox.about(self, "Внимание!", "Не выбран проект для удаления!")
+            QMessageBox.about(self, "Внимание!", "Не выбран проект для удаления!")
         else:
             text = "удалить выбранный проект"
             if self.confirm_msg(text):
@@ -310,7 +310,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
     def create_dialog(self):
         if self.expert_name == '':
-            QtWidgets.QMessageBox.about(self, "Внимание!", "Не выбран пользователь!")
+            QMessageBox.about(self, "Внимание!", "Не выбран пользователь!")
             self.switch_login.emit()
         else:
             self.check_enterdata()
@@ -318,10 +318,10 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
     def check_enterdata(self):
         full_info = True
         for item in self.tab_new_project.children():
-            if isinstance(item, QtWidgets.QLineEdit) and item.text() == '':
+            if isinstance(item, QLineEdit) and item.text() == '':
                 full_info = False
         if not full_info:
-            QtWidgets.QMessageBox.about(self, "Внимание!", "Не все поля заполнены!")
+            QMessageBox.about(self, "Внимание!", "Не все поля заполнены!")
         else:
             project_num = self.enter_project_num.text()
             self.start_project(project_num)
@@ -341,12 +341,12 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.rad = []
 
     def confirm_msg(self, text):
-        messageBox = QtWidgets.QMessageBox(self)
+        messageBox = QMessageBox(self)
         messageBox.setWindowTitle("Подтверждение")
-        messageBox.setIcon(QtWidgets.QMessageBox.Question)
+        messageBox.setIcon(QMessageBox.Question)
         messageBox.setText(f"Вы уверены, что хотите {text}?")
-        buttonYes = messageBox.addButton("Да", QtWidgets.QMessageBox.YesRole)
-        buttonNo = messageBox.addButton("Нет", QtWidgets.QMessageBox.NoRole)
+        buttonYes = messageBox.addButton("Да", QMessageBox.YesRole)
+        buttonNo = messageBox.addButton("Нет", QMessageBox.NoRole)
         messageBox.setDefaultButton(buttonYes)
         messageBox.exec_()
 
@@ -368,7 +368,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     for j in range(level.childCount()):
                         child = level.child(j)
                         el = tree.itemWidget(child, 0)
-                        if isinstance(el, QtWidgets.QComboBox):
+                        if isinstance(el, QComboBox):
                             el.setCurrentText('Нет')
             self.param_tabs.setCurrentIndex(0)
 
@@ -379,7 +379,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 self.reset_params()
                 self.get_params()
                 if len(self.params) == 0:
-                    QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
+                    QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
                 else:
                     self.create_rows()
                     self.btn_calculate.setEnabled(True)
@@ -388,7 +388,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.reset_params()
             self.get_params()
             if len(self.params) == 0:
-                QtWidgets.QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
+                QMessageBox.warning(self, 'Предупреждение', 'Не выбраны параметры оценки!')
             else:
                 self.create_rows()
                 self.btn_calculate.setEnabled(True)
@@ -421,20 +421,18 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             self.param_tabs.setTabEnabled(self.params.index(param), True)
 
             for key, value in val.items():
-                font_0 = QtGui.QFont()
-                font_0.setBold(True)
-                self.item_0 = QtWidgets.QTreeWidgetItem(self.tw)
-                self.item_0.setBackground(0,QtGui.QColor("#D3D3D3"))
+                self.item_0 = QTreeWidgetItem(self.tw)
+                self.item_0.setBackground(0,QColor("#D3D3D3"))
                 self.item_0.setText(0, f'Уровень {key}')
-                self.item_0.setBackground(1, QtGui.QColor("#D3D3D3"))
+                self.item_0.setBackground(1, QColor("#D3D3D3"))
                 text = self.word_wrap(value[0], 90)
                 self.item_0.setText(1, text)
 
                 for v in value[1:]:
-                    self.combo_task = QtWidgets.QComboBox()
+                    self.combo_task = QComboBox()
                     self.combo_task.addItems(['Да', 'Нет', 'Не применимо'])
                     self.combo_task.setFixedSize(110, 20)
-                    self.item_1 = QtWidgets.QTreeWidgetItem(self.item_0, ["", ""])
+                    self.item_1 = QTreeWidgetItem(self.item_0, ["", ""])
                     if v[2] == 0:
                         self.combo_task.setCurrentText('Нет')
                     elif v[2] == 1:
@@ -445,8 +443,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     self.tw.setItemWidget(self.item_1, 0, self.combo_task)
                     text = self.word_wrap(v[0], 90)
                     self.item_1.setText(1, text)
-                    self.item_1.setBackground(0, QtGui.QColor('#fcfcfc'))
-                    self.item_1.setBackground(1, QtGui.QColor('#fcfcfc'))
+                    self.item_1.setBackground(0, QColor('#fcfcfc'))
+                    self.item_1.setBackground(1, QColor('#fcfcfc'))
             self.save_data = self.save_data.append(self.data)
         self.param_tabs.setCurrentIndex(0)
 
@@ -493,19 +491,19 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
         text_levels.pop('TPRL')
         for i, key in enumerate(text_levels.items()):
-            label1 = QtWidgets.QLabel(key[0])
+            label1 = QLabel(key[0])
             label1.setStyleSheet("border-bottom: 1px solid grey;")
             label_text = self.word_wrap(key[1], 90)
-            label2 = QtWidgets.QLabel(label_text)
+            label2 = QLabel(label_text)
             label2.setStyleSheet("border-bottom: 1px solid grey;")
             self.table_tprl_results.setCellWidget(i, 0, label1)
             self.table_tprl_results.setCellWidget(i, 1, label2)
         self.table_tprl_results.setShowGrid(False)
         self.table_tprl_results.resizeRowsToContents()
-        self.table_tprl_results.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.table_tprl_results.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.table_tprl_results.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.table_tprl_results.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.table_tprl_results.setEnabled(True)
-        self.table_tprl_results.setFrameStyle(QtWidgets.QFrame.NoFrame)
+        self.table_tprl_results.setFrameStyle(QFrame.NoFrame)
 
     def make_text_dict(self, op_data, diction):
         new_text_dict = {}
@@ -551,7 +549,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 for kid in range(level.childCount()):
                     child = level.child(kid)
                     el = tree.itemWidget(child, 0)
-                    if isinstance(el, QtWidgets.QComboBox):
+                    if isinstance(el, QComboBox):
                         combo_text = el.currentText()
                         if combo_text == 'Да':
                             l1.append(1)
@@ -687,7 +685,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         data = self.newproject_data + self.saveproject_data
         check_db.save_project(self.expert_name, data)
 
-        QtWidgets.QMessageBox.about(self, 'Сохранение результатов', 'Результаты успешно сохранены')
+        QMessageBox.about(self, 'Сохранение результатов', 'Результаты успешно сохранены')
         self.btn_save_results.setEnabled(False)
         self.check_draft.setEnabled(False)
 
@@ -808,7 +806,7 @@ class Controller:
 
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     controller = Controller()  # Создаем экземпляр класса
     controller.show_splash()
     app.processEvents()
