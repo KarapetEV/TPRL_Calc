@@ -16,7 +16,6 @@ from chart import Chart
 from PyQt5.QtCore import pyqtSignal, QSize
 from splash import Splash
 from create_pdf import CreatePDF
-import font_resources_rc
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
@@ -72,7 +71,6 @@ class HelpDialog(QtWidgets.QDialog):
         self.setGeometry(x, y, 470, 200)
         self.help_text = QtWidgets.QTextEdit(self)
         self.help_text.setGeometry(10, 10, 450, 130)
-        # self.help_text.setFont(_font)
         self.help_text.setStyleSheet('font-size: 12px;')
         self.help_text.setAlignment(QtCore.Qt.AlignHCenter)
         self.help_text.insertPlainText('Инструкция!\n')
@@ -106,7 +104,6 @@ class Login(QtWidgets.QDialog, login.Ui_Login):
         super(Login, self).__init__()
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
-        # self.label_login_title.setFont(_font)
         self.comboBox_users.addItems(check_db.create_user_list())
         self.comboBox_users.setCurrentIndex(0)
         self.comboBox_users.currentIndexChanged.connect(self.reset_passw)
@@ -187,14 +184,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
-        # self.labelCalc.setFont(_font)
-
-        # fontId = QFontDatabase.addApplicationFont(":/fonts/RussianRail/RussianRail_Regular.otf")
-        # if fontId == 0:
-        #     fontName = QFontDatabase.applicationFontFamilies(fontId)[0]
-        #     self.font = QFont(fontName)
-        # else:
-        #     self.font = QFont()
 
         self.tabWidget.setTabEnabled(3, False)
         self.tabWidget.setTabEnabled(4, False)
@@ -448,7 +437,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             val = self.make_level_dict(self.data)
 
             self.tw = TreeWidget()
-            # self.param_tabs.setFont(_font)
             self.param_tabs.setStyleSheet('''font-weight: 12px bold;''')
             self.param_tabs.addTab(self.tw, param)
             self.param_tabs.setCurrentIndex(self.params.index(param))
@@ -469,18 +457,14 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                 # self.item_0.setFont(0, font_0)
                 # self.tw.expandAll()
                 self.item_0 = QtWidgets.QTreeWidgetItem(self.tw)
-                # self.item_0.setFont(0, font_0)
-                # self.item_0.setFont(0, _font)
-                self.item_0.setBackground(0,QtGui.QColor("#8f9695"))
+                self.item_0.setBackground(0,QtGui.QColor("#D3D3D3"))
                 self.item_0.setText(0, f'Уровень {key}')
-                self.item_0.setBackground(1, QtGui.QColor("#8f9695"))
+                self.item_0.setBackground(1, QtGui.QColor("#D3D3D3"))
                 text = self.word_wrap(value[0], 90)
-                # self.item_0.setFont(1, _font)
                 self.item_0.setText(1, text)
 
                 for v in value[1:]:
                     self.combo_task = QtWidgets.QComboBox()
-                    # self.combo_task.setFont(_font)
                     self.combo_task.addItems(['Да', 'Нет', 'Не применимо'])
                     self.combo_task.setFixedSize(110, 20)
                     # textEdit_1 = AdjusttableTextEdit()
@@ -505,7 +489,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     # textEdit_0.setStyleSheet(text_style)
                     # textEdit_1.setStyleSheet(text_style)
                     text = self.word_wrap(v[0], 90)
-                    # self.item_1.setFont(1, _font)
                     self.item_1.setText(1, text)
                     self.item_1.setBackground(0, QtGui.QColor('#fcfcfc'))
                     self.item_1.setBackground(1, QtGui.QColor('#fcfcfc'))
@@ -896,9 +879,6 @@ class Controller:
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    # fontId = QFontDatabase.addApplicationFont(":/fonts/RussianRail/RussianRail_Regular.otf")
-    # fontName = QFontDatabase.applicationFontFamilies(fontId)[0]
-    # _font = QFont(fontName)
     controller = Controller()  # Создаем экземпляр класса
     controller.show_splash()
     app.processEvents()
