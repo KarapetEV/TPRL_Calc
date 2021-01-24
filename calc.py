@@ -29,31 +29,14 @@ class TreeWidget(QtWidgets.QTreeWidget):
         self.setColumnWidth(0, 150)
         self.headerItem().setText(0, 'Параметр')
         self.headerItem().setText(1, 'Задачи')
+        self.itemClicked.connect(self.onItemClicked)
 
-
-# class AdjusttableTextEdit(QtWidgets.QTextEdit):
-#     td_size_sig = pyqtSignal(QSize)
-#
-#     def __init__(self, parent=None):
-#         super(AdjusttableTextEdit, self).__init__(parent)
-#
-#         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-#         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-#         self.textChanged.connect(self.resizeTextEdit)
-#         self.document().documentLayout().documentSizeChanged.connect(self.resizeTextEdit)
-#
-#     def resizeTextEdit(self):
-#         docheight = int(self.document().size().height())
-#         margin = int(self.document().documentMargin())
-#         self.setMinimumHeight(docheight + margin)
-#         self.setMaximumHeight(docheight + margin)
-#
-#         return
-#
-#     def resizeEvent(self, e):
-#         super(AdjusttableTextEdit, self).resizeEvent(e)
-#         self.td_size_sig.emit(QSize(self.sizeHint().width(), self.maximumHeight()))
-#         return
+    @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
+    def onItemClicked(self, item):
+        if item.isExpanded():
+            item.setExpanded(False)
+        else:
+            item.setExpanded(True)
 
 
 class HelpDialog(QtWidgets.QDialog):
@@ -106,7 +89,6 @@ class Login(QtWidgets.QDialog, login.Ui_Login):
         super(Login, self).__init__()
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
-        # self.label_login_title.setFont(_font)
         self.comboBox_users.addItems(check_db.create_user_list())
         self.comboBox_users.setCurrentIndex(0)
         self.comboBox_users.currentIndexChanged.connect(self.reset_passw)
@@ -187,18 +169,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         QtWidgets.QWidget.__init__(self)
         self.setupUi(self)
         self.setStyleSheet(open(style).read())
-        # self.labelCalc.setFont(_font)
-
-        # fontId = QFontDatabase.addApplicationFont(":/fonts/RussianRail/RussianRail_Regular.otf")
-        # if fontId == 0:
-        #     fontName = QFontDatabase.applicationFontFamilies(fontId)[0]
-        #     self.font = QFont(fontName)
-        # else:
-        #     self.font = QFont()
 
         self.tabWidget.setTabEnabled(3, False)
         self.tabWidget.setTabEnabled(4, False)
-        # self.treeWidget.itemClicked.connect(self.onItemClicked)
 
         self.expert_name = user
         self.params = []
@@ -264,12 +237,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
     def change_user(self):
         self.switch_login.emit()
-        # self.expert_name = ''
-        # self.label_user_name.setText("")
-        # self.label_user_name1.setText("")
-        # self.label_user_name2.setText("")
-        # self.projects_table.clear()
-        # self.projects_table2.clear()
 
     def start_project(self, num):
         self.project_num = num
@@ -448,44 +415,25 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             val = self.make_level_dict(self.data)
 
             self.tw = TreeWidget()
-            # self.param_tabs.setFont(_font)
             self.param_tabs.setStyleSheet('''font-weight: 12px bold;''')
             self.param_tabs.addTab(self.tw, param)
             self.param_tabs.setCurrentIndex(self.params.index(param))
             self.param_tabs.setTabEnabled(self.params.index(param), True)
 
             for key, value in val.items():
-                # textEdit_0 = AdjusttableTextEdit()  # key[1][1] - комментарий к key[1][0]
-                # textEdit_0.setText(value[0])
-                # textEdit_0.setReadOnly(True)
                 font_0 = QtGui.QFont()
                 font_0.setBold(True)
-                # self.item_0 = QtWidgets.QTreeWidgetItem(self.tw, [f'Уровень {key}', ""])
-                # self.tw.setItemWidget(self.item_0, 1, textEdit_0)
-                # x = '<nobr>' + key[1][1][:80] + '</nobr>' + key[1][1][80:]
-                #
-                # item_0.setToolTip(1, x)
-                # textEdit_0.td_size_sig.connect(lambda size: self.item_0.setSizeHint(1, size))
-                # self.item_0.setFont(0, font_0)
-                # self.tw.expandAll()
                 self.item_0 = QtWidgets.QTreeWidgetItem(self.tw)
-                # self.item_0.setFont(0, font_0)
-                # self.item_0.setFont(0, _font)
-                self.item_0.setBackground(0,QtGui.QColor("#8f9695"))
+                self.item_0.setBackground(0,QtGui.QColor("#D3D3D3"))
                 self.item_0.setText(0, f'Уровень {key}')
-                self.item_0.setBackground(1, QtGui.QColor("#8f9695"))
+                self.item_0.setBackground(1, QtGui.QColor("#D3D3D3"))
                 text = self.word_wrap(value[0], 90)
-                # self.item_0.setFont(1, _font)
                 self.item_0.setText(1, text)
 
                 for v in value[1:]:
                     self.combo_task = QtWidgets.QComboBox()
-                    # self.combo_task.setFont(_font)
                     self.combo_task.addItems(['Да', 'Нет', 'Не применимо'])
                     self.combo_task.setFixedSize(110, 20)
-                    # textEdit_1 = AdjusttableTextEdit()
-                    # textEdit_1.setText(v[0])
-                    # textEdit_1.setReadOnly(True)
                     self.item_1 = QtWidgets.QTreeWidgetItem(self.item_0, ["", ""])
                     if v[2] == 0:
                         self.combo_task.setCurrentText('Нет')
@@ -495,17 +443,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                         self.combo_task.setCurrentText('Не применимо')
 
                     self.tw.setItemWidget(self.item_1, 0, self.combo_task)
-                    # self.tw.setItemWidget(self.item_1, 1, textEdit_1)
-                    # textEdit_1.td_size_sig.connect(lambda size: self.item_1.setSizeHint(1, size))
-                    # text_style = '''background-color: #fce6e6;
-                    #                 border: 0;
-                    #                 font-size: 13px;
-                    #                 color: #000;
-                    #                 '''
-                    # textEdit_0.setStyleSheet(text_style)
-                    # textEdit_1.setStyleSheet(text_style)
                     text = self.word_wrap(v[0], 90)
-                    # self.item_1.setFont(1, _font)
                     self.item_1.setText(1, text)
                     self.item_1.setBackground(0, QtGui.QColor('#fcfcfc'))
                     self.item_1.setBackground(1, QtGui.QColor('#fcfcfc'))
@@ -557,17 +495,11 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         for i, key in enumerate(text_levels.items()):
             label1 = QtWidgets.QLabel(key[0])
             label1.setStyleSheet("border-bottom: 1px solid grey;")
-            # label1.setMaximumHeight(50)
             label_text = self.word_wrap(key[1], 90)
             label2 = QtWidgets.QLabel(label_text)
             label2.setStyleSheet("border-bottom: 1px solid grey;")
             self.table_tprl_results.setCellWidget(i, 0, label1)
             self.table_tprl_results.setCellWidget(i, 1, label2)
-            # self.table_tprl_results.setItem(i, 0, QtWidgets.QTableWidgetItem(key[0]))
-            # self.table_tprl_results.item(i, 0).setFlags(QtCore.Qt.ItemIsEditable)
-            # self.table_tprl_results.setItem(i, 1, QtWidgets.QTableWidgetItem(key[1]))
-            # self.table_tprl_results.item(i, 1).setFlags(QtCore.Qt.ItemIsEditable)
-        # self._delegate.setWordWrap(True)
         self.table_tprl_results.setShowGrid(False)
         self.table_tprl_results.resizeRowsToContents()
         self.table_tprl_results.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
@@ -589,16 +521,12 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
 
     def make_text(self):
         op_data = pd.read_excel('data/Levels.xlsx')
-        # text_dict = {'TPRL': str(self.ugtSlider.value())}
         text_dict = {'TPRL': str(self.tprl_min)}
         text_dict.update(self.d3)
         text_levels = self.make_text_dict(op_data, text_dict)
-        # self.create_text_rows(text_levels)
         self.create_table_rows(text_levels)
 
     def calculate(self):
-        # self.save_data = self.data.copy()
-        # self.save_data = self.save_data.loc[self.save_data['Parameter'].isin(self.params)]
         self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
         self.label_expert_name.setText(self.expert_name)
@@ -617,11 +545,8 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             tree = self.param_tabs.currentWidget()
             root = tree.invisibleRootItem()
             levels = root.childCount()
-            # l2 = []
             for level_num in range(levels):
                 level = root.child(level_num)
-                # print(param, level)
-                #     d2 = {}
                 l1 = []
                 for kid in range(level.childCount()):
                     child = level.child(kid)
@@ -643,8 +568,6 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
                     self.d1[param] = l2
                 else:
                     self.d1[param].append(l1)
-
-            # print(self.d1)
 
             for key, values in self.d1.items():
                 first_list = []
@@ -734,16 +657,13 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             if not os.path.isdir(f"Projects/{self.expert_name}/Черновики/{saved_file_name}"):
                 os.mkdir(f"Projects/{self.expert_name}/Черновики/{saved_file_name}")
             self.path = f"Projects/{self.expert_name}/Черновики/{saved_file_name}/{new_file_name}"
-            # new_file = open(self.path, 'w')
             writer = pd.ExcelWriter(self.path)
             for param in self.params:
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
                 new_save_data.drop(['Parameter'], axis='columns', inplace=True)
-                # new_save_data.to_excel(self.path, index=False, sheet_name=param)
                 new_save_data.to_excel(writer, sheet_name=param, index=False)
                 writer.save()
             writer.close()
-            # new_file.close()
         else:
             if not os.path.isdir(f"Projects/{self.expert_name}/Завершенные"):
                 os.mkdir(f"Projects/{self.expert_name}/Завершенные")
@@ -756,11 +676,9 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
             for param in self.params:
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
                 new_save_data.drop(['Parameter'], axis='columns', inplace=True)
-                # new_save_data.to_excel(self.path, index=False, sheet_name=param)
                 new_save_data.to_excel(writer, sheet_name=param, index=False)
                 writer.save()
             writer.close()
-            # new_file.close()
             self.chart.save_chart(full_dir, project_dir)
 
         # сохранение проекта в БД
@@ -841,12 +759,7 @@ class Window(QtWidgets.QWidget, calc_gui.Ui_AppWindow):
         self.help_dialog = HelpDialog(self)
         self.help_dialog.show()
 
-    @QtCore.pyqtSlot(QtWidgets.QTreeWidgetItem)
-    def onItemClicked(self, item):
-        if item.isExpanded():
-            item.setExpanded(False)
-        else:
-            item.setExpanded(True)
+
 
 
     def closeEvent(self, event):
@@ -896,9 +809,6 @@ class Controller:
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    # fontId = QFontDatabase.addApplicationFont(":/fonts/RussianRail/RussianRail_Regular.otf")
-    # fontName = QFontDatabase.applicationFontFamilies(fontId)[0]
-    # _font = QFont(fontName)
     controller = Controller()  # Создаем экземпляр класса
     controller.show_splash()
     app.processEvents()
