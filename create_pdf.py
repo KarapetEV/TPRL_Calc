@@ -226,6 +226,8 @@ class CreatePDF:
                         self.pdf.ln()
 
     def word_wrap(self, line, x):
+        if '\n' in line:
+            line = line.replace('\n', ' ')
         start = 0
         l1 = []
         if len(line) > x:
