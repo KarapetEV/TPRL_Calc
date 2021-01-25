@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 from chart import Chart
 from PyQt5.QtGui import QTextOption, QColor
-from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem, QTabWidget, QDialog, \
+from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem, QDialog, \
     QTextEdit, QLabel, QPushButton, QMessageBox, QTableWidgetItem, QLineEdit, QComboBox, QFrame
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
@@ -604,9 +604,9 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.param_tabs.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
-        self.chart = Chart(self.d3, self.lay)
+        if self.params == 5:
+            self.chart = Chart(self.d3, self.lay)
         self.make_text()
-
 
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
