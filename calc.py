@@ -450,18 +450,12 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
 
     def word_wrap(self, line, x):
         start = 0
-        l1 = []
-        new_line = ''
         if len(line) > x:
             while len(line) > (start + x):
                 index = line.rfind(' ', start, start + x)
-                l1.append(line[start:index].strip())
+                line = (line[:index]).strip() + "\n" + (line[index:]).strip()
                 start = index
-            l1.append(line[start:].strip())
-        else:
-            l1.append(line)
-        new_line = '\n'.join(l1)
-        return new_line
+        return line
 
     def make_level_dict(self, df):
         dict_levels = {}
@@ -487,7 +481,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
 
         for key, values in text_levels.items():
             if key == 'TPRL':
-                self.label_main_tprl.setText(self.word_wrap(values, 100))
+                self.label_main_tprl.setText(self.word_wrap(values, 95))
 
         text_levels.pop('TPRL')
         for i, key in enumerate(text_levels.items()):
@@ -604,7 +598,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.param_tabs.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
-        if self.params == 5:
+        if len(self.params) == 5:
             self.chart = Chart(self.d3, self.lay)
         self.make_text()
 
