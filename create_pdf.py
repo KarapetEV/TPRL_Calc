@@ -21,7 +21,7 @@ class CreatePDF:
         self.param_results = param_results
         self.tprl = self.data[0][5][0]
         self.tprl_name = f"Уровень {self.tprl}. {self.data[0][5][1]}"
-        self.header = ["Экспертное заключение",
+        self.header = ["Экспертное заключение № ____",
                       "по оценке информации о результатах",
                       "инновационного проекта в области железнодорожного транспорта"]
         self.text = ['1.    Дата проведения экспертного оценивания: ',
