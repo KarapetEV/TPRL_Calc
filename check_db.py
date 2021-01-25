@@ -1,5 +1,9 @@
+# -*- coding: utf-8 -*-
+
+#  Copyright 2020 Aleksey Karapyshev, Evgeniy Karapyshev ©
+# E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
+
 import sqlite3
-from PyQt5 import QtCore, QtWidgets
 
 
 def create_user_list():

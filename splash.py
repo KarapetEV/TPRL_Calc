@@ -1,5 +1,9 @@
-import sys
-from PyQt5.QtWidgets import QApplication, QLabel, QSplashScreen
+# -*- coding: utf-8 -*-
+
+#  Copyright 2020 Aleksey Karapyshev, Evgeniy Karapyshev ©
+# E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
+
+from PyQt5.QtWidgets import QLabel, QSplashScreen
 from PyQt5.QtGui import QMovie, QPixmap
 from PyQt5.QtCore import Qt
 
