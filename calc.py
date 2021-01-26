@@ -572,6 +572,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                             new_list.append(0)
                     first_list.append(new_list)
                 d2[key] = first_list
+        print(d2)
         self.save_data['State'] = new_state
         for new_key, new_values in d2.items():
             l_n = []
@@ -582,7 +583,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                     new_value = 0.0
                 l_n.append(new_value)
             d2[new_key] = l_n
-
+        print(d2)
         for d2_keys, d2_values in d2.items():
             summary = 0
             for d2_value in range(len(d2_values)):
