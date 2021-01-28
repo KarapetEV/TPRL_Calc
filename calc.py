@@ -1,7 +1,22 @@
 # -*- coding: utf-8 -*-
 
-#  Copyright 2020 Aleksey Karapyshev, Evgeniy Karapyshev ©
+# © Copyright 2021 Aleksey Karapyshev, Evgeniy Karapyshev
 # E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
+
+# This file is part of TPRL Calculator.
+#
+#     TPRL Calculator is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     Foobar is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with Foobar.  If not, see <https://www.gnu.org/licenses/>.
 
 from decimal import Decimal
 import sys
@@ -109,7 +124,7 @@ class HelpDialog(QDialog):
                                'Все расчеты и результаты формируются в соответствии с представленной методикой.</small></p>'
                                '<p>© Copyright 2021</p>'
                                '<p>\nАлексей Карапышев, Евгений Карапышев<br>'
-                               'и команда Дирекции НТП</p>'
+                               'в составе коллектива Дирекции НТП</p>'
                                '<p>Версия: 1.00</p>')
         self.link = QLabel('<a href="http://fcntp.ru">Посетить сайт Дирекции НТП</a>', self.about_tab)
         self.link.setStyleSheet("font-size: 12px;")
@@ -140,8 +155,7 @@ class HelpDialog(QDialog):
                  'ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. Для подробностей смотрите Стандартную Общественную '
                  'Лицензию GNU.\n\n'
                  'Вы должны были получить копию Стандартной Общественной Лицензии GNU вместе с '
-                 'этой программой.\nЕсли это не так, см. '
-                '<a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.')
+                 'этой программой.\nЕсли это не так, см. <https://www.gnu.org/licenses/>.')
         license_font = QFont()
         license_font.setPointSize(10)
         license_font.setBold(False)
