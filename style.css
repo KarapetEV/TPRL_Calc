@@ -127,6 +127,39 @@ QPushButton	{
   	text-decoration: none;
 }
 
+#btn_license {
+	background: #e31b1a;
+  	background-image: -webkit-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: -moz-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: -ms-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: -o-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: linear-gradient(to bottom, #e31b1a, #c62d1f);
+
+	border-radius: 3px;
+	color: #f8e7e9;
+  	font-size: 12px;
+  	font-family: RussianRail;
+  	font-weight: bold;
+  	padding: 2px 5px 2px 5px;
+  	text-decoration: none;
+}
+
+#btn_license:pressed	{
+	background-color: #e31b1a;
+}
+
+#btn_license:hover	{
+	background: #c62d1f;
+  	background-image: -webkit-linear-gradient(top, #c62d1f, #f24437);
+  	background-image: -moz-linear-gradient(top, #c62d1f, #f24437);
+  	background-image: -ms-linear-gradient(top, #c62d1f, #f24437);
+  	background-image: -o-linear-gradient(top, #c62d1f, #f24437);
+  	background-image: linear-gradient(to bottom, #c62d1f, #f24437);
+  	color: #ffffff;
+  	text-decoration: none;
+}
+
+#
 
 QPushButton:pressed	{
 	background-color: #e31b1a;

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright 2020 Aleksey Karapyshev, Evgeniy Karapyshev ©
+# © Copyright 2020 Aleksey Karapyshev, Evgeniy Karapyshev
 # E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
 
 from PyQt5 import QtCore, QtGui, QtWidgets
