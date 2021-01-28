@@ -584,9 +584,11 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         text_levels.pop('TPRL')
         for i, key in enumerate(text_levels.items()):
             label1 = QLabel(key[0])
+            label1.setContentsMargins(5, 5, 5, 5)
             label1.setStyleSheet("border-bottom: 1px solid grey;")
             label_text = self.word_wrap(key[1], 90)
             label2 = QLabel(label_text)
+            label2.setContentsMargins(5, 5, 5, 5)
             label2.setStyleSheet("border-bottom: 1px solid grey;")
             self.table_tprl_results.setCellWidget(i, 0, label1)
             self.table_tprl_results.setCellWidget(i, 1, label2)
