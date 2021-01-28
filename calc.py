@@ -4,15 +4,19 @@
 # E-mail: <karapyshev@gmail.com>, <karapet2011@gmail.com>
 
 from decimal import Decimal
-import sys, os, datetime
-import login, register, check_db
+import sys
+import os
+import datetime
+import login
+import register
+import check_db
 import calc_gui
 import numpy as np
 import pandas as pd
 from chart import Chart
-from PyQt5.QtGui import QTextOption, QColor
+from PyQt5.QtGui import QTextOption, QColor, QPixmap, QFont
 from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem, QDialog, \
-    QTextEdit, QLabel, QPushButton, QMessageBox, QTableWidgetItem, QLineEdit, QComboBox, QFrame
+    QTextEdit, QLabel, QPushButton, QMessageBox, QTabWidget, QTableWidgetItem, QLineEdit, QComboBox, QFrame
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
 from create_pdf import CreatePDF
@@ -42,6 +46,7 @@ class TreeWidget(QTreeWidget):
 class HelpDialog(QDialog):
 
     def __init__(self, parent=None):
+        # Создание окна "Помощь"
         super(HelpDialog, self).__init__(parent)
         self.setStyleSheet(open(style).read())
         self.setWindowFlags(
@@ -50,34 +55,113 @@ class HelpDialog(QDialog):
             Qt.WindowStaysOnTopHint
         )
         self.setWindowTitle('Информация о программе')
+        self.btn_ok = QPushButton(self)
+        self.btn_ok.setGeometry(185, 330, 100, 30)
+        self.btn_ok.setText("OK")
+        self.btn_ok.clicked.connect(self.close)
+
+        # Указание координат для формирования окна - в центре
         x = self.parent().x() + int(self.parent().width() / 2) - 200
         y = self.parent().y() + int(self.parent().height() / 2) - 125
-        self.setGeometry(x, y, 470, 200)
-        self.help_text = QTextEdit(self)
-        self.help_text.setGeometry(10, 10, 450, 130)
-        # self.help_text.setFont(_font)
-        self.help_text.setStyleSheet('font-size: 12px;')
-        self.help_text.setAlignment(Qt.AlignHCenter)
-        self.help_text.insertPlainText('Инструкция!\n')
-        self.help_text.setAlignment(Qt.AlignLeft)
-        self.help_text.insertPlainText('Программа "TPRL Calculator" предназначена для расчета уровня готовности '
-                                       'проекта/технологии к внедрению в ОАО"РЖД."\n'
-                                       'Все расчеты и результаты формируются в соответствии с представленной методикой.')
-        self.help_text.setReadOnly(True)
-        self.help_text.setWordWrapMode(QTextOption.WordWrap)
-        self.btn_methodology = QPushButton(self.help_text)
-        self.btn_methodology.setGeometry(140, 100, 150, 20)
+        self.setGeometry(x, y, 470, 370)
+
+        # Создание TabWidget для вкладок ("О программе" и "Лицензия")
+        self.help_tabs = QTabWidget(self)
+        self.help_tabs.setEnabled(True)
+        self.help_tabs.setGeometry(QRect(0, 0, 470, 320))
+        self.help_tabs.setObjectName("help_tabs")
+        self.help_tabs.raise_()
+
+        # Вкладка "О программе"
+        self.about_tab = QWidget()
+        self.about_tab.setObjectName("about_tab")
+        self.help_tabs.addTab(self.about_tab, "О программе")
+        self.create_help_tab()
+
+        # Вкладка "Лицензия"
+        self.license_tab = QWidget()
+        self.license_tab.setObjectName("license_tab")
+        self.help_tabs.addTab(self.license_tab, "Лицензия")
+        self.create_license_tab()
+
+    def create_help_tab(self):
+        self.label_about_title = QLabel(self.about_tab)
+        self.label_about_title.setGeometry(QRect(100, 5, 300, 50))
+        self.label_about_title.setContentsMargins(0, 0, 0, 0)
+        self.label_about_title.setScaledContents(True)
+        self.label_about_title.setObjectName("label_about_title")
+        self.label_about_title.setPixmap(QPixmap("img/splash_appname.png"))
+        self.label_about_title.setAlignment(Qt.AlignCenter)
+
+        help_font = QFont()
+        help_font.setPointSize(12)
+        help_font.setBold(False)
+        help_font.setWeight(35)
+        self.help_text = QLabel(self.about_tab)
+        self.help_text.setFont(help_font)
+        self.help_text.setGeometry(QRect(10, 55, 450, 170))
+        self.help_text.setObjectName("help_text")
+        self.help_text.setAlignment(Qt.AlignCenter)
+        self.help_text.setWordWrap(True)
+        self.help_text.setContentsMargins(0, 0, 0, 0)
+        self.help_text.setText('<p><small>Программа <strong>"TPRL Calculator"</strong> предназначена для расчета уровня '
+                               'готовности проекта/технологии к внедрению в ОАО"РЖД".\n'
+                               'Все расчеты и результаты формируются в соответствии с представленной методикой.</small></p>'
+                               '<p>© Copyright 2021</p>'
+                               '<p>\nАлексей Карапышев, Евгений Карапышев<br>'
+                               'и команда Дирекции НТП</p>'
+                               '<p>Версия: 1.00</p>')
+        self.link = QLabel('<a href="http://fcntp.ru">Посетить сайт Дирекции НТП</a>', self.about_tab)
+        self.link.setStyleSheet("font-size: 12px;")
+        self.link.setOpenExternalLinks(True)
+        self.link.setGeometry(QRect(10, 230, 450, 20))
+        self.link.setObjectName("link")
+        self.link.setAlignment(Qt.AlignCenter)
+
+        self.btn_methodology = QPushButton(self.about_tab)
+        self.btn_methodology.setGeometry(160, 260, 150, 20)
         self.btn_methodology.setObjectName("btn_methodology")
         self.btn_methodology.setText("Открыть методику")
-        self.btn_ok = QPushButton(self)
-        self.btn_ok.setGeometry(175, 155, 100, 30)
-        self.btn_ok.setText("OK")
-
         self.btn_methodology.clicked.connect(self.open_methodology)
-        self.btn_ok.clicked.connect(self.close)
 
     def open_methodology(self):
         open_path = os.getcwd() + "\\data\\methodology.pdf"
+        os.startfile(open_path)
+
+    def create_license_tab(self):
+        text = ('TPRL Calculator является свободным программным обеспечением: вы можете '
+                 'распространять и/или изменять его на условиях Стандартной общественной '
+                 'лицензии GNU в том виде, в каком она была опубликованной Фондом свободного '
+                 'программного обеспечения (FSF); либо Лицензии версии 3, либо (на Ваше '
+                 'усмотрение) любой более поздней версии.\n\n'
+                 'Эта программа распространяется в надежде, что она будет полезной, но БЕЗ КАКИХ '
+                 'БЫ ТО НИ БЫЛО ГАРАНТИЙНЫХ ОБЯЗАТЕЛЬСТВ; даже без косвенных гарантийных '
+                 'обязательств, связанных с ПОТРЕБИТЕЛЬСКИМИ СВОЙСТВАМИ и ПРИГОДНОСТЬЮ ДЛЯ '
+                 'ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. Для подробностей смотрите Стандартную Общественную '
+                 'Лицензию GNU.\n\n'
+                 'Вы должны были получить копию Стандартной Общественной Лицензии GNU вместе с '
+                 'этой программой.\nЕсли это не так, см. '
+                '<a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.')
+        license_font = QFont()
+        license_font.setPointSize(10)
+        license_font.setBold(False)
+        license_font.setWeight(25)
+        self.license_text = QLabel(text, self.license_tab)
+        self.license_text.setOpenExternalLinks(True)
+        self.license_text.setFont(license_font)
+        self.license_text.setGeometry(QRect(5, 0, 460, 240))
+        self.license_text.setContentsMargins(0, 0, 0, 0)
+        self.license_text.setWordWrap(True)
+        self.license_text.setObjectName("label_about_title")
+
+        self.btn_license = QPushButton(self.license_tab)
+        self.btn_license.setGeometry(160, 260, 150, 20)
+        self.btn_license.setObjectName("btn_license")
+        self.btn_license.setText("Лицензия GPL")
+        self.btn_license.clicked.connect(self.open_license)
+
+    def open_license(self):
+        open_path = os.getcwd() + "\\data\\license.pdf"
         os.startfile(open_path)
 
 
