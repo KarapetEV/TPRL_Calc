@@ -292,18 +292,10 @@ class Ui_AppWindow(object):
 
         self.btn_calculate = QtWidgets.QPushButton(self.frame_tasks)
         self.btn_calculate.setGeometry(QtCore.QRect(102, 390, 180, 30))
-        font = QtGui.QFont('fonts/RussianRail/RussianRail_Regular.otf')
-        font.setFamily("Times New Roman")
-        font.setPointSize(14)
-        self.btn_calculate.setFont(font)
         self.btn_calculate.setObjectName("btn_calculate")
         self.btn_calculate.setEnabled(False)
         self.btn_reset_tasks = QtWidgets.QPushButton(self.frame_tasks)
         self.btn_reset_tasks.setGeometry(QtCore.QRect(486, 390, 180, 30))
-        font = QtGui.QFont('fonts/RussianRail/RussianRail_Regular.otf')
-        font.setFamily("Times New Roman")
-        font.setPointSize(14)
-        self.btn_reset_tasks.setFont(font)
         self.btn_reset_tasks.setObjectName("btn_reset_tasks")
         self.btn_reset_tasks.setEnabled(False)
         #----------------------Вкладка результатов-----------------------------
@@ -530,18 +522,10 @@ class Ui_AppWindow(object):
         #----------------------Save_results Button-----------------------
         self.btn_save_results = QtWidgets.QPushButton(self.frame_tprl_results)
         self.btn_save_results.setGeometry(QtCore.QRect(150, 310, 180, 30))
-        font = QtGui.QFont('fonts/RussianRail/RussianRail_Regular.otf')
-        font.setFamily("Times New Roman")
-        font.setPointSize(14)
-        self.btn_save_results.setFont(font)
         self.btn_save_results.setObjectName("btn_save_results")
 
         self.btn_pdf = QtWidgets.QPushButton(self.frame_tprl_results)
         self.btn_pdf.setGeometry(QtCore.QRect(480, 310, 180, 30))
-        font = QtGui.QFont('fonts/RussianRail/RussianRail_Regular.otf')
-        font.setFamily("Times New Roman")
-        font.setPointSize(14)
-        self.btn_pdf.setFont(font)
         self.btn_pdf.setObjectName("btn_pdf")
 
         self.tabWidget.raise_()

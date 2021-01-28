@@ -56,22 +56,6 @@ QTreeWidgetItem::Item {
 	border-bottom: 1px solid #ffffff;
 }
 
-QPushButton	{
-	background: #e31b1a;
-  	background-image: -webkit-linear-gradient(top, #e31b1a, #c62d1f);
-  	background-image: -moz-linear-gradient(top, #e31b1a, #c62d1f);
-  	background-image: -ms-linear-gradient(top, #e31b1a, #c62d1f);
-  	background-image: -o-linear-gradient(top, #e31b1a, #c62d1f);
-  	background-image: linear-gradient(to bottom, #e31b1a, #c62d1f);
-
-  	border-radius: 5px;
-  	color: #ffffff;
-  	font-size: 14px;
-  	font-weight: bold;
-  	padding: 5px 10px 5px 10px;
-  	text-decoration: none;
-}
-
 #btn_manual	{
 	font-size: 10px;
   	padding: 1px 2px 1px 2px;
@@ -139,7 +123,22 @@ QPushButton	{
   	text-decoration: none;
 }
 
-#
+QPushButton	{
+	background: #e31b1a;
+  	background-image: -webkit-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: -moz-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: -ms-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: -o-linear-gradient(top, #e31b1a, #c62d1f);
+  	background-image: linear-gradient(to bottom, #e31b1a, #c62d1f);
+
+  	border-radius: 5px;
+  	color: #ffffff;
+  	font-size: 14px;
+  	font-weight: bold;
+  	padding: 5px 10px 5px 10px;
+  	text-align: center;
+  	text-decoration: none;
+}
 
 QPushButton:pressed	{
 	background-color: #e31b1a;
