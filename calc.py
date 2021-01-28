@@ -798,11 +798,11 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                 if self.parameters[i] == param:
                     results.append(res_list[i])
         date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
-        data = []
+        data = {}
         for param in self.params:
             new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
             new_save_data.drop(['Parameter'], axis='columns', inplace=True)
-            data.append([param, new_save_data])
+            data[param] = new_save_data
         self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]], data)
         new_pdf = CreatePDF(self.pdf_data, self.d1)
         new_pdf.set_data()
