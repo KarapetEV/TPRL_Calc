@@ -36,6 +36,7 @@ class Chart:
         ax = self.figure.add_subplot(111, projection='polar')
         ax.set(facecolor='#f3f3f3')
         ax.set_theta_offset(np.pi / 2)
+        ax.set_theta_direction(-1)
         ax.set_ylim(0, 9)
         ax.set_yticks(np.arange(0, 10, 1.0))
         plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], fontsize=6, color='grey')
