@@ -122,7 +122,8 @@ class CreatePDF:
             self.param_float[self.params[i]] = self.results[i]
 
         for k, v in self.res.items():
-            self.create_table(k, v)
+            df = self.data[1][k]
+            self.create_table(k, v, df)
 
         self.pdf.ln()
         self.pdf.ln()
@@ -168,7 +169,7 @@ class CreatePDF:
                 line = line.replace(ch, '_')
         return line
 
-    def create_table(self, param, lvl):
+    def create_table(self, param, lvl, df):
 
         self.pdf.ln()
         self.pdf.set_font("times", 'U', size=12)
@@ -190,7 +191,6 @@ class CreatePDF:
             self.pdf.ln()
             self.pdf.set_font("times", size=10)
 
-            df = pd.read_excel("data/Param_Tasks.xlsx", sheet_name=param)
             for i in range(count):
                 states = param_states[i]
 

@@ -584,9 +584,11 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         text_levels.pop('TPRL')
         for i, key in enumerate(text_levels.items()):
             label1 = QLabel(key[0])
+            label1.setContentsMargins(5, 5, 5, 5)
             label1.setStyleSheet("border-bottom: 1px solid grey;")
             label_text = self.word_wrap(key[1], 90)
             label2 = QLabel(label_text)
+            label2.setContentsMargins(5, 5, 5, 5)
             label2.setStyleSheet("border-bottom: 1px solid grey;")
             self.table_tprl_results.setCellWidget(i, 0, label1)
             self.table_tprl_results.setCellWidget(i, 1, label2)
@@ -797,11 +799,11 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                 if self.parameters[i] == param:
                     results.append(res_list[i])
         date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
-        data = []
+        data = {}
         for param in self.params:
             new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
             new_save_data.drop(['Parameter'], axis='columns', inplace=True)
-            data.append([param, new_save_data])
+            data[param] = new_save_data
         self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]], data)
         new_pdf = CreatePDF(self.pdf_data, self.d1)
         new_pdf.set_data()
