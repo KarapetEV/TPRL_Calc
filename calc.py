@@ -29,9 +29,9 @@ import calc_gui
 import numpy as np
 import pandas as pd
 from chart import Chart
-from PyQt5.QtGui import QTextOption, QColor, QPixmap, QFont
+from PyQt5.QtGui import QColor, QPixmap, QFont
 from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem, QDialog, \
-    QTextEdit, QLabel, QPushButton, QMessageBox, QTabWidget, QTableWidgetItem, QLineEdit, QComboBox, QFrame
+    QLabel, QPushButton, QMessageBox, QTabWidget, QTableWidgetItem, QLineEdit, QComboBox, QFrame
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
 from create_pdf import CreatePDF
