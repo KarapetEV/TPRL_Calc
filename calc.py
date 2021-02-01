@@ -832,17 +832,14 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             self.label_tprl_average_result.setText(self.tprl_average)
             self.label_tprl_min_result.setText(self.tprl_min)
         else:
-            if float(max(show_res.values())) - float(min(show_res.values())) > 2:
+            while float(max(show_res.values())) - float(min(show_res.values())) >= 2:
                 x = float(max(show_res.values()))
-            else:
-                x = -1
-            for d3_k, d3_v in show_res.items():
-                if float(d3_v) == x:
-                    d3_v = round(float(d3_v) - 1, 1)
+                for d3_k, d3_v in show_res.items():
+                    if float(d3_v) == x:
+                        d3_v = round(float(d3_v) - 1, 1)
                     show_res[d3_k] = str(d3_v)
-                else:
-                    show_res[d3_k] = d3_v
-                res_list.append(float(d3_v))
+            for new_v in show_res.values():
+                res_list.append(float(new_v))
             self.tprl_average = float(sum(res_list) / len(res_list))
             number = Decimal(f'{self.tprl_average}')
             self.tprl_average = number.quantize(Decimal("1.0"), rounding='ROUND_DOWN')
