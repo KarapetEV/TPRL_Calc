@@ -353,33 +353,36 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.user_calcTab.setText(self.expert_name)
 
     def load_project_data(self):
-        self.set_param_check(self.parameters, False)
-        self.reset_params()
-        data = [self.expert_name]
         table = None
         if self.tabWidget.currentIndex() == 1:
             table = self.projects_table
         elif self.tabWidget.currentIndex() == 2:
             table = self.projects_table2
-        row = table.currentRow()
-        num = table.item(row, 1).text()
-        data.append(num)
-        date = table.item(row, 6).text()
-        data.append(date)
-        value = check_db.get_project(data)
-        self.newproject_data = (value[3:])
-        self.project_state = value[0]
-        self.path = value[1]
-        self.params = value[2].split(' ')
-        self.project_num = num
-        self.tabWidget.setTabEnabled(3, True)
-        self.tabWidget.setCurrentIndex(3)
-        self.btn_calculate.setEnabled(True)
-        self.btn_reset_tasks.setEnabled(True)
-        self.num_calcTab.setText(self.project_num)
-        self.user_calcTab.setText(self.expert_name)
-        self.set_param_check(self.params, True)
-        self.create_rows()
+        if len(table.selectedItems()) == 0:
+            QMessageBox.about(self, "Внимание!", "Не выбран проект для загрузки!")
+        else:
+            self.set_param_check(self.parameters, False)
+            self.reset_params()
+            data = [self.expert_name]
+            row = table.currentRow()
+            num = table.item(row, 1).text()
+            data.append(num)
+            date = table.item(row, 6).text()
+            data.append(date)
+            value = check_db.get_project(data)
+            self.newproject_data = (value[3:])
+            self.project_state = value[0]
+            self.path = value[1]
+            self.params = value[2].split(' ')
+            self.project_num = num
+            self.tabWidget.setTabEnabled(3, True)
+            self.tabWidget.setCurrentIndex(3)
+            self.btn_calculate.setEnabled(True)
+            self.btn_reset_tasks.setEnabled(True)
+            self.num_calcTab.setText(self.project_num)
+            self.user_calcTab.setText(self.expert_name)
+            self.set_param_check(self.params, True)
+            self.create_rows()
 
     def remove_project(self):
         table = self.projects_table
