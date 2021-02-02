@@ -125,7 +125,7 @@ class HelpDialog(QDialog):
                                '<p>© Copyright 2021</p>'
                                '<p>\nАлексей Карапышев, Евгений Карапышев<br>'
                                'в составе коллектива Дирекции НТП</p>'
-                               '<p>Версия: 1.00</p>')
+                               '<p>Версия: 1.01</p>')
         self.link = QLabel('<a href="http://fcntp.ru">Посетить сайт Дирекции НТП</a>', self.about_tab)
         self.link.setStyleSheet("font-size: 12px;")
         self.link.setOpenExternalLinks(True)
@@ -361,6 +361,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         if len(table.selectedItems()) == 0:
             QMessageBox.about(self, "Внимание!", "Не выбран проект для загрузки!")
         else:
+            index = self.tabWidget.currentIndex()
             self.set_param_check(self.parameters, False)
             self.reset_params()
             data = [self.expert_name]
@@ -382,32 +383,40 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             self.num_calcTab.setText(self.project_num)
             self.user_calcTab.setText(self.expert_name)
             self.set_param_check(self.params, True)
-            self.create_rows()
+            try:
+                self.create_rows()
+            except FileNotFoundError:
+                self.tabWidget.setTabEnabled(index, True)
+                self.tabWidget.setCurrentIndex(index)
+                if self.confirm_msg("Файлы проекта не найдены! Вы хотите удалить выбранный проект из списка?"):
+                    self.delete_from_table(table)
 
     def remove_project(self):
         table = self.projects_table
         if len(self.projects_table.selectedItems()) == 0:
             QMessageBox.about(self, "Внимание!", "Не выбран проект для удаления!")
         else:
-            text = "удалить выбранный проект"
-            if self.confirm_msg(text):
-                data = [self.expert_name]
-                row = table.currentRow()
-                num = table.item(row, 1).text()
-                data.append(num)
-                date = table.item(row, 6).text()
-                data.append(date)
-                file_path = check_db.remove_project(data)
-                index = file_path.rfind('/')
-                line = file_path.replace('/', '\\')
-                dir_path = f'\\{line[:index]}'
-                dir = os.getcwd() + dir_path
-                try:
-                    os.remove(file_path)
-                    os.rmdir(dir)
-                except:
-                    pass
-            self.show_user_projects(self.tabWidget.currentIndex())
+            if self.confirm_msg("Вы уверены, что хотите удалить выбранный проект?"):
+                self.delete_from_table(table)
+
+    def delete_from_table(self, table):
+        data = [self.expert_name]
+        row = table.currentRow()
+        num = table.item(row, 1).text()
+        data.append(num)
+        date = table.item(row, 6).text()
+        data.append(date)
+        file_path = check_db.remove_project(data)
+        index = file_path.rfind('/')
+        line = file_path.replace('/', '\\')
+        dir_path = f'\\{line[:index]}'
+        dir = os.getcwd() + dir_path
+        try:
+            os.remove(file_path)
+            os.rmdir(dir)
+        except:
+            pass
+        self.show_user_projects(self.tabWidget.currentIndex())
 
     def create_dialog(self):
         if self.expert_name == '':
@@ -445,7 +454,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         messageBox = QMessageBox(self)
         messageBox.setWindowTitle("Подтверждение")
         messageBox.setIcon(QMessageBox.Question)
-        messageBox.setText(f"Вы уверены, что хотите {text}?")
+        messageBox.setText(text)
         buttonYes = messageBox.addButton("Да", QMessageBox.YesRole)
         buttonNo = messageBox.addButton("Нет", QMessageBox.NoRole)
         messageBox.setDefaultButton(buttonYes)
@@ -457,8 +466,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             return False
 
     def reset_tasks(self):
-        text = "сбросить все отметки"
-        if self.confirm_msg(text):
+        if self.confirm_msg("Вы уверены, что хотите сбросить все отметки?"):
             tab_count = self.param_tabs.count()
             for i in range(tab_count):
                 self.param_tabs.setCurrentIndex(i)
@@ -474,9 +482,8 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             self.param_tabs.setCurrentIndex(0)
 
     def set_params(self):
-        text = 'изменить параметры (текущие отметки будут сброшены)'
         if self.project_state in ['черновик', 'итог']:
-            if self.confirm_msg(text):
+            if self.confirm_msg('Вы уверены, что хотите изменить параметры (текущие отметки будут сброшены)?'):
                 self.reset_params()
                 self.get_params()
                 if len(self.params) == 0:
@@ -858,8 +865,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
 
 
     def closeEvent(self, event):
-        text = "закрыть программу"
-        if self.confirm_msg(text):
+        if self.confirm_msg("Вы уверены, что хотите закрыть программу?"):
             event.accept()
         else:
             event.ignore()
