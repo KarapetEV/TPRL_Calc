@@ -36,6 +36,13 @@ QTabWidget	{
 #label_expert_name	{
 	text-decoration: underline;
 }
+#label_project_num1	{
+	text-decoration: underline;
+}
+
+#label_expert_name1	{
+	text-decoration: underline;
+}
 
 QCheckBox	{
 	font-size: 13px;
