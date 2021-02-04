@@ -304,6 +304,9 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             columns=['Level', 'РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
                      'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
                      'РЭ-экол', 'РП-бюд', 'РП-срок', 'РИ-проект'])
+        self.normal_risks = {'РТ-нир': 42, 'РТ-окр': 60, 'РТ-произв': 55, 'РТ-инт': 30, 'РТ-эксп': 28, 'РМ-зак': 29,
+                            'РМ-треб': 69, 'РМ-цен': 30, 'РМ-конк': 22, 'РМ-прод': 19, 'РО-дог': 29, 'РО-разр': 30,
+                             'РО-эксп': 15, 'РЮ-пат': 5, 'РЮ-зак': 9, 'РЭ-экол': 3, 'РП-бюд': 13, 'РП-срок': 14, 'РИ-проект': 223}
 
     @pyqtSlot(int)
     def show_user_projects(self, index):
@@ -721,6 +724,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.make_text()
 
     def count_risks(self, frame):
+        new_risks = {}
         columns = ['РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
                      'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
                      'РЭ-экол', 'РП-бюд', 'РП-срок']
@@ -740,7 +744,16 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
                     if all_risk[col][row] == 1:
                         all_risk.at[row, col] = 0
                 all_risk.loc[row, 'РИ-проект'] = 0
-        all_risk.to_excel('Data_Risk.xlsx', index=False)
+        for key, values in self.normal_risks.items():
+            if key not in new_risks:
+                if key == 'РИ-проект':
+                    value = round((1 - all_risk[all_risk['State'] != 0].shape[0] / self.normal_risks['РИ-проект']) * 100, 1)
+                else:
+                    value = round((1-all_risk[key].sum()/values)*100, 1)
+                new_risks[key] = value
+
+        # all_risk.to_excel('Data_Risk.xlsx', index=False)
+        print(new_risks)
         print('Done')
 
 
