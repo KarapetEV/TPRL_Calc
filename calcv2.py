@@ -36,7 +36,6 @@ from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
 from create_pdf import CreatePDF
 
-
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
 
@@ -119,13 +118,14 @@ class HelpDialog(QDialog):
         self.help_text.setAlignment(Qt.AlignCenter)
         self.help_text.setWordWrap(True)
         self.help_text.setContentsMargins(0, 0, 0, 0)
-        self.help_text.setText('<p><small>Программа <strong>"TPRL Calculator"</strong> предназначена для расчета уровня '
-                               'готовности проекта/технологии к внедрению в ОАО"РЖД".\n'
-                               'Все расчеты и результаты формируются в соответствии с представленной методикой.</small></p>'
-                               '<p>© Copyright 2021</p>'
-                               '<p>\nАлексей Карапышев, Евгений Карапышев<br>'
-                               'в составе коллектива Дирекции НТП</p>'
-                               '<p>Версия: 1.00</p>')
+        self.help_text.setText(
+            '<p><small>Программа <strong>"TPRL Calculator"</strong> предназначена для расчета уровня '
+            'готовности проекта/технологии к внедрению в ОАО"РЖД".\n'
+            'Все расчеты и результаты формируются в соответствии с представленной методикой.</small></p>'
+            '<p>© Copyright 2021</p>'
+            '<p>\nАлексей Карапышев, Евгений Карапышев<br>'
+            'в составе коллектива Дирекции НТП</p>'
+            '<p>Версия: 1.00</p>')
         self.link = QLabel('<a href="http://fcntp.ru">Посетить сайт Дирекции НТП</a>', self.about_tab)
         self.link.setStyleSheet("font-size: 12px;")
         self.link.setOpenExternalLinks(True)
@@ -145,17 +145,17 @@ class HelpDialog(QDialog):
 
     def create_license_tab(self):
         text = ('TPRL Calculator является свободным программным обеспечением: вы можете '
-                 'распространять и/или изменять его на условиях Стандартной общественной '
-                 'лицензии GNU в том виде, в каком она была опубликованной Фондом свободного '
-                 'программного обеспечения (FSF); либо Лицензии версии 3, либо (на Ваше '
-                 'усмотрение) любой более поздней версии.\n\n'
-                 'Эта программа распространяется в надежде, что она будет полезной, но БЕЗ КАКИХ '
-                 'БЫ ТО НИ БЫЛО ГАРАНТИЙНЫХ ОБЯЗАТЕЛЬСТВ; даже без косвенных гарантийных '
-                 'обязательств, связанных с ПОТРЕБИТЕЛЬСКИМИ СВОЙСТВАМИ и ПРИГОДНОСТЬЮ ДЛЯ '
-                 'ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. Для подробностей смотрите Стандартную Общественную '
-                 'Лицензию GNU.\n\n'
-                 'Вы должны были получить копию Стандартной Общественной Лицензии GNU вместе с '
-                 'этой программой.\nЕсли это не так, см. <https://www.gnu.org/licenses/>.')
+                'распространять и/или изменять его на условиях Стандартной общественной '
+                'лицензии GNU в том виде, в каком она была опубликованной Фондом свободного '
+                'программного обеспечения (FSF); либо Лицензии версии 3, либо (на Ваше '
+                'усмотрение) любой более поздней версии.\n\n'
+                'Эта программа распространяется в надежде, что она будет полезной, но БЕЗ КАКИХ '
+                'БЫ ТО НИ БЫЛО ГАРАНТИЙНЫХ ОБЯЗАТЕЛЬСТВ; даже без косвенных гарантийных '
+                'обязательств, связанных с ПОТРЕБИТЕЛЬСКИМИ СВОЙСТВАМИ и ПРИГОДНОСТЬЮ ДЛЯ '
+                'ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. Для подробностей смотрите Стандартную Общественную '
+                'Лицензию GNU.\n\n'
+                'Вы должны были получить копию Стандартной Общественной Лицензии GNU вместе с '
+                'этой программой.\nЕсли это не так, см. <https://www.gnu.org/licenses/>.')
         license_font = QFont()
         license_font.setPointSize(10)
         license_font.setBold(False)
@@ -304,6 +304,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             columns=['Level', 'РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
                      'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
                      'РЭ-экол', 'РП-бюд', 'РП-срок', 'РИ-проект'])
+
     @pyqtSlot(int)
     def show_user_projects(self, index):
         if index == 1:
@@ -528,7 +529,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
 
             for key, value in val.items():
                 self.item_0 = QTreeWidgetItem(self.tw)
-                self.item_0.setBackground(0,QColor("#D3D3D3"))
+                self.item_0.setBackground(0, QColor("#D3D3D3"))
                 self.item_0.setText(0, f'Уровень {key}')
                 self.item_0.setBackground(1, QColor("#D3D3D3"))
                 text = self.word_wrap(value[0], 90)
@@ -614,7 +615,8 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
                 if (key == 'TPRL') & (value == '0'):
                     new_text_dict['TPRL'] = 'Уровень зрелости инновационного проекта/технологии  = 0'
                 elif (key == 'TPRL') & (value == '--'):
-                    new_text_dict['TPRL'] = 'Уровень зрелости инновационного проекта/технологии не рассчитан, т.к. не были выбраны все параметры'
+                    new_text_dict[
+                        'TPRL'] = 'Уровень зрелости инновационного проекта/технологии не рассчитан, т.к. не были выбраны все параметры'
                 elif op_data['Уровень'][rank] == int(float(value)):
                     new_text_dict[key] = op_data[key][rank]
         return new_text_dict
@@ -625,8 +627,6 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         text_dict.update(self.d3)
         text_levels = self.make_text_dict(op_data, text_dict)
         self.create_table_rows(text_levels)
-
-
 
     def calculate(self):
         self.save_data.drop(['State'], axis='columns', inplace=True)
@@ -687,7 +687,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
                 d2[key] = first_list
         self.save_data['State'] = new_state
 
-        if len(self.params) == 5:                       # Оценка рисков
+        if len(self.params) == 5:  # Оценка рисков
             self.count_risks(self.save_data)
         for new_key, new_values in d2.items():
             l_n = []
@@ -721,14 +721,29 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.make_text()
 
     def count_risks(self, frame):
+        columns = ['РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
+                     'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
+                     'РЭ-экол', 'РП-бюд', 'РП-срок']
         for param in self.params:
-            risk_d = pd.read_excel('data\\Risks.xlsx', sheet_name=param)
+            risk_d = pd.read_excel('data/Risks.xlsx', sheet_name=param)
             self.risk_data = self.risk_data.append(risk_d)
         self.risk_data.drop(['Level'], axis='columns', inplace=True)
         all_risk = pd.concat([frame, self.risk_data], axis=1)
+        all_risk.reset_index(inplace=True)
+        for row in all_risk.index:
+            if all_risk['State'][row] == 0:
+                for col in columns:
+                    if all_risk[col][row] == 1:
+                        all_risk.at[row, col] = 0
+            elif all_risk['State'][row] == -1:
+                for col in columns:
+                    if all_risk[col][row] == 1:
+                        all_risk.at[row, col] = 0
+                all_risk.loc[row, 'РИ-проект'] = 0
         all_risk.to_excel('Data_Risk.xlsx', index=False)
-
         print('Done')
+
+
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
         now = datetime.datetime.now()
@@ -817,10 +832,10 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         if len(self.params) == 5:
             self.chart.save_chart('', "chart_pdf")
         res_list = [float(self.label_trl_result.text()),
-                   float(self.label_mrl_result.text()),
-                   float(self.label_erl_result.text()),
-                   float(self.label_orl_result.text()),
-                   float(self.label_crl_result.text())]
+                    float(self.label_mrl_result.text()),
+                    float(self.label_erl_result.text()),
+                    float(self.label_orl_result.text()),
+                    float(self.label_crl_result.text())]
         results = []
         for i in range(len(self.parameters)):
             for param in self.params:
@@ -832,7 +847,9 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
             new_save_data.drop(['Parameter'], axis='columns', inplace=True)
             data[param] = new_save_data
-        self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]], data)
+        self.pdf_data = (
+        [date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]],
+        data)
         new_pdf = CreatePDF(self.pdf_data, self.d1)
         new_pdf.set_data()
         try:
@@ -878,9 +895,6 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
     def show_help(self):
         self.help_dialog = HelpDialog(self)
         self.help_dialog.show()
-
-
-
 
     def closeEvent(self, event):
         text = "закрыть программу"
