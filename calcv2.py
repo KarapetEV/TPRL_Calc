@@ -300,7 +300,10 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.btn_pdf2.clicked.connect(self.create_pdf2)
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
-
+        self.risk_data = pd.DataFrame(
+            columns=['Level', 'РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
+                     'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
+                     'РЭ-экол', 'РП-бюд', 'РП-срок', 'РИ-проект'])
     @pyqtSlot(int)
     def show_user_projects(self, index):
         if index == 1:
@@ -433,6 +436,10 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
 
     def reset_params(self):
         self.path = 'data/Param_Tasks.xlsx'
+        self.risk_data = pd.DataFrame(
+            columns=['Level', 'РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
+                     'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
+                     'РЭ-экол', 'РП-бюд', 'РП-срок', 'РИ-проект'])
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
         self.param_tabs.clear()
@@ -619,6 +626,8 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         text_levels = self.make_text_dict(op_data, text_dict)
         self.create_table_rows(text_levels)
 
+
+
     def calculate(self):
         self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
@@ -677,6 +686,9 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
                     first_list.append(new_list)
                 d2[key] = first_list
         self.save_data['State'] = new_state
+
+        if len(self.params) == 5:                       # Оценка рисков
+            self.count_risks(self.save_data)
         for new_key, new_values in d2.items():
             l_n = []
             for new_value in new_values:
@@ -708,6 +720,15 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             self.chart = Chart(self.d3, self.lay)
         self.make_text()
 
+    def count_risks(self, frame):
+        for param in self.params:
+            risk_d = pd.read_excel('data\\Risks.xlsx', sheet_name=param)
+            self.risk_data = self.risk_data.append(risk_d)
+        self.risk_data.drop(['Level'], axis='columns', inplace=True)
+        all_risk = pd.concat([frame, self.risk_data], axis=1)
+        all_risk.to_excel('Data_Risk.xlsx', index=False)
+
+        print('Done')
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
         now = datetime.datetime.now()
