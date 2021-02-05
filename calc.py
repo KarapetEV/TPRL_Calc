@@ -297,7 +297,8 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.btn_load_project2.clicked.connect(self.load_project_data)
         self.btn_new_project.clicked.connect(self.create_dialog)
         self.tabWidget.currentChanged.connect(self.show_user_projects)
-        self.btn_report_ugt.clicked.connect(self.create_pdf)
+        self.btn_report_ugt.clicked.connect(self.report_ugt)
+        self.btn_report_risks.clicked.connect(self.report_risks)
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
         self.normal_risks = {'РТ-нир': 42, 'РТ-окр': 60, 'РТ-произв': 55, 'РТ-инт': 30, 'РТ-эксп': 28, 'РМ-зак': 29,
@@ -633,6 +634,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.create_table_rows(text_levels)
 
     def calculate(self):
+        self.risks_table.setVisible(False)
         self.text_warning = ''
         self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
@@ -706,7 +708,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                 if d2_values[d2_value] == 1:
                     if d2_value > 0:
                         if d2_values[d2_value - 1] != 1:
-                            self.text_warning = 'Вы не отметили задачи предыдущих уровней. Риски будут расчитаны неправильно!!!'
+                            text_warning = 'Вы не отметили задачи предыдущих уровней.\nРиски рассчитаны неправильно!!!'
                     summary = d2_value + 1
                 elif 0 < d2_values[d2_value] < 1:
                     if summary == d2_value:
@@ -714,7 +716,13 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             self.d3[d2_keys] = str(summary)
 
         if len(self.params) == 5:  # Оценка рисков
+            self.risks_table.setVisible(True)
+            self.report_risks()
             self.count_risks(self.save_data)
+        else:
+            self.text_warning = 'Комплексная оценка рисков не проводилась, т.к. не все параметры выбраны!'
+            self.risks_table.setVisible(False)
+        self.risks_warning_label.setText(self.text_warning)
 
         for par in Window.parameters:
             if par not in self.d3.keys():
@@ -902,7 +910,10 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.btn_save_results.setEnabled(False)
         self.check_draft.setEnabled(False)
 
-    def create_pdf(self):
+    def report_risks(self):
+        pass
+
+    def report_ugt(self):
         if len(self.params) == 5:
             self.chart.save_chart('', "chart_pdf")
         res_list = [float(self.label_trl_result.text()),

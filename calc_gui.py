@@ -556,10 +556,11 @@ class Ui_AppWindow(object):
 
         self.risks_warning_label = QtWidgets.QLabel(self.frame_risks)
         self.risks_warning_label.setGeometry(QtCore.QRect(400, 20, 400, 50))
+        font.setPointSize(14)
         self.risks_warning_label.setFont(font)
         self.risks_warning_label.setStyleSheet("font-color: red;")
         self.risks_warning_label.setWordWrap(True)
-        self.risks_warning_label.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
+        self.risks_warning_label.setAlignment(QtCore.Qt.AlignCenter)
         self.risks_warning_label.setObjectName("risks_warning_label")
 
         font.setBold(False)
