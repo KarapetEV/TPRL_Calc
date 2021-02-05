@@ -300,7 +300,10 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.btn_report_ugt.clicked.connect(self.create_pdf)
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
-
+        self.normal_risks = {'РТ-нир': 42, 'РТ-окр': 60, 'РТ-произв': 55, 'РТ-инт': 30, 'РТ-эксп': 28, 'РМ-зак': 29,
+                             'РМ-треб': 69, 'РМ-цен': 30, 'РМ-конк': 22, 'РМ-прод': 19, 'РО-дог': 29, 'РО-разр': 30,
+                             'РО-эксп': 15, 'РЮ-пат': 5, 'РЮ-зак': 9, 'РЭ-экол': 3, 'РП-бюд': 13, 'РП-срок': 14,
+                             'РИ-проект': 223}
     @pyqtSlot(int)
     def show_user_projects(self, index):
         if index == 1:
@@ -630,6 +633,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.create_table_rows(text_levels)
 
     def calculate(self):
+        self.text_warning = ''
         self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
         self.label_expert_name.setText(self.expert_name)
@@ -700,11 +704,18 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             summary = 0
             for d2_value in range(len(d2_values)):
                 if d2_values[d2_value] == 1:
+                    if d2_value > 0:
+                        if d2_values[d2_value - 1] != 1:
+                            self.text_warning = 'Вы не отметили задачи предыдущих уровней. Риски будут расчитаны неправильно!!!'
                     summary = d2_value + 1
                 elif 0 < d2_values[d2_value] < 1:
                     if summary == d2_value:
                         summary += d2_values[d2_value]
             self.d3[d2_keys] = str(summary)
+
+        if len(self.params) == 5:  # Оценка рисков
+            self.count_risks(self.save_data)
+
         for par in Window.parameters:
             if par not in self.d3.keys():
                 self.d3[par] = '0'
@@ -717,6 +728,51 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         if len(self.params) == 5:
             self.chart = Chart(self.d3, self.lay)
         self.make_text()
+
+    def count_risks(self, frame):
+        new_risks = self.normal_risks.copy()
+        self.risk_data = pd.DataFrame(
+            columns=['Level', 'РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
+                     'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
+                     'РЭ-экол', 'РП-бюд', 'РП-срок', 'РИ-проект'])
+        final_risks = {}
+        columns = ['РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
+                     'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
+                     'РЭ-экол', 'РП-бюд', 'РП-срок']
+        for param in self.params:
+            risk_d = pd.read_excel('data/Risks.xlsx', sheet_name=param)
+            self.risk_data = self.risk_data.append(risk_d)
+        self.risk_data.drop(['Level'], axis='columns', inplace=True)
+        all_risk = pd.concat([frame, self.risk_data], axis=1)
+        all_risk.reset_index(inplace=True)
+        for row in all_risk.index:
+            if all_risk['State'][row] == 0:
+                for col in columns:
+                    if all_risk[col][row] == 1:
+                        all_risk.at[row, col] = 0
+            elif all_risk['State'][row] == -1:
+                for col in columns:
+                    if all_risk[col][row] == 1:
+                        all_risk.at[row, col] = 0
+                        new_risks[col] -= 1
+                all_risk.loc[row, 'РИ-проект'] = 0
+                new_risks['РИ-проект'] -= 1
+        for key, values in new_risks.items():
+            if key not in final_risks:
+                if key == 'РИ-проект':
+                    value = round((1/new_risks[key]*all_risk[all_risk['State'] == 0].shape[0])*100, 1)
+                else:
+                    value = round((1/new_risks[key]*all_risk[all_risk[key] == 0].shape[0])*100, 1)
+                if value > 100:
+                    value = 100.0
+                final_risks[key] = value
+
+        # all_risk.to_excel(f'Data_Risk_{self.project_num}.xlsx', index=False)
+        # print(self.normal_risks)
+        # print(new_risks)
+        # print(final_risks)
+        # print(self.text_warning)
+        # print('Done')
 
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
