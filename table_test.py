@@ -13,7 +13,7 @@ import pandas as pd
 from chart import Chart
 from PyQt5.QtCore import pyqtSignal, QSize
 from splash import Splash
-from create_pdf import CreatePDF
+from report_ugt import ReportUgt
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
@@ -736,7 +736,7 @@ class Window(QtWidgets.QWidget, table_test_gui.Ui_AppWindow):
             new_save_data.drop(['Parameter'], axis='columns', inplace=True)
             data.append([param, new_save_data])
         self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]], data)
-        new_pdf = CreatePDF(self.pdf_data, self.d1)
+        new_pdf = ReportUgt(self.pdf_data, self.d1)
         new_pdf.set_data()
         os.remove(os.getcwd() + "\\chart_pdf.png")
 

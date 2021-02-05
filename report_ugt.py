@@ -24,8 +24,7 @@ from math import ceil
 import os
 
 
-
-class CreatePDF:
+class ReportUgt:
 
     def __init__(self, data, param_results):
         self.pdf = None
@@ -37,8 +36,8 @@ class CreatePDF:
         self.tprl = self.data[0][5][0]
         self.tprl_name = f"Уровень {self.tprl}. {self.data[0][5][1]}"
         self.header = ["Экспертное заключение № ____",
-                      "по оценке информации о результатах",
-                      "инновационного проекта в области железнодорожного транспорта"]
+                       "по оценке информации о результатах",
+                       "инновационного проекта в области железнодорожного транспорта"]
         self.text = ['1.    Дата проведения экспертного оценивания: ',
                      '2.    Идентификационный номер проекта: ',
                      '3.    ФИО эксперта: ',
@@ -144,7 +143,7 @@ class CreatePDF:
         files = os.listdir(dir)
         for file in files:
             if file.endswith(".pkl"):
-                os.remove(dir+file)
+                os.remove(dir + file)
 
     def get_path(self):
         file_date = self.data[0][0]
@@ -194,7 +193,7 @@ class CreatePDF:
             for i in range(count):
                 states = param_states[i]
 
-                levels = df.loc[df['Level'] == (lvl+i)]
+                levels = df.loc[df['Level'] == (lvl + i)]
                 level = levels.iat[0, 0]
                 lvls = levels.iat[0, 1]
                 level_name_list = self.word_wrap(lvls, 95)
@@ -209,7 +208,7 @@ class CreatePDF:
                     if lvl_line == 0:
                         border_num = 'LT'
                         border_lvl = 'TR'
-                    elif lvl_line == len(level_name_list)-1:
+                    elif lvl_line == len(level_name_list) - 1:
                         border_num = 'LB'
                         border_lvl = 'RB'
                     if len(level_name_list) == 1:
@@ -233,7 +232,7 @@ class CreatePDF:
                         border = 'LR'
                         if k == 0:
                             border = 'LTR'
-                        elif k == len(task_list)-1:
+                        elif k == len(task_list) - 1:
                             border = 'LRB'
                         if len(task_list) == 1:
                             border = 1

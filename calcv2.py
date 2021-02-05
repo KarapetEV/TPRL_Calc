@@ -34,7 +34,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem,
     QLabel, QPushButton, QMessageBox, QTabWidget, QTableWidgetItem, QLineEdit, QComboBox, QFrame
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
-from create_pdf import CreatePDF
+from report_ugt import ReportUgt
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
@@ -863,7 +863,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.pdf_data = (
         [date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]],
         data)
-        new_pdf = CreatePDF(self.pdf_data, self.d1)
+        new_pdf = ReportUgt(self.pdf_data, self.d1)
         new_pdf.set_data()
         try:
             os.remove(os.getcwd() + "\\chart_pdf.png")
