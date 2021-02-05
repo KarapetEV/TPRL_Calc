@@ -270,6 +270,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
 
         self.tabWidget.setTabEnabled(3, False)
         self.tabWidget.setTabEnabled(4, False)
+        self.tabWidget.setTabEnabled(5, False)
 
         self.expert_name = user
         self.params = []
@@ -296,7 +297,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.btn_load_project2.clicked.connect(self.load_project_data)
         self.btn_new_project.clicked.connect(self.create_dialog)
         self.tabWidget.currentChanged.connect(self.show_user_projects)
-        self.btn_pdf.clicked.connect(self.create_pdf)
+        self.btn_report_ugt.clicked.connect(self.create_pdf)
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
 
@@ -632,7 +633,10 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
         self.label_expert_name.setText(self.expert_name)
+        self.risks_label_project_num.setText(self.project_num)
+        self.risks_label_expert_name.setText(self.expert_name)
         self.tabWidget.setTabEnabled(4, True)
+        self.tabWidget.setTabEnabled(5, True)
         self.tabWidget.setCurrentIndex(4)
         self.check_draft.setEnabled(True)
         self.check_draft.setChecked(False)
