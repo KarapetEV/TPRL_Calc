@@ -35,7 +35,7 @@ class ReportUgt:
         self.param_results = param_results
         self.tprl = self.data[0][5][0]
         self.tprl_name = f"Уровень {self.tprl}. {self.data[0][5][1]}"
-        self.header = ["Экспертное заключение № ____",
+        self.title = ["Экспертное заключение № ____",
                        "по оценке информации о результатах",
                        "инновационного проекта в области железнодорожного транспорта"]
         self.text = ['1.    Дата проведения экспертного оценивания: ',
@@ -85,8 +85,8 @@ class ReportUgt:
         self.pdf.add_page()
         self.pdf.add_font('timesbd', '', r"fonts/times/timesbd.ttf", uni=True)
         self.pdf.set_font("timesbd", size=12)
-        for i in range(len(self.header)):
-            self.pdf.cell(200, 5, txt=self.header[i], ln=1, align="C")
+        for i in range(len(self.title)):
+            self.pdf.cell(200, 5, txt=self.title[i], ln=1, align="C")
         self.pdf.ln()
         self.pdf.ln()
         self.pdf.ln()

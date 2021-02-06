@@ -35,6 +35,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem,
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
 from report_ugt import ReportUgt
+from report_risks import ReportRisks
 
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
@@ -283,6 +284,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.label_user_name2.setText(user)
         self.newproject_data = tuple()
         self.saveproject_data = tuple()
+        self.risk_flag = True
 
         self.btn_set_params.clicked.connect(self.set_params)
         self.btn_calculate.clicked.connect(self.calculate)
@@ -634,6 +636,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.create_table_rows(text_levels)
 
     def calculate(self):
+        self.risk_flag = True
         self.risks_table.setVisible(False)
         self.text_warning = ''
         self.save_data.drop(['State'], axis='columns', inplace=True)
@@ -709,6 +712,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                     if d2_value > 0:
                         if d2_values[d2_value - 1] != 1:
                             self.text_warning = 'Вы не отметили задачи предыдущих уровней.\nРиски рассчитаны неправильно!!!'
+                            self.risk_flag = False
                     summary = d2_value + 1
                 elif 0 < d2_values[d2_value] < 1:
                     if summary == d2_value:
@@ -717,12 +721,13 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
 
         if len(self.params) == 5:  # Оценка рисков
             self.risks_table.setVisible(True)
-            self.report_risks()
             self.count_risks(self.save_data)
         else:
             self.text_warning = 'Комплексная оценка рисков не проводилась, т.к. не все параметры выбраны!'
             self.risks_table.setVisible(False)
+            self.risk_flag = False
         self.risks_warning_label.setText(self.text_warning)
+        self.btn_report_risks.setEnabled(self.risk_flag)
 
         for par in Window.parameters:
             if par not in self.d3.keys():
@@ -836,7 +841,6 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             self.risks_table.setCellWidget(i, 0, label_1)
             self.risks_table.setCellWidget(i, 1, label_2)
             self.risks_table.setCellWidget(i, 2, label_3)
-
         self.risks_table.resizeRowsToContents()
         self.risks_table.setEnabled(True)
         self.risks_table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -925,9 +929,6 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.btn_save_results.setEnabled(False)
         self.check_draft.setEnabled(False)
 
-    def report_risks(self):
-        pass
-
     def report_ugt(self):
         if len(self.params) == 5:
             self.chart.save_chart('', "chart_pdf")
@@ -954,6 +955,11 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             os.remove(os.getcwd() + "\\chart_pdf.png")
         except:
             pass
+
+    def report_risks(self):
+        date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
+        data = [date, self.project_num, self.expert_name]
+        new_report_risks = ReportRisks(data, self.risks_table)
 
     def show_results(self, res):
         res_list = []
