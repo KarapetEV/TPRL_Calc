@@ -86,9 +86,8 @@ class ReportRisks:
             table_headers.append(self.table.horizontalHeaderItem(i).text())
 
         self.pdf.ln()
-        self.pdf.ln()
         self.pdf.set_font("timesbd", size=10)
-        self.pdf.cell(30, 5, table_headers[0], 1, 0, align="C")
+        self.pdf.cell(35, 5, table_headers[0], 1, 0, align="C")
         self.pdf.cell(135, 5, table_headers[1], 1, 0, align="C")
         self.pdf.cell(25, 5, table_headers[2], 1, 0, align="C")
         self.pdf.ln()
@@ -122,7 +121,7 @@ class ReportRisks:
                     border_left = 'LB'
                     border_right = 'RB'
                     border = 'LRB'
-                self.pdf.cell(30, 5, risk_group[j], border_left, 0, align="C")
+                self.pdf.cell(35, 5, risk_group[j], border_left, 0, align="C")
                 self.pdf.cell(135, 5, risk_name[j], border, 0, align="L")
                 self.pdf.cell(25, 5, risk_num[j], border_right, 0, align="C")
                 self.pdf.ln()
@@ -132,8 +131,8 @@ class ReportRisks:
             line = line.replace('\n', ' ')
         start = 0
         l1 = []
-        if len(line) > x:
-            while len(line) > (start + x):
+        if len(line) >= x:
+            while len(line) >= (start + x):
                 index = line.rfind(' ', start, start + x)
                 res = line[start:index]
                 l1.append(res.strip())
