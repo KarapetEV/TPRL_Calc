@@ -37,7 +37,6 @@ from splash import Splash
 from report_ugt import ReportUgt
 from report_risks import ReportRisks
 
-
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
 
@@ -120,13 +119,15 @@ class HelpDialog(QDialog):
         self.help_text.setAlignment(Qt.AlignCenter)
         self.help_text.setWordWrap(True)
         self.help_text.setContentsMargins(0, 0, 0, 0)
-        self.help_text.setText('<p><small>Программа <strong>"TPRL Calculator"</strong> предназначена для расчета уровня '
-                               'готовности проекта/технологии к внедрению в ОАО"РЖД".\n'
-                               'Все расчеты и результаты формируются в соответствии с представленной методикой.</small></p>'
-                               '<p>© Copyright 2021</p>'
-                               '<p>\nАлексей Карапышев, Евгений Карапышев<br>'
-                               'в составе коллектива Дирекции НТП</p>'
-                               '<p>Версия: 1.01</p>')
+        self.help_text.setText(
+            '<p><small>Программа <strong>"TPRL Calculator"</strong> предназначена для расчета уровня '
+            'готовности проекта/технологии к внедрению в ОАО"РЖД".\n'
+            'Все расчеты и результаты, а также оценка рисков формируются в соответствии с представленными '
+            'методиками.</small></p>'
+            '<p>© Copyright 2021</p>'
+            '<p>\n<small>Алексей Карапышев, Евгений Карапышев<br>'
+            'в составе коллектива Дирекции НТП</small></p>'
+            '<p>Версия: 1.01</p>')
         self.link = QLabel('<a href="http://fcntp.ru">Посетить сайт Дирекции НТП</a>', self.about_tab)
         self.link.setStyleSheet("font-size: 12px;")
         self.link.setOpenExternalLinks(True)
@@ -134,29 +135,39 @@ class HelpDialog(QDialog):
         self.link.setObjectName("link")
         self.link.setAlignment(Qt.AlignCenter)
 
-        self.btn_methodology = QPushButton(self.about_tab)
-        self.btn_methodology.setGeometry(160, 260, 150, 20)
-        self.btn_methodology.setObjectName("btn_methodology")
-        self.btn_methodology.setText("Открыть методику")
-        self.btn_methodology.clicked.connect(self.open_methodology)
+        self.btn_ugt_methodology = QPushButton(self.about_tab)
+        self.btn_ugt_methodology.setGeometry(40, 260, 175, 20)
+        self.btn_ugt_methodology.setObjectName("btn_ugt_methodology")
+        self.btn_ugt_methodology.setText("Методика оценки зрелости")
+        self.btn_ugt_methodology.clicked.connect(self.open_ugt_methodology)
 
-    def open_methodology(self):
-        open_path = os.getcwd() + "\\data\\methodology.pdf"
+        self.btn_risk_methodology = QPushButton(self.about_tab)
+        self.btn_risk_methodology.setGeometry(255, 260, 175, 20)
+        self.btn_risk_methodology.setObjectName("btn_risk_methodology")
+        self.btn_risk_methodology.setText("Методика оценки рисков")
+        self.btn_risk_methodology.clicked.connect(self.open_risk_methodology)
+
+    def open_ugt_methodology(self):
+        open_path = os.getcwd() + "\\data\\ugt_methodology.pdf"
+        os.startfile(open_path)
+
+    def open_risk_methodology(self):
+        open_path = os.getcwd() + "\\data\\risk_methodology.pdf"
         os.startfile(open_path)
 
     def create_license_tab(self):
         text = ('TPRL Calculator является свободным программным обеспечением: вы можете '
-                 'распространять и/или изменять его на условиях Стандартной общественной '
-                 'лицензии GNU в том виде, в каком она была опубликованной Фондом свободного '
-                 'программного обеспечения (FSF); либо Лицензии версии 3, либо (на Ваше '
-                 'усмотрение) любой более поздней версии.\n\n'
-                 'Эта программа распространяется в надежде, что она будет полезной, но БЕЗ КАКИХ '
-                 'БЫ ТО НИ БЫЛО ГАРАНТИЙНЫХ ОБЯЗАТЕЛЬСТВ; даже без косвенных гарантийных '
-                 'обязательств, связанных с ПОТРЕБИТЕЛЬСКИМИ СВОЙСТВАМИ и ПРИГОДНОСТЬЮ ДЛЯ '
-                 'ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. Для подробностей смотрите Стандартную Общественную '
-                 'Лицензию GNU.\n\n'
-                 'Вы должны были получить копию Стандартной Общественной Лицензии GNU вместе с '
-                 'этой программой.\nЕсли это не так, см. <https://www.gnu.org/licenses/>.')
+                'распространять и/или изменять его на условиях Стандартной общественной '
+                'лицензии GNU в том виде, в каком она была опубликованной Фондом свободного '
+                'программного обеспечения (FSF); либо Лицензии версии 3, либо (на Ваше '
+                'усмотрение) любой более поздней версии.\n\n'
+                'Эта программа распространяется в надежде, что она будет полезной, но БЕЗ КАКИХ '
+                'БЫ ТО НИ БЫЛО ГАРАНТИЙНЫХ ОБЯЗАТЕЛЬСТВ; даже без косвенных гарантийных '
+                'обязательств, связанных с ПОТРЕБИТЕЛЬСКИМИ СВОЙСТВАМИ и ПРИГОДНОСТЬЮ ДЛЯ '
+                'ОПРЕДЕЛЕННЫХ ЦЕЛЕЙ. Для подробностей смотрите Стандартную Общественную '
+                'Лицензию GNU.\n\n'
+                'Вы должны были получить копию Стандартной Общественной Лицензии GNU вместе с '
+                'этой программой.\nЕсли это не так, см. <https://www.gnu.org/licenses/>.')
         license_font = QFont()
         license_font.setPointSize(10)
         license_font.setBold(False)
@@ -307,6 +318,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                              'РМ-треб': 69, 'РМ-цен': 30, 'РМ-конк': 22, 'РМ-прод': 19, 'РО-дог': 29, 'РО-разр': 30,
                              'РО-эксп': 15, 'РЮ-пат': 5, 'РЮ-зак': 9, 'РЭ-экол': 3, 'РП-бюд': 13, 'РП-срок': 14,
                              'РИ-проект': 223}
+
     @pyqtSlot(int)
     def show_user_projects(self, index):
         if index == 1:
@@ -537,7 +549,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
 
             for key, value in val.items():
                 self.item_0 = QTreeWidgetItem(self.tw)
-                self.item_0.setBackground(0,QColor("#D3D3D3"))
+                self.item_0.setBackground(0, QColor("#D3D3D3"))
                 self.item_0.setText(0, f'Уровень {key}')
                 self.item_0.setBackground(1, QColor("#D3D3D3"))
                 text = self.word_wrap(value[0], 90)
@@ -623,7 +635,8 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                 if (key == 'TPRL') & (value == '0'):
                     new_text_dict['TPRL'] = 'Уровень зрелости инновационного проекта/технологии  = 0'
                 elif (key == 'TPRL') & (value == '--'):
-                    new_text_dict['TPRL'] = 'Уровень зрелости инновационного проекта/технологии не рассчитан, т.к. не были выбраны все параметры'
+                    new_text_dict['TPRL'] = 'Уровень зрелости инновационного проекта/технологии не рассчитан, т.к. ' \
+                                            'не были выбраны все параметры'
                 elif op_data['Уровень'][rank] == int(float(value)):
                     new_text_dict[key] = op_data[key][rank]
         return new_text_dict
@@ -654,7 +667,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         d2 = {}
         self.d3 = {}
         new_state = []
-        l2 = []
+        # l2 = []
         for param in self.params:
             self.param_tabs.setCurrentIndex(self.params.index(param))
             tree = self.param_tabs.currentWidget()
@@ -711,7 +724,8 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                 if d2_values[d2_value] == 1:
                     if d2_value > 0:
                         if d2_values[d2_value - 1] != 1:
-                            self.text_warning = 'Вы не отметили задачи предыдущих уровней.\nРиски рассчитаны неправильно!!!'
+                            self.text_warning = 'Вы не отметили задачи предыдущих уровней.\n' \
+                                                'Риски рассчитаны неправильно!!!'
                             self.risk_flag = False
                     summary = d2_value + 1
                 elif 0 < d2_values[d2_value] < 1:
@@ -742,7 +756,6 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             self.chart = Chart(self.d3, self.lay)
         self.make_text()
 
-
     def count_risks(self, frame):
         new_risks = self.normal_risks.copy()
         self.risk_data = pd.DataFrame(
@@ -751,8 +764,8 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                      'РЭ-экол', 'РП-бюд', 'РП-срок', 'РИ-проект'])
         final_risks = {}
         columns = ['РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
-                     'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
-                     'РЭ-экол', 'РП-бюд', 'РП-срок']
+                   'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
+                   'РЭ-экол', 'РП-бюд', 'РП-срок']
         for param in self.params:
             risk_d = pd.read_excel('data/Risks.xlsx', sheet_name=param)
             self.risk_data = self.risk_data.append(risk_d)
@@ -774,9 +787,9 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         for key, values in new_risks.items():
             if key not in final_risks:
                 if key == 'РИ-проект':
-                    value = round((1/new_risks[key]*all_risk[all_risk['State'] == 0].shape[0])*100, 1)
+                    value = round((1 / new_risks[key] * all_risk[all_risk['State'] == 0].shape[0]) * 100, 1)
                 else:
-                    value = round((1/new_risks[key]*all_risk[all_risk[key] == 0].shape[0])*100, 1)
+                    value = round((1 / new_risks[key] * all_risk[all_risk[key] == 0].shape[0]) * 100, 1)
                 if value > 100:
                     value = 100.0
                 final_risks[key] = value
@@ -789,7 +802,8 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             "Технический риск", "Технический риск", "Технический риск", "Технологический риск", "Технологический риск",
             "Маркетинговый риск", "Маркетинговый риск", "Маркетинговый риск", "Маркетинговый (коньюнктурный) риск",
             "Маркетинговый риск", "Организационный (контрактный) риск", "Организационный риск", "Организационный риск",
-            "Юридический (правовой) риск", "Юридический риск (законодательство)", "Экологический риск", "Проектный риск",
+            "Юридический (правовой) риск", "Юридический риск (законодательство)", "Экологический риск",
+            "Проектный риск",
             "Проектный риск", "Интегральный проектный риск"
         ]
         risk_text = [
@@ -799,8 +813,10 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             "Недостаточная проработка вопросов интеграции в систему верхнего уровня",
             "Применение неапробированных в промышленных масштабах технологий",
             "Недостаточные (отсутствующие) исследования потенциальных заказчиков продукта, сегментации рынка",
-            "Недостаточные (отсутствующие) исследования требований и потребностей конкретных заказчиков из разных сегментов рынка",
-            "Недостаточные (отсутствующие) исследования покупательной способности заказчиков из разных сегментов рынка, "
+            "Недостаточные (отсутствующие) исследования требований и потребностей конкретных заказчиков из разных "
+            "сегментов рынка",
+            "Недостаточные (отсутствующие) исследования покупательной способности заказчиков из разных "
+            "сегментов рынка, "
             "вопросов себестоимости, ценообразования и объемов продаж для конкретных заказчиков из разных сегментов",
             "Недостаточные (отсутствующие) исследования аналогов и конкурентов, конкурентных преимуществ, разработки "
             "планов по развитию продукта / технологии в конкурентной среде",
@@ -810,7 +826,8 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             "Недостаточная компетентность или нехватка ресурсов персонала компании - разработчика",
             "Эксплуатация персоналом незнакомых технических средств (технологий)",
             "Недостаточная (отсутствующая) патентная защита",
-            "Неучтенные законодательные ограничения на продукт / технологию или требования нормативно - правовых документов",
+            "Неучтенные законодательные ограничения на продукт / технологию или требования нормативно - "
+            "правовых документов",
             "Нарушение экологических стандартов",
             "Недостаточно проработанное (отсутствующее) бюджетное планирование проекта",
             "Недостаточно проработанное (отсутствующее) календарное планирование проекта",
@@ -933,10 +950,10 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         if len(self.params) == 5:
             self.chart.save_chart('', "chart_pdf")
         res_list = [float(self.label_trl_result.text()),
-                   float(self.label_mrl_result.text()),
-                   float(self.label_erl_result.text()),
-                   float(self.label_orl_result.text()),
-                   float(self.label_crl_result.text())]
+                    float(self.label_mrl_result.text()),
+                    float(self.label_erl_result.text()),
+                    float(self.label_orl_result.text()),
+                    float(self.label_crl_result.text())]
         results = []
         for i in range(len(self.parameters)):
             for param in self.params:
@@ -948,7 +965,10 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
             new_save_data.drop(['Parameter'], axis='columns', inplace=True)
             data[param] = new_save_data
-        self.pdf_data = ([date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]], data)
+        self.pdf_data = (
+            [date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]],
+            data
+        )
         new_report_ugt = ReportUgt(self.pdf_data, self.d1)
         new_report_ugt.set_data()
         try:
@@ -999,9 +1019,6 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
     def show_help(self):
         self.help_dialog = HelpDialog(self)
         self.help_dialog.show()
-
-
-
 
     def closeEvent(self, event):
         if self.confirm_msg("Вы уверены, что хотите закрыть программу?"):
