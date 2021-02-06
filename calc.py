@@ -736,7 +736,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         if len(self.params) == 5:
             self.chart = Chart(self.d3, self.lay)
         self.make_text()
-        self.create_risk_table()
+
 
     def count_risks(self, frame):
         new_risks = self.normal_risks.copy()
@@ -776,7 +776,10 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                     value = 100.0
                 final_risks[key] = value
 
-    def create_risk_table(self):
+        self.create_risk_table(final_risks)
+
+    def create_risk_table(self, dict_risks):
+        risk_value = []
         risk_group = [
             "Технический риск", "Технический риск", "Технический риск", "Технологический риск", "Технологический риск",
             "Маркетинговый риск", "Маркетинговый риск", "Маркетинговый риск", "Маркетинговый (коньюнктурный) риск",
@@ -808,6 +811,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             "Недостаточно проработанное (отсутствующее) календарное планирование проекта",
             "Недостаточное выполнение задач повышения зрелости продукта / технологии в рамках заданных характеристик"
         ]
+
         rows = len(risk_group)
         self.risks_table.setRowCount(rows)
         self.risks_table.setHorizontalHeaderLabels(["Группа", "Наименование риска", "Оценка риска"])
@@ -818,15 +822,21 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.risks_table.setColumnWidth(0, 150)
         self.risks_table.setColumnWidth(1, 520)
         self.risks_table.setColumnWidth(2, 130)
-
+        for k, v in dict_risks.items():
+            number = Decimal(f'{v}')
+            v = number.quantize(Decimal('1'), rounding='ROUND_HALF_UP')
+            risk_value.append(v)
         for i in range(rows):
             label_1 = QLabel(self.word_wrap(risk_group[i], 26))
             label_1.setContentsMargins(5, 5, 5, 5)
             label_2 = QLabel(self.word_wrap(risk_text[i], 90))
             label_2.setContentsMargins(5, 5, 5, 5)
+            label_3 = QLabel(f'{risk_value[i]}%')
+            label_3.setContentsMargins(55, 5, 5, 5)
             self.risks_table.setCellWidget(i, 0, label_1)
             self.risks_table.setCellWidget(i, 1, label_2)
-            # self.risks_table.setCellWidget()
+            self.risks_table.setCellWidget(i, 2, label_3)
+
         self.risks_table.resizeRowsToContents()
         self.risks_table.setEnabled(True)
         self.risks_table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
