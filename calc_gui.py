@@ -554,14 +554,7 @@ class Ui_AppWindow(object):
         self.risks_label_expert.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.risks_label_expert.setObjectName("risks_label_expert")
 
-        self.risks_warning_label = QtWidgets.QLabel(self.frame_risks)
-        self.risks_warning_label.setGeometry(QtCore.QRect(400, 20, 400, 50))
-        font.setPointSize(14)
-        self.risks_warning_label.setFont(font)
-        self.risks_warning_label.setStyleSheet("font-color: red;")
-        self.risks_warning_label.setWordWrap(True)
-        self.risks_warning_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.risks_warning_label.setObjectName("risks_warning_label")
+
 
         font.setBold(False)
         font.setUnderline(True)
@@ -577,6 +570,16 @@ class Ui_AppWindow(object):
         self.risks_label_expert_name.setWordWrap(True)
         self.risks_label_expert_name.setAlignment(QtCore.Qt.AlignVCenter)
         self.risks_label_expert_name.setObjectName("risks_label_expert_name")
+
+        self.risks_warning_label = QtWidgets.QLabel(self.frame_risks)
+        self.risks_warning_label.setGeometry(QtCore.QRect(400, 20, 400, 50))
+        # font.setPointSize(14)
+        # self.risks_warning_label.setFont(font)
+        self.risks_warning_label.setStyleSheet("""font-color: red;
+                                                            font-size: 14px;""")
+        self.risks_warning_label.setWordWrap(True)
+        self.risks_warning_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.risks_warning_label.setObjectName("risks_warning_label")
 
         # таблица рисков
         self.risks_table = QtWidgets.QTableWidget(self.frame_risks)

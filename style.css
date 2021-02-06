@@ -53,6 +53,10 @@ QTabWidget	{
 	text-decoration: underline;
 }
 
+#risks_warning_label {
+    color: red;
+}
+
 QCheckBox	{
 	font-size: 13px;
 }
