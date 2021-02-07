@@ -127,7 +127,7 @@ class HelpDialog(QDialog):
             '<p>© Copyright 2021</p>'
             '<p>\n<small>Алексей Карапышев, Евгений Карапышев<br>'
             'в составе коллектива Дирекции НТП</small></p>'
-            '<p>Версия: 1.01</p>')
+            '<p>Версия: 1.02</p>')
         self.link = QLabel('<a href="http://fcntp.ru">Посетить сайт Дирекции НТП</a>', self.about_tab)
         self.link.setStyleSheet("font-size: 12px;")
         self.link.setOpenExternalLinks(True)
