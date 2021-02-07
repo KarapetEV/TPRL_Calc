@@ -667,7 +667,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         d2 = {}
         self.d3 = {}
         new_state = []
-        # l2 = []
+        l2 = []
         for param in self.params:
             self.param_tabs.setCurrentIndex(self.params.index(param))
             tree = self.param_tabs.currentWidget()
