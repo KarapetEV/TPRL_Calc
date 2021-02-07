@@ -667,7 +667,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         d2 = {}
         self.d3 = {}
         new_state = []
-        # l2 = []
+        l2 = []
         for param in self.params:
             self.param_tabs.setCurrentIndex(self.params.index(param))
             tree = self.param_tabs.currentWidget()
@@ -780,7 +780,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             elif all_risk['State'][row] == -1:
                 for col in columns:
                     if all_risk[col][row] == 1:
-                        all_risk.at[row, col] = 0
+                        all_risk.at[row, col] = 1
                         new_risks[col] -= 1
                 all_risk.loc[row, 'РИ-проект'] = 0
                 new_risks['РИ-проект'] -= 1
@@ -793,7 +793,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                 if value > 100:
                     value = 100.0
                 final_risks[key] = value
-
+        # all_risk.to_excel(f'Data_Risk_{self.project_num}.xlsx', index=False)
         self.create_risk_table(final_risks)
 
     def create_risk_table(self, dict_risks):
