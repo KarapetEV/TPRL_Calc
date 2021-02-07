@@ -136,13 +136,13 @@ class HelpDialog(QDialog):
         self.link.setAlignment(Qt.AlignCenter)
 
         self.btn_ugt_methodology = QPushButton(self.about_tab)
-        self.btn_ugt_methodology.setGeometry(40, 260, 175, 20)
+        self.btn_ugt_methodology.setGeometry(33, 260, 185, 20)
         self.btn_ugt_methodology.setObjectName("btn_ugt_methodology")
         self.btn_ugt_methodology.setText("Методика оценки зрелости")
         self.btn_ugt_methodology.clicked.connect(self.open_ugt_methodology)
 
         self.btn_risk_methodology = QPushButton(self.about_tab)
-        self.btn_risk_methodology.setGeometry(255, 260, 175, 20)
+        self.btn_risk_methodology.setGeometry(252, 260, 185, 20)
         self.btn_risk_methodology.setObjectName("btn_risk_methodology")
         self.btn_risk_methodology.setText("Методика оценки рисков")
         self.btn_risk_methodology.clicked.connect(self.open_risk_methodology)
