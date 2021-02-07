@@ -589,6 +589,7 @@ class Ui_AppWindow(object):
         self.risks_table.horizontalHeader().setVisible(True)
         self.risks_table.verticalHeader().setVisible(False)
         self.risks_table.setColumnCount(3)
+        self.risks_table.setSelectionMode(QtWidgets.QTableWidget.NoSelection)
 
         # кнопка формирования заключения по рискам
         self.btn_report_risks = QtWidgets.QPushButton(self.frame_risks)

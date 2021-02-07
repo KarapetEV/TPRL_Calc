@@ -841,9 +841,9 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.risks_table.horizontalHeaderItem(1).setTextAlignment(Qt.AlignCenter)
         self.risks_table.horizontalHeaderItem(2).setTextAlignment(Qt.AlignCenter)
 
-        self.risks_table.setColumnWidth(0, 150)
+        self.risks_table.setColumnWidth(0, 140)
         self.risks_table.setColumnWidth(1, 520)
-        self.risks_table.setColumnWidth(2, 130)
+        self.risks_table.setColumnWidth(2, 125)
         for k, v in dict_risks.items():
             number = Decimal(f'{v}')
             v = number.quantize(Decimal('1'), rounding='ROUND_HALF_UP')
