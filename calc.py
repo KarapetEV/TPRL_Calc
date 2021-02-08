@@ -1065,7 +1065,9 @@ class Controller:
 
 
 if __name__ == '__main__':
+    os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '1'
     app = QApplication(sys.argv)
+    app.setAttribute(Qt.AA_EnableHighDpiScaling)
     controller = Controller()  # Создаем экземпляр класса
     controller.show_splash()
     app.processEvents()
