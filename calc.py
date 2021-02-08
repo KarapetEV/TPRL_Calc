@@ -545,7 +545,6 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             self.param_tabs.addTab(self.tw, param)
             self.param_tabs.setCurrentIndex(self.params.index(param))
             self.param_tabs.setTabEnabled(self.params.index(param), True)
-            # self.param_tabs.setStyleSheet('''font-weight: 12px bold;''')
 
             for key, value in val.items():
                 self.item_0 = QTreeWidgetItem(self.tw)
