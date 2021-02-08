@@ -68,7 +68,8 @@ QTreeWidget	{
 	background-color: #ebebeb;
 	border: 1px solid grey;
 	border-radius: 4px;
-	font-size: 13px;
+	font-size: 12px;
+	font-weight: 12px;
 	color: #000;
 }
 
@@ -161,6 +162,10 @@ QTreeWidgetItem::Item {
 
 #btn_license:pressed	{
 	background-color: #e31b1a;
+}
+
+#combo_task {
+    font-size: 10px;
 }
 
 #btn_license:hover	{
