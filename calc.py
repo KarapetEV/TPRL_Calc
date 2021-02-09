@@ -534,7 +534,6 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             self.params.append('CRL')
 
     def create_rows(self):
-        # QToolTip.setFont(_font)
 
         for param in self.params:
             self.data = pd.read_excel(self.path, sheet_name=param)
@@ -558,6 +557,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                     self.combo_task = QComboBox()
                     self.combo_task.setObjectName('combo_task')
                     self.combo_task.addItems(['Да', 'Нет', 'Не применимо'])
+                    self.combo_task.adjustSize()
                     self.combo_task.setFixedSize(110, 20)
                     self.item_1 = QTreeWidgetItem(self.item_0, ["", ""])
                     if v[2] == 0:

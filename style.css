@@ -165,7 +165,7 @@ QTreeWidgetItem::Item {
 }
 
 #combo_task {
-    font-size: 10px;
+    font-size: 12px;
 }
 
 #btn_license:hover	{
