@@ -947,8 +947,8 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.check_draft.setEnabled(False)
 
     def report_ugt(self):
-        if len(self.params) == 5:
-            self.chart.save_chart('', "chart_pdf")
+        # if len(self.params) == 5:
+        #     self.chart.save_chart('', "chart_pdf")
         res_list = [float(self.label_trl_result.text()),
                     float(self.label_mrl_result.text()),
                     float(self.label_erl_result.text()),
@@ -971,10 +971,10 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         )
         new_report_ugt = ReportUgt(self.pdf_data, self.d1)
         new_report_ugt.set_data()
-        try:
-            os.remove(os.getcwd() + "\\chart_pdf.png")
-        except:
-            pass
+        # try:
+        #     os.remove(os.getcwd() + "\\chart_pdf.png")
+        # except:
+        #     pass
 
     def report_risks(self):
         date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
