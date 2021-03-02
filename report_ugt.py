@@ -97,21 +97,6 @@ class ReportUgt:
             self.pdf.set_font("times", 'U', size=12)
             self.pdf.cell(80, 8, data[i], '', 0, align="L")
             self.pdf.ln()
-        # self.pdf.set_font("times", size=12)
-        # self.pdf.cell(100, 8, self.tprl_text, ln=1, align="L")
-        # self.pdf.set_font("times", 'U', size=12)
-        # tprl_name_list = self.word_wrap(self.tprl_name, 95)
-        # for i in range(len(tprl_name_list)):
-        #     self.pdf.cell(100, 5, tprl_name_list[i].strip(), '', 0, align="L")
-        #     self.pdf.ln()
-        # if len(tprl_name_list) > 1:
-        #     y = 95
-        # else:
-        #     y = 90
-        # if len(self.params) == 5:
-        #     self.pdf.image('chart_pdf.png', 60, y, 84, 50)
-        #     for _ in range(11):
-        #         self.pdf.ln()
         self.pdf.ln()
         self.pdf.set_font("times", size=12)
         self.pdf.cell(200, 8, txt=self.table_header, align="L")
