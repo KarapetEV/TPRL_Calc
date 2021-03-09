@@ -122,12 +122,12 @@ class HelpDialog(QDialog):
         self.help_text.setText(
             '<p><small>Программа <strong>"TPRL Calculator"</strong> предназначена для расчета уровня '
             'готовности проекта/технологии к внедрению в ОАО"РЖД".\n'
-            'Все расчеты и результаты, а также оценка рисков формируются в соответствии с представленными '
-            'методиками.</small></p>'
+            'Все расчеты и результаты, а также оценка рисков формируются в соответствии с представленной '
+            'методикой.</small></p>'
             '<p>© Copyright 2021</p>'
             '<p>\n<small>Алексей Карапышев, Евгений Карапышев<br>'
             'в составе коллектива Дирекции НТП</small></p>'
-            '<p>Версия: 1.02</p>')
+            '<p>Версия: 1.1</p>')
         self.link = QLabel('<a href="http://fcntp.ru">Посетить сайт Дирекции НТП</a>', self.about_tab)
         self.link.setStyleSheet("font-size: 12px;")
         self.link.setOpenExternalLinks(True)
@@ -136,24 +136,24 @@ class HelpDialog(QDialog):
         self.link.setAlignment(Qt.AlignCenter)
 
         self.btn_ugt_methodology = QPushButton(self.about_tab)
-        self.btn_ugt_methodology.setGeometry(33, 260, 185, 20)
+        self.btn_ugt_methodology.setGeometry(175, 260, 120, 20)
         self.btn_ugt_methodology.setObjectName("btn_ugt_methodology")
-        self.btn_ugt_methodology.setText("Методика оценки зрелости")
+        self.btn_ugt_methodology.setText("Методика")
         self.btn_ugt_methodology.clicked.connect(self.open_ugt_methodology)
 
-        self.btn_risk_methodology = QPushButton(self.about_tab)
-        self.btn_risk_methodology.setGeometry(252, 260, 185, 20)
-        self.btn_risk_methodology.setObjectName("btn_risk_methodology")
-        self.btn_risk_methodology.setText("Методика оценки рисков")
-        self.btn_risk_methodology.clicked.connect(self.open_risk_methodology)
+        # self.btn_risk_methodology = QPushButton(self.about_tab)
+        # self.btn_risk_methodology.setGeometry(252, 260, 185, 20)
+        # self.btn_risk_methodology.setObjectName("btn_risk_methodology")
+        # self.btn_risk_methodology.setText("Методика оценки рисков")
+        # self.btn_risk_methodology.clicked.connect(self.open_risk_methodology)
 
     def open_ugt_methodology(self):
         open_path = os.getcwd() + "\\data\\ugt_methodology.pdf"
         os.startfile(open_path)
 
-    def open_risk_methodology(self):
-        open_path = os.getcwd() + "\\data\\risk_methodology.pdf"
-        os.startfile(open_path)
+    # def open_risk_methodology(self):
+    #     open_path = os.getcwd() + "\\data\\risk_methodology.pdf"
+    #     os.startfile(open_path)
 
     def create_license_tab(self):
         text = ('TPRL Calculator является свободным программным обеспечением: вы можете '
