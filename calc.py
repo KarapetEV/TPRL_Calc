@@ -713,7 +713,9 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
             l_n = []
             for new_value in new_values:
                 try:
-                    new_value = round(sum(new_value) / len(new_value), 1)
+                    new_value = sum(new_value) / len(new_value)
+                    n = Decimal(f'{new_value}')
+                    new_value = n.quantize(Decimal('1.0'), rounding='ROUND_HALF_UP')
                 except Exception:
                     new_value = 0.0
                 l_n.append(new_value)
@@ -746,9 +748,12 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         for par in Window.parameters:
             if par not in self.d3.keys():
                 self.d3[par] = '0'
+        print(self.d3)
         for iter_k, iter_v in self.d3.items():
-            iter_v = round(float(iter_v), 1)
+            # iter_v = round(float(iter_v), 1)
+
             self.d3[iter_k] = str(iter_v)
+        print(self.d3)
         self.param_tabs.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
@@ -977,16 +982,18 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
     def show_results(self, res):
         res_list = []
         for k_res, v_res in res.items():
+            n = Decimal(f'{v_res}')
+            v = n.quantize(Decimal('1.0'), rounding='ROUND_HALF_UP')
             if k_res == 'TRL':
-                self.label_trl_result.setText(v_res)
+                self.label_trl_result.setText(f'{v}')
             elif k_res == 'MRL':
-                self.label_mrl_result.setText(v_res)
+                self.label_mrl_result.setText(f'{v}')
             elif k_res == 'ERL':
-                self.label_erl_result.setText(v_res)
+                self.label_erl_result.setText(f'{v}')
             elif k_res == 'ORL':
-                self.label_orl_result.setText(v_res)
+                self.label_orl_result.setText(f'{v}')
             elif k_res == 'CRL':
-                self.label_crl_result.setText(v_res)
+                self.label_crl_result.setText(f'{v}')
         show_res = res.copy()
         if len(self.params) < 5:
             self.tprl_average = '--'
@@ -1004,7 +1011,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
                 res_list.append(float(new_v))
             self.tprl_average = float(sum(res_list) / len(res_list))
             number = Decimal(f'{self.tprl_average}')
-            self.tprl_average = number.quantize(Decimal("1.0"), rounding='ROUND_DOWN')
+            self.tprl_average = number.quantize(Decimal("1.0"), rounding='ROUND_HALF_UP')
             self.tprl_min = int(self.tprl_average)
             self.label_tprl_average_result.setText(str(self.tprl_average))
             self.label_tprl_min_result.setText(str(self.tprl_min))
