@@ -77,12 +77,12 @@ QTreeWidgetItem::Item {
 	border-bottom: 1px solid #ffffff;
 }
 
-#btn_manual	{
+#btn_help	{
 	font-size: 10px;
   	padding: 1px 2px 1px 2px;
 }
 
-#btn_ugt_methodology {
+#btn_methodology {
 	background: #e31b1a;
   	background-image: -webkit-linear-gradient(top, #e31b1a, #c62d1f);
   	background-image: -moz-linear-gradient(top, #e31b1a, #c62d1f);
@@ -98,11 +98,11 @@ QTreeWidgetItem::Item {
   	text-decoration: none;
 }
 
-#btn_ugt_methodology:pressed	{
+#btn_methodology:pressed	{
 	background-color: #e31b1a;
 }
 
-#btn_ugt_methodology:hover	{
+#btn_methodology:hover	{
 	background: #c62d1f;
   	background-image: -webkit-linear-gradient(top, #c62d1f, #f24437);
   	background-image: -moz-linear-gradient(top, #c62d1f, #f24437);
@@ -113,7 +113,7 @@ QTreeWidgetItem::Item {
   	text-decoration: none;
 }
 
-#btn_risk_methodology {
+#btn_manual {
 	background: #e31b1a;
   	background-image: -webkit-linear-gradient(top, #e31b1a, #c62d1f);
   	background-image: -moz-linear-gradient(top, #e31b1a, #c62d1f);
@@ -129,11 +129,11 @@ QTreeWidgetItem::Item {
   	text-decoration: none;
 }
 
-#btn_risk_methodology:pressed	{
+#btn_manual:pressed	{
 	background-color: #e31b1a;
 }
 
-#btn_risk_methodology:hover	{
+#btn_manual:hover	{
 	background: #c62d1f;
   	background-image: -webkit-linear-gradient(top, #c62d1f, #f24437);
   	background-image: -moz-linear-gradient(top, #c62d1f, #f24437);

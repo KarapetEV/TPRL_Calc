@@ -54,9 +54,9 @@ class Ui_AppWindow(object):
         self.tabWidget.setGeometry(QtCore.QRect(0, 75, 820, 610))
         self.tabWidget.setObjectName("tabWidget")
         # -------------------------Create HELP Button-------------------
-        self.btn_manual = QtWidgets.QPushButton(self.tabWidget)
-        self.btn_manual.setGeometry(QtCore.QRect(770, 0, 45, 20))
-        self.btn_manual.setObjectName("btn_manual")
+        self.btn_help = QtWidgets.QPushButton(self.tabWidget)
+        self.btn_help.setGeometry(QtCore.QRect(770, 0, 45, 20))
+        self.btn_help.setObjectName("btn_help")
         # -----------------------Вкладка проектов (новый)---------------------------
         self.tab_new_project = QtWidgets.QWidget()
         self.tab_new_project.setObjectName("tab_new_project")
@@ -610,7 +610,7 @@ class Ui_AppWindow(object):
                                           "Расчёт оценки зрелости инновационного продукта/технологии к внедрению в ОАО "
                                           "«РЖД» и оценки уровня рисков реализации и финансирования инновационных "
                                           "проектов в ОАО «РЖД»"))
-        self.btn_manual.setText(_translate("AppWindow", "Справка"))
+        self.btn_help.setText(_translate("AppWindow", "Справка"))
         self.btn_change_user.setText(_translate("AppWindow", "Сменить пользователя"))
         self.btn_change_user1.setText(_translate("AppWindow", "Сменить пользователя"))
         self.btn_change_user2.setText(_translate("AppWindow", "Сменить пользователя"))

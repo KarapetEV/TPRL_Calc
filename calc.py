@@ -135,25 +135,29 @@ class HelpDialog(QDialog):
         self.link.setObjectName("link")
         self.link.setAlignment(Qt.AlignCenter)
 
-        self.btn_ugt_methodology = QPushButton(self.about_tab)
-        self.btn_ugt_methodology.setGeometry(175, 260, 120, 20)
-        self.btn_ugt_methodology.setObjectName("btn_ugt_methodology")
-        self.btn_ugt_methodology.setText("Методика")
-        self.btn_ugt_methodology.clicked.connect(self.open_ugt_methodology)
+        # Кнопка открытия файла методики
+        self.btn_methodology = QPushButton(self.about_tab)
+        self.btn_methodology.setGeometry(33, 260, 185, 20)
+        self.btn_methodology.setObjectName("btn_methodology")
+        self.btn_methodology.setText("Методика")
+        self.btn_methodology.clicked.connect(self.open_methodology)
 
-        # self.btn_risk_methodology = QPushButton(self.about_tab)
-        # self.btn_risk_methodology.setGeometry(252, 260, 185, 20)
-        # self.btn_risk_methodology.setObjectName("btn_risk_methodology")
-        # self.btn_risk_methodology.setText("Методика оценки рисков")
-        # self.btn_risk_methodology.clicked.connect(self.open_risk_methodology)
+        # Кнопка открытия файла руководства пользователя
+        self.btn_manual = QPushButton(self.about_tab)
+        self.btn_manual.setGeometry(252, 260, 185, 20)
+        self.btn_manual.setObjectName("btn_manual")
+        self.btn_manual.setText("Руководство пользователя")
+        self.btn_manual.clicked.connect(self.open_manual)
 
-    def open_ugt_methodology(self):
-        open_path = os.getcwd() + "\\data\\ugt_methodology.pdf"
+    def open_methodology(self):
+        # open_path = os.getcwd() + "\\data\\methodology.pdf"
+        open_path = os.getcwd() + "/data/methodology.pdf"
         os.startfile(open_path)
 
-    # def open_risk_methodology(self):
-    #     open_path = os.getcwd() + "\\data\\risk_methodology.pdf"
-    #     os.startfile(open_path)
+    def open_manual(self):
+        # open_path = os.getcwd() + "\\data\\manual.pdf"
+        open_path = os.getcwd() + "/data/manual.pdf"
+        os.startfile(open_path)
 
     def create_license_tab(self):
         text = ('TPRL Calculator является свободным программным обеспечением: вы можете '
@@ -300,7 +304,7 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.btn_set_params.clicked.connect(self.set_params)
         self.btn_calculate.clicked.connect(self.calculate)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
-        self.btn_manual.clicked.connect(self.show_help)
+        self.btn_help.clicked.connect(self.show_help)
         self.btn_save_results.clicked.connect(self.save_results)
         self.btn_change_user.clicked.connect(self.change_user)
         self.btn_change_user1.clicked.connect(self.change_user)
