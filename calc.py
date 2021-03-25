@@ -120,10 +120,12 @@ class HelpDialog(QDialog):
         self.help_text.setWordWrap(True)
         self.help_text.setContentsMargins(0, 0, 0, 0)
         self.help_text.setText(
-            '<p><small>Программа <strong>"TPRL Calculator"</strong> предназначена для расчета уровня '
-            'готовности проекта/технологии к внедрению в ОАО"РЖД".\n'
+            '<p><small>Программа <strong>"TPRL Calculator"</strong> предназначена для расчёта уровня зрелости '
+            'инновационного продукта/технологии, реализующая Методику оценки зрелости инновационного '
+            'продукта/технологии к внедрению в ОАО «РЖД» и оценки уровня рисков реализации и финансирования '
+            'инновационных проектов в ОАО «РЖД».\n'
             'Все расчеты и результаты, а также оценка рисков формируются в соответствии с представленной '
-            'методикой.</small></p>'
+            'Методикой.</small></p>'
             '<p>© Copyright 2021</p>'
             '<p>\n<small>Алексей Карапышев, Евгений Карапышев<br>'
             'в составе коллектива Дирекции НТП</small></p>'
@@ -851,8 +853,8 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         self.risks_table.horizontalHeaderItem(2).setTextAlignment(Qt.AlignCenter)
 
         self.risks_table.setColumnWidth(0, 140)
-        self.risks_table.setColumnWidth(1, 520)
-        self.risks_table.setColumnWidth(2, 125)
+        self.risks_table.setColumnWidth(1, 525)
+        self.risks_table.setColumnWidth(2, 120)
         for k, v in dict_risks.items():
             number = Decimal(f'{v}')
             v = number.quantize(Decimal('1'), rounding='ROUND_HALF_UP')
@@ -860,10 +862,13 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         for i in range(rows):
             label_1 = QLabel(self.word_wrap(risk_group[i], 26))
             label_1.setContentsMargins(5, 5, 5, 5)
+            label_1.setStyleSheet("font-size: 11px;")
             label_2 = QLabel(self.word_wrap(risk_text[i], 90))
             label_2.setContentsMargins(5, 5, 5, 5)
+            label_2.setStyleSheet("font-size: 11px;")
             label_3 = QLabel(f'{risk_value[i]}%')
             label_3.setContentsMargins(55, 5, 5, 5)
+            label_3.setStyleSheet("font-size: 11px;")
             self.risks_table.setCellWidget(i, 0, label_1)
             self.risks_table.setCellWidget(i, 1, label_2)
             self.risks_table.setCellWidget(i, 2, label_3)
@@ -1069,7 +1074,9 @@ class Controller:
 
 
 if __name__ == '__main__':
+    os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '1'
     app = QApplication(sys.argv)
+    app.setAttribute(Qt.AA_EnableHighDpiScaling)
     controller = Controller()  # Создаем экземпляр класса
     controller.show_splash()
     app.processEvents()
