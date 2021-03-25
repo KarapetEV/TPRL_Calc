@@ -754,12 +754,10 @@ class Window(QWidget, calc_gui.Ui_AppWindow):
         for par in Window.parameters:
             if par not in self.d3.keys():
                 self.d3[par] = '0'
-        print(self.d3)
         for iter_k, iter_v in self.d3.items():
             # iter_v = round(float(iter_v), 1)
 
             self.d3[iter_k] = str(iter_v)
-        print(self.d3)
         self.param_tabs.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
