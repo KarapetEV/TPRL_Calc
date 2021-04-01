@@ -48,6 +48,8 @@ class TreeWidget(QTreeWidget):
         self.setColumnWidth(0, 150)
         self.headerItem().setText(0, 'Параметр')
         self.headerItem().setText(1, 'Задачи')
+        self.setStyleSheet("QHeaderView::section {background-color: #82898E; font-size: 14px; "
+                           "font-weight: bold; color: #ffffff;}")
         self.itemClicked.connect(self.onItemClicked)
 
     @pyqtSlot(QTreeWidgetItem)
@@ -874,14 +876,24 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
         self.risks_impact_table.setHorizontalHeaderLabels(list(column_headers.keys()))
         self.risks_impact_table.setVerticalHeaderLabels(list(row_headers.keys()))
 
-        # self.risks_impact_table.horizontalHeader().setStyleSheet('''
-        #                                                             font-size: 12px;
-        #                                                             color: #000000;
-        #                                                          ''')
-        # self.risks_impact_table.verticalHeader().setStyleSheet('''
-        #                                                                     font-size: 12px;
-        #                                                                     color: #000000;
-        #                                                                  ''')
+        self.risks_impact_table.horizontalHeader().setLineWidth(1)
+        self.risks_impact_table.verticalHeader().setLineWidth(1)
+
+        for i in range(5):
+            for j in range(5):
+                row = list(row_headers.keys())[i]
+                column = list(column_headers.keys())[j]
+                k = column_headers[column] * row_headers[row]
+                self.risks_impact_table.setItem(i, j, QTableWidgetItem())
+
+                if 1 <= k < 5:
+                    self.risks_impact_table.item(i, j).setBackground(QColor("#61ff96"))
+                    # self.risks_impact_table.item(i, j).setText(str(k))
+                elif 5 <= k < 10:
+                    self.risks_impact_table.item(i, j).setBackground(QColor("#dfff61"))
+                else:
+                    self.risks_impact_table.item(i, j).setBackground(QColor("#ff6161"))
+
 
         # all_risk.to_excel(f'Data_Risk_{self.project_num}.xlsx', index=False)
 

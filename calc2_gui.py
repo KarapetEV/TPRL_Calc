@@ -110,6 +110,11 @@ class Ui_AppWindow(object):
         self.btn_new_project = QtWidgets.QPushButton(self.tab_new_project)
         self.btn_new_project.setGeometry(QtCore.QRect(310, 500, 200, 30))
         self.btn_new_project.setObjectName("btn_new_project")
+
+        # -----------------------Стиль заголовков таблицы-------------------------------
+        headers_style = "QHeaderView::section {background-color: #82898E; font-size: 14px; " \
+                        "font-weight: bold; color: #ffffff;}"
+
         # -----------------------Вкладка проектов (черновики)---------------------------
         self.tab_user = QtWidgets.QWidget()
         self.tab_user.setObjectName("tab_user")
@@ -132,6 +137,7 @@ class Ui_AppWindow(object):
         self.btn_change_user1 = QtWidgets.QPushButton(self.frame_user_tab)
         self.btn_change_user1.setGeometry(QtCore.QRect(580, 10, 190, 30))
         self.btn_change_user1.setObjectName("btn_change_user1")
+
         # Таблица черновиков
         self.projects_table = QtWidgets.QTableWidget(self.frame_user_tab)
         self.projects_table.setGeometry(QtCore.QRect(50, 50, 720, 470))
@@ -140,7 +146,7 @@ class Ui_AppWindow(object):
         self.projects_table.setColumnCount(7)
         self.projects_table.setRowCount(0)
         self.projects_table.verticalHeader().setVisible(False)
-
+        self.projects_table.setStyleSheet(headers_style)
         # Заголовки таблицы черновиков
         item = QtWidgets.QTableWidgetItem()
         item.setTextAlignment(QtCore.Qt.AlignCenter)
@@ -195,8 +201,9 @@ class Ui_AppWindow(object):
         self.projects_table2.setContentsMargins(0, 0, 0, 0)
         self.projects_table2.setObjectName('projects_table2')
         self.projects_table2.setColumnCount(7)
-        self.projects_table.setRowCount(0)
+        self.projects_table2.setRowCount(0)
         self.projects_table2.verticalHeader().setVisible(False)
+        self.projects_table2.setStyleSheet(headers_style)
         # Заголовки таблицы завершенных проектов
         item = QtWidgets.QTableWidgetItem()
         item.setTextAlignment(QtCore.Qt.AlignCenter)
@@ -514,6 +521,7 @@ class Ui_AppWindow(object):
         self.table_tprl_results.setObjectName('table_tprl_results')
         self.table_tprl_results.horizontalHeader().setVisible(False)
         self.table_tprl_results.verticalHeader().setVisible(False)
+        self.table_tprl_results.setStyleSheet(headers_style)
         # -------------------------Draft_CheckBox-------------------------
         self.check_draft = QtWidgets.QCheckBox(self.frame_tprl_results)
         self.check_draft.setGeometry(QtCore.QRect(335, 310, 180, 30))
@@ -581,19 +589,18 @@ class Ui_AppWindow(object):
 
         # таблица рисков
         self.risks_table = QtWidgets.QTableWidget(self.frame_risks)
-        self.risks_table.setGeometry(QtCore.QRect(5, 90, 805, 172))
+        self.risks_table.setGeometry(QtCore.QRect(5, 90, 805, 175))
         self.risks_table.setContentsMargins(2, 2, 2, 2)
         self.risks_table.setObjectName('risks_table')
         self.risks_table.horizontalHeader().setVisible(True)
         self.risks_table.verticalHeader().setVisible(False)
         self.risks_table.setColumnCount(3)
-        # self.risks_table.setStyleSheet("QHeaderView {background-color: #82898E; font-size: 14px; "
-        #                                "font-weight: bold; color: #ffffff;")
+        self.risks_table.setStyleSheet(headers_style)
         self.risks_table.setSelectionMode(QtWidgets.QTableWidget.NoSelection)
 
         # разделение таблиц
         self.line_horizontal2 = QtWidgets.QFrame(self.frame_risks)
-        self.line_horizontal2.setGeometry(QtCore.QRect(0, 264, 820, 2))
+        self.line_horizontal2.setGeometry(QtCore.QRect(0, 267, 820, 2))
         self.line_horizontal2.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_horizontal2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_horizontal2.setObjectName("line_horizontal2")
@@ -607,9 +614,7 @@ class Ui_AppWindow(object):
         self.risks_impact_table.setRowCount(5)
         self.risks_impact_table.horizontalHeader().setVisible(True)
         self.risks_impact_table.verticalHeader().setVisible(True)
-        # self.risks_impact_table.setStyleSheet("QHeaderView::section{font-size: 12px; color: #000000;")
         self.risks_impact_table.setSelectionMode(QtWidgets.QTableWidget.NoSelection)
-        self.risks_impact_table.showGrid()
 
         # кнопка формирования заключения по рискам
         self.btn_report_risks = QtWidgets.QPushButton(self.frame_risks)
