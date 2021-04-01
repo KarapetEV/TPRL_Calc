@@ -215,7 +215,7 @@ QLabel	{
 	padding: 0px 0px 0px 0px;
 }
 
-QHeaderView::section	{
+QHeaderView1::section	{
 	background-color: #82898E;
 	font-size: 14px;
 	font-weight: bold;

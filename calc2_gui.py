@@ -48,7 +48,7 @@ class Ui_AppWindow(object):
         self.labelCalc.setAlignment(QtCore.Qt.AlignCenter)
         self.labelCalc.setWordWrap(True)
         self.labelCalc.setObjectName("labelCalc")
-        #-----------------------Создание вкладок---------------------------
+        # -----------------------Создание вкладок---------------------------
         self.tabWidget = QtWidgets.QTabWidget(AppWindow)
         self.tabWidget.setEnabled(True)
         self.tabWidget.setGeometry(QtCore.QRect(0, 75, 820, 610))
@@ -298,7 +298,7 @@ class Ui_AppWindow(object):
         self.btn_reset_tasks.setGeometry(QtCore.QRect(486, 390, 180, 30))
         self.btn_reset_tasks.setObjectName("btn_reset_tasks")
         self.btn_reset_tasks.setEnabled(False)
-        #----------------------Вкладка результатов-----------------------------
+        # ----------------------Вкладка результатов-----------------------------
         self.tab_results = QtWidgets.QWidget()
         self.tab_results.setObjectName("tab_results")
         self.tabWidget.addTab(self.tab_results, "")
@@ -315,7 +315,7 @@ class Ui_AppWindow(object):
         font.setBold(True)
         font.setWeight(75)
         self.labelProject.setFont(font)
-        self.labelProject.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.labelProject.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.labelProject.setObjectName("labelProject")
         self.label_project_num = QtWidgets.QLabel(self.frame_results)
         self.label_project_num.setGeometry(QtCore.QRect(150, 10, 200, 30))
@@ -493,13 +493,13 @@ class Ui_AppWindow(object):
         self.line_horizontal.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_horizontal.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_horizontal.setObjectName("line_horizontal")
-        #-----------------------Frame_TPRL_results----------------------
+        # -----------------------Frame_TPRL_results----------------------
         self.frame_tprl_results = QtWidgets.QFrame(self.tab_results)
         self.frame_tprl_results.setGeometry(QtCore.QRect(5, 235, 815, 345))
         self.frame_tprl_results.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_tprl_results.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_tprl_results.setObjectName('frame_tprl_results')
-        #------------------------Label_Main_TPRL-------------------------
+        # ------------------------Label_Main_TPRL-------------------------
         self.label_main_tprl = QtWidgets.QLabel(self.frame_tprl_results)
         self.label_main_tprl.setGeometry(QtCore.QRect(0, 0, 805, 40))
         font = QtGui.QFont()
@@ -514,12 +514,12 @@ class Ui_AppWindow(object):
         self.table_tprl_results.setObjectName('table_tprl_results')
         self.table_tprl_results.horizontalHeader().setVisible(False)
         self.table_tprl_results.verticalHeader().setVisible(False)
-        #-------------------------Draft_CheckBox-------------------------
+        # -------------------------Draft_CheckBox-------------------------
         self.check_draft = QtWidgets.QCheckBox(self.frame_tprl_results)
         self.check_draft.setGeometry(QtCore.QRect(335, 310, 180, 30))
         self.check_draft.setObjectName("check_draft")
         self.check_draft.setChecked(False)
-        #----------------------Save_results Button-----------------------
+        # ----------------------Save_results Button-----------------------
         self.btn_save_results = QtWidgets.QPushButton(self.frame_tprl_results)
         self.btn_save_results.setGeometry(QtCore.QRect(150, 310, 180, 30))
         self.btn_save_results.setObjectName("btn_save_results")
@@ -554,8 +554,6 @@ class Ui_AppWindow(object):
         self.risks_label_expert.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.risks_label_expert.setObjectName("risks_label_expert")
 
-
-
         font.setBold(False)
         font.setUnderline(True)
         self.risks_label_project_num = QtWidgets.QLabel(self.frame_risks)
@@ -589,7 +587,29 @@ class Ui_AppWindow(object):
         self.risks_table.horizontalHeader().setVisible(True)
         self.risks_table.verticalHeader().setVisible(False)
         self.risks_table.setColumnCount(3)
+        # self.risks_table.setStyleSheet("QHeaderView {background-color: #82898E; font-size: 14px; "
+        #                                "font-weight: bold; color: #ffffff;")
         self.risks_table.setSelectionMode(QtWidgets.QTableWidget.NoSelection)
+
+        # разделение таблиц
+        self.line_horizontal2 = QtWidgets.QFrame(self.frame_risks)
+        self.line_horizontal2.setGeometry(QtCore.QRect(0, 264, 820, 2))
+        self.line_horizontal2.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line_horizontal2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line_horizontal2.setObjectName("line_horizontal2")
+
+        # таблица рисков с вероятностью и весом
+        self.risks_impact_table = QtWidgets.QTableWidget(self.frame_risks)
+        self.risks_impact_table.setGeometry(QtCore.QRect(50, 275, 750, 250))
+        self.risks_impact_table.setContentsMargins(2, 2, 2, 2)
+        self.risks_impact_table.setObjectName('risks_impact_table')
+        self.risks_impact_table.setColumnCount(5)
+        self.risks_impact_table.setRowCount(5)
+        self.risks_impact_table.horizontalHeader().setVisible(True)
+        self.risks_impact_table.verticalHeader().setVisible(True)
+        # self.risks_impact_table.setStyleSheet("QHeaderView::section{font-size: 12px; color: #000000;")
+        self.risks_impact_table.setSelectionMode(QtWidgets.QTableWidget.NoSelection)
+        self.risks_impact_table.showGrid()
 
         # кнопка формирования заключения по рискам
         self.btn_report_risks = QtWidgets.QPushButton(self.frame_risks)

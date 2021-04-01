@@ -807,8 +807,7 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
 
     def create_risk_table(self, dict_risks):
         risk_value = []
-        risk_group = [
-            "Р1", "Р2", "Р3", "Р4", "Р5"]
+        risk_group = ["Р1", "Р2", "Р3", "Р4", "Р5"]
         risk_text = [
             "Недостижение ожидаемых (заданных) характеристик функциональности и производительности результата "
             "инновационного проекта – продукта/технологии",
@@ -851,6 +850,38 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
         self.risks_table.setEnabled(True)
         self.risks_table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.risks_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        self.create_risks_impact_table()
+
+    # таблица рисков и их влияния
+    def create_risks_impact_table(self):
+
+        column_headers = {
+            "Очень низкая": 1,
+            "Низкая": 2,
+            "Средняя": 3,
+            "Высокая": 4,
+            "Очень высокая": 5,
+        }
+        row_headers = {
+            "Очень высокий уровень": 5,
+            "Высокий уровень": 4,
+            "Средний уровень": 3,
+            "Низкий уровень": 2,
+            "Очень низкий уровень": 1,
+        }
+
+        self.risks_impact_table.setHorizontalHeaderLabels(list(column_headers.keys()))
+        self.risks_impact_table.setVerticalHeaderLabels(list(row_headers.keys()))
+
+        # self.risks_impact_table.horizontalHeader().setStyleSheet('''
+        #                                                             font-size: 12px;
+        #                                                             color: #000000;
+        #                                                          ''')
+        # self.risks_impact_table.verticalHeader().setStyleSheet('''
+        #                                                                     font-size: 12px;
+        #                                                                     color: #000000;
+        #                                                                  ''')
 
         # all_risk.to_excel(f'Data_Risk_{self.project_num}.xlsx', index=False)
 
