@@ -607,7 +607,7 @@ class Ui_AppWindow(object):
 
         # таблица рисков с вероятностью и весом
         self.risks_impact_table = QtWidgets.QTableWidget(self.frame_risks)
-        self.risks_impact_table.setGeometry(QtCore.QRect(50, 275, 750, 250))
+        self.risks_impact_table.setGeometry(QtCore.QRect(20, 300, 779, 225))
         self.risks_impact_table.setContentsMargins(2, 2, 2, 2)
         self.risks_impact_table.setObjectName('risks_impact_table')
         self.risks_impact_table.setColumnCount(5)
@@ -615,7 +615,6 @@ class Ui_AppWindow(object):
         self.risks_impact_table.horizontalHeader().setVisible(True)
         self.risks_impact_table.verticalHeader().setVisible(True)
         self.risks_impact_table.setSelectionMode(QtWidgets.QTableWidget.NoSelection)
-        # self.risks_impact_table.setStyleSheet("border: 1px solid grey;")
 
         # кнопка формирования заключения по рискам
         self.btn_report_risks = QtWidgets.QPushButton(self.frame_risks)
