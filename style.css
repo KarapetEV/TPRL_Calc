@@ -221,3 +221,7 @@ QHeaderView1::section	{
 	font-weight: bold;
 	color: #ffffff;
 }
+
+#risks_impact_table {
+    gridline-color: black;
+}

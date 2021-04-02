@@ -39,6 +39,7 @@ from report_risks import ReportRisks
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
+
 class comboCompanies(QComboBox):
     def __init__(self, parent):
         super(comboCompanies, self).__init__(parent)
@@ -835,7 +836,7 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
         self.risks_table.horizontalHeaderItem(3).setTextAlignment(Qt.AlignCenter)
 
         self.risks_table.setColumnWidth(0, 45)
-        self.risks_table.setColumnWidth(1, 580)
+        self.risks_table.setColumnWidth(1, 578)
         self.risks_table.setColumnWidth(2, 100)
         self.risks_table.setColumnWidth(3, 80)
         for k, v in dict_risks.items():
@@ -886,24 +887,27 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
 
         self.risks_impact_table.setHorizontalHeaderLabels(list(column_headers.keys()))
         self.risks_impact_table.setVerticalHeaderLabels(list(row_headers.keys()))
+        # headers_style = "QHeaderView::section {border: 1px solid black; background-color: white;}"
+        # self.risks_impact_table.setStyleSheet(headers_style)
+        # self.risks_impact_table.horizontalHeader().setLineWidth(1)
+        # self.risks_impact_table.verticalHeader().setLineWidth(1)
 
-        self.risks_impact_table.horizontalHeader().setLineWidth(1)
-        self.risks_impact_table.verticalHeader().setLineWidth(1)
 
         for i in range(5):
+            self.risks_impact_table.setRowHeight(i, 30)
             for j in range(5):
+
                 row = list(row_headers.keys())[i]
                 column = list(column_headers.keys())[j]
                 k = column_headers[column] * row_headers[row]
                 self.risks_impact_table.setItem(i, j, QTableWidgetItem())
-
                 if 1 <= k < 5:
-                    self.risks_impact_table.item(i, j).setBackground(QColor("#61ff96"))
+                    self.risks_impact_table.item(i, j).setBackground(QColor("#06d10d")) #61ff96
                     # self.risks_impact_table.item(i, j).setText(str(k))
                 elif 5 <= k < 10:
-                    self.risks_impact_table.item(i, j).setBackground(QColor("#dfff61"))
+                    self.risks_impact_table.item(i, j).setBackground(QColor("yellow")) #dfff61
                 else:
-                    self.risks_impact_table.item(i, j).setBackground(QColor("#ff6161"))
+                    self.risks_impact_table.item(i, j).setBackground(QColor("red")) #ff6161
 
 
         # all_risk.to_excel(f'Data_Risk_{self.project_num}.xlsx', index=False)

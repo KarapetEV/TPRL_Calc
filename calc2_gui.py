@@ -615,6 +615,7 @@ class Ui_AppWindow(object):
         self.risks_impact_table.horizontalHeader().setVisible(True)
         self.risks_impact_table.verticalHeader().setVisible(True)
         self.risks_impact_table.setSelectionMode(QtWidgets.QTableWidget.NoSelection)
+        # self.risks_impact_table.setStyleSheet("border: 1px solid grey;")
 
         # кнопка формирования заключения по рискам
         self.btn_report_risks = QtWidgets.QPushButton(self.frame_risks)
