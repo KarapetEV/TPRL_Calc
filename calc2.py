@@ -41,18 +41,18 @@ style = os.path.join(os.path.dirname(__file__), 'style.css')
 
 
 class comboCompanies(QComboBox):
-    combo_signal = pyqtSignal(str)
+    combo_signal = pyqtSignal()
 
     def __init__(self, parent):
         super(comboCompanies, self).__init__(parent)
         self.setStyleSheet("font-size: 12px;")
         self.addItems(['1', '2', '3', '4', '5'])
         self.setCurrentText('1')
-        self.currentIndexChanged.connect(self.return_combodata)
+        self.currentIndexChanged.connect(self.combo_signal.emit)
 
-    def return_combodata(self):
-        index = self.currentText()
-        self.combo_signal.emit(index)
+    # def return_combodata(self):
+    #     index = self.currentText()
+    #     self.combo_signal.emit()
 
 
 class TreeWidget(QTreeWidget):
@@ -335,7 +335,6 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
         self.tabWidget.currentChanged.connect(self.show_user_projects)
         self.btn_report_ugt.clicked.connect(self.report_ugt)
         self.btn_report_risks.clicked.connect(self.report_risks)
-        self.combo_signal.connect(self.change_risks_impact)
 
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
@@ -869,7 +868,7 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
             self.risks_table.setCellWidget(i, 1, label_2)
             self.risks_table.setCellWidget(i, 2, label_3)
             self.risks_table.setCellWidget(i, 3, self.combo)
-            self.combo.combo_signal[str].connect(self.change_risks_impact)
+            self.combo.combo_signal.connect(self.fill_risks_impact_table)
 
         self.risks_table.resizeRowsToContents()
         self.risks_table.setEnabled(True)
@@ -877,6 +876,7 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
         self.risks_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.create_risks_impact_table()
+        self.fill_risks_impact_table()
 
     # таблица рисков и их влияния
     def create_risks_impact_table(self):
@@ -908,22 +908,63 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
                 row = list(row_headers.keys())[i]
                 column = list(column_headers.keys())[j]
                 k = column_headers[column] * row_headers[row]
-                self.risks_impact_table.setItem(i, j, QTableWidgetItem())
-                if 1 <= k < 5:
-                    self.risks_impact_table.item(i, j).setBackground(QColor("#06d10d"))
-                elif 5 <= k < 10:
-                    self.risks_impact_table.item(i, j).setBackground(QColor("yellow"))
-                else:
-                    self.risks_impact_table.item(i, j).setBackground(QColor("red"))
-        # all_risk.to_excel(f'Data_Risk_{self.project_num}.xlsx', index=False)
 
-    @pyqtSlot(str)
-    def change_risks_impact(self, text):
-        self.risks_impact_table.clear()
+                label = QLabel("")
+                label.setAlignment(Qt.AlignCenter)
+
+                self.risks_impact_table.setCellWidget(i, j, label)
+
+                if 1 <= k < 5:
+                    self.risks_impact_table.cellWidget(i, j).setStyleSheet('''
+                                                                              font-size: 13px; 
+                                                                              font-weight: bold; 
+                                                                              background-color: #06d10d;
+                                                                              ''')
+                elif 5 <= k < 10:
+                    self.risks_impact_table.cellWidget(i, j).setStyleSheet('''
+                                                                              font-size: 13px bold; 
+                                                                              font-weight: bold; 
+                                                                              background-color: yellow;
+                                                                              ''')
+                else:
+                    self.risks_impact_table.cellWidget(i, j).setStyleSheet('''
+                                                                              font-size: 13px bold; 
+                                                                              font-weight: bold; 
+                                                                              background-color: red;
+                                                                              ''')
+
+    @pyqtSlot()
+    def fill_risks_impact_table(self):
+        self.clear_risks_impact_table()
         for i in range(5):
-            risk = self.risks_impact_table.item(i, 0).text()
-            percent = int(self.risks_impact_table.item(i, 2).text().strip("%"))
-            risk_impact = self.risks_impact_table.item(i, 3).current
+            risk = self.risks_table.cellWidget(i, 0).text()
+            percent = int(self.risks_table.cellWidget(i, 2).text().strip("%"))
+            risk_impact = int(self.risks_table.cellWidget(i, 3).currentText())
+            coords = self.check_risk(risk_impact, percent)
+            cell_text = self.risks_impact_table.cellWidget(coords[0], coords[1]).text()
+            risks_text = (cell_text + f", {risk}").strip(", ")
+            self.risks_impact_table.cellWidget(coords[0], coords[1]).setText(risks_text)
+
+    def clear_risks_impact_table(self):
+        for i in range(5):
+            for j in range(5):
+                self.risks_impact_table.cellWidget(i, j).setText("")
+
+    def check_risk(self, x, y):
+        coordinates = [5-x]
+        if 0 <= y <= 20:
+            coordinates.append(0)
+        elif 21 <= y <= 40:
+            coordinates.append(1)
+        elif 41 <= y <= 60:
+            coordinates.append(2)
+        elif 61 <= y <= 80:
+            coordinates.append(3)
+        elif 81 <= y <= 100:
+            coordinates.append(4)
+
+        return coordinates
+
 
 
     def save_results(self):
