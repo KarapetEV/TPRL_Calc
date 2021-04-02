@@ -594,7 +594,7 @@ class Ui_AppWindow(object):
         self.risks_table.setObjectName('risks_table')
         self.risks_table.horizontalHeader().setVisible(True)
         self.risks_table.verticalHeader().setVisible(False)
-        self.risks_table.setColumnCount(3)
+        self.risks_table.setColumnCount(4)
         self.risks_table.setStyleSheet(headers_style)
         self.risks_table.setSelectionMode(QtWidgets.QTableWidget.NoSelection)
 

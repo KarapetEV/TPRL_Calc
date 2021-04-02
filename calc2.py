@@ -39,6 +39,13 @@ from report_risks import ReportRisks
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
+class comboCompanies(QComboBox):
+    def __init__(self, parent):
+        super(comboCompanies, self).__init__(parent)
+        self.setStyleSheet("font-size: 12px;")
+        self.addItems(['1', '2', '3', '4', '5'])
+        self.setCurrentText('1')
+
 
 class TreeWidget(QTreeWidget):
     def __init__(self, parent=None):
@@ -821,20 +828,22 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
 
         rows = len(risk_group)
         self.risks_table.setRowCount(rows)
-        self.risks_table.setHorizontalHeaderLabels(["Риск", "Определение риска", "Оценка риска"])
+        self.risks_table.setHorizontalHeaderLabels(["Риск", "Наименование риска", "Вероятность", "Влияние"])
         self.risks_table.horizontalHeaderItem(0).setTextAlignment(Qt.AlignCenter)
         self.risks_table.horizontalHeaderItem(1).setTextAlignment(Qt.AlignCenter)
         self.risks_table.horizontalHeaderItem(2).setTextAlignment(Qt.AlignCenter)
+        self.risks_table.horizontalHeaderItem(3).setTextAlignment(Qt.AlignCenter)
 
-        self.risks_table.setColumnWidth(0, 80)
-        self.risks_table.setColumnWidth(1, 615)
-        self.risks_table.setColumnWidth(2, 110)
+        self.risks_table.setColumnWidth(0, 45)
+        self.risks_table.setColumnWidth(1, 580)
+        self.risks_table.setColumnWidth(2, 100)
+        self.risks_table.setColumnWidth(3, 80)
         for k, v in dict_risks.items():
             number = Decimal(f'{v}')
             v = number.quantize(Decimal('1'), rounding='ROUND_HALF_UP')
             risk_value.append(v)
         for i in range(rows):
-            label_1 = QLabel(self.word_wrap(risk_group[i], 26))
+            label_1 = QLabel(self.word_wrap(risk_group[i], 15))
             label_1.setContentsMargins(5, 5, 5, 5)
             label_1.setStyleSheet("font-size: 13px;")
             label_1.setAlignment(Qt.AlignCenter)
@@ -845,9 +854,11 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
             label_3.setContentsMargins(5, 5, 5, 5)
             label_3.setStyleSheet("font-size: 12px;")
             label_3.setAlignment(Qt.AlignCenter)
+            combo = comboCompanies(self)
             self.risks_table.setCellWidget(i, 0, label_1)
             self.risks_table.setCellWidget(i, 1, label_2)
             self.risks_table.setCellWidget(i, 2, label_3)
+            self.risks_table.setCellWidget(i, 3, combo)
         self.risks_table.resizeRowsToContents()
         self.risks_table.setEnabled(True)
         self.risks_table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
