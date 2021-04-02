@@ -35,9 +35,15 @@ from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem,
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
 from report_ugt import ReportUgt
+from report_risks import ReportRisks
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
-
+class comboCompanies(QComboBox):
+    def __init__(self, parent):
+        super(comboCompanies, self).__init__(parent)
+        self.setStyleSheet("font-size: 12px;")
+        self.addItems(['1', '2', '3', '4', '5'])
+        self.setCurrentText('')
 
 class TreeWidget(QTreeWidget):
     def __init__(self, parent=None):
@@ -119,13 +125,16 @@ class HelpDialog(QDialog):
         self.help_text.setWordWrap(True)
         self.help_text.setContentsMargins(0, 0, 0, 0)
         self.help_text.setText(
-            '<p><small>Программа <strong>"TPRL Calculator"</strong> предназначена для расчета уровня '
-            'готовности проекта/технологии к внедрению в ОАО"РЖД".\n'
-            'Все расчеты и результаты формируются в соответствии с представленной методикой.</small></p>'
+            '<p><small>Программа <strong>"TPRL Calculator"</strong> предназначена для расчёта уровня зрелости '
+            'инновационного продукта/технологии, реализующая Методику оценки зрелости инновационного '
+            'продукта/технологии к внедрению в ОАО «РЖД» и оценки уровня рисков реализации и финансирования '
+            'инновационных проектов в ОАО «РЖД».\n'
+            'Все расчеты и результаты, а также оценка рисков формируются в соответствии с представленной '
+            'Методикой.</small></p>'
             '<p>© Copyright 2021</p>'
-            '<p>\nАлексей Карапышев, Евгений Карапышев<br>'
-            'в составе коллектива Дирекции НТП</p>'
-            '<p>Версия: 1.00</p>')
+            '<p>\n<small>Алексей Карапышев, Евгений Карапышев<br>'
+            'в составе коллектива Дирекции НТП</small></p>'
+            '<p>Версия: 1.1</p>')
         self.link = QLabel('<a href="http://fcntp.ru">Посетить сайт Дирекции НТП</a>', self.about_tab)
         self.link.setStyleSheet("font-size: 12px;")
         self.link.setOpenExternalLinks(True)
@@ -133,14 +142,28 @@ class HelpDialog(QDialog):
         self.link.setObjectName("link")
         self.link.setAlignment(Qt.AlignCenter)
 
+        # Кнопка открытия файла методики
         self.btn_methodology = QPushButton(self.about_tab)
-        self.btn_methodology.setGeometry(160, 260, 150, 20)
+        self.btn_methodology.setGeometry(33, 260, 185, 20)
         self.btn_methodology.setObjectName("btn_methodology")
-        self.btn_methodology.setText("Открыть методику")
+        self.btn_methodology.setText("Методика")
         self.btn_methodology.clicked.connect(self.open_methodology)
 
+        # Кнопка открытия файла руководства пользователя
+        self.btn_manual = QPushButton(self.about_tab)
+        self.btn_manual.setGeometry(252, 260, 185, 20)
+        self.btn_manual.setObjectName("btn_manual")
+        self.btn_manual.setText("Руководство пользователя")
+        self.btn_manual.clicked.connect(self.open_manual)
+
     def open_methodology(self):
-        open_path = os.getcwd() + "\\data\\methodology.pdf"
+        # open_path = os.getcwd() + "\\data\\methodology.pdf"
+        open_path = os.getcwd() + "/data/methodology.pdf"
+        os.startfile(open_path)
+
+    def open_manual(self):
+        # open_path = os.getcwd() + "\\data\\manual.pdf"
+        open_path = os.getcwd() + "/data/manual.pdf"
         os.startfile(open_path)
 
     def create_license_tab(self):
@@ -271,6 +294,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.tabWidget.setTabEnabled(3, False)
         self.tabWidget.setTabEnabled(4, False)
         self.tabWidget.setTabEnabled(5, False)
+
         self.expert_name = user
         self.params = []
         self.project_num = ''
@@ -282,11 +306,12 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.label_user_name2.setText(user)
         self.newproject_data = tuple()
         self.saveproject_data = tuple()
+        self.risk_flag = True
 
         self.btn_set_params.clicked.connect(self.set_params)
         self.btn_calculate.clicked.connect(self.calculate)
         self.btn_reset_tasks.clicked.connect(self.reset_tasks)
-        self.btn_manual.clicked.connect(self.show_help)
+        self.btn_help.clicked.connect(self.show_help)
         self.btn_save_results.clicked.connect(self.save_results)
         self.btn_change_user.clicked.connect(self.change_user)
         self.btn_change_user1.clicked.connect(self.change_user)
@@ -296,17 +321,14 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.btn_load_project2.clicked.connect(self.load_project_data)
         self.btn_new_project.clicked.connect(self.create_dialog)
         self.tabWidget.currentChanged.connect(self.show_user_projects)
-        self.btn_pdf.clicked.connect(self.create_pdf)
-        self.btn_pdf2.clicked.connect(self.create_pdf2)
+        self.btn_report_ugt.clicked.connect(self.report_ugt)
+        self.btn_report_risks.clicked.connect(self.report_risks)
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
-        self.risk_data = pd.DataFrame(
-            columns=['Level', 'РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
-                     'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
-                     'РЭ-экол', 'РП-бюд', 'РП-срок', 'РИ-проект'])
         self.normal_risks = {'РТ-нир': 42, 'РТ-окр': 60, 'РТ-произв': 55, 'РТ-инт': 30, 'РТ-эксп': 28, 'РМ-зак': 29,
-                            'РМ-треб': 69, 'РМ-цен': 30, 'РМ-конк': 22, 'РМ-прод': 19, 'РО-дог': 29, 'РО-разр': 30,
-                             'РО-эксп': 15, 'РЮ-пат': 5, 'РЮ-зак': 9, 'РЭ-экол': 3, 'РП-бюд': 13, 'РП-срок': 14, 'РИ-проект': 223}
+                             'РМ-треб': 69, 'РМ-цен': 30, 'РМ-конк': 22, 'РМ-прод': 19, 'РО-дог': 29, 'РО-разр': 30,
+                             'РО-эксп': 15, 'РЮ-пат': 5, 'РЮ-зак': 9, 'РЭ-экол': 3, 'РП-бюд': 13, 'РП-срок': 14,
+                             'РИ-проект': 223}
 
     @pyqtSlot(int)
     def show_user_projects(self, index):
@@ -361,58 +383,70 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.user_calcTab.setText(self.expert_name)
 
     def load_project_data(self):
-        self.set_param_check(self.parameters, False)
-        self.reset_params()
-        data = [self.expert_name]
         table = None
         if self.tabWidget.currentIndex() == 1:
             table = self.projects_table
         elif self.tabWidget.currentIndex() == 2:
             table = self.projects_table2
-        row = table.currentRow()
-        num = table.item(row, 1).text()
-        data.append(num)
-        date = table.item(row, 6).text()
-        data.append(date)
-        value = check_db.get_project(data)
-        self.newproject_data = (value[3:])
-        self.project_state = value[0]
-        self.path = value[1]
-        self.params = value[2].split(' ')
-        self.project_num = num
-        self.tabWidget.setTabEnabled(3, True)
-        self.tabWidget.setCurrentIndex(3)
-        self.btn_calculate.setEnabled(True)
-        self.btn_reset_tasks.setEnabled(True)
-        self.num_calcTab.setText(self.project_num)
-        self.user_calcTab.setText(self.expert_name)
-        self.set_param_check(self.params, True)
-        self.create_rows()
+        if len(table.selectedItems()) == 0:
+            QMessageBox.about(self, "Внимание!", "Не выбран проект для загрузки!")
+        else:
+            index = self.tabWidget.currentIndex()
+            self.set_param_check(self.parameters, False)
+            self.reset_params()
+            data = [self.expert_name]
+            row = table.currentRow()
+            num = table.item(row, 1).text()
+            data.append(num)
+            date = table.item(row, 6).text()
+            data.append(date)
+            value = check_db.get_project(data)
+            self.newproject_data = (value[3:])
+            self.project_state = value[0]
+            self.path = value[1]
+            self.params = value[2].split(' ')
+            self.project_num = num
+            self.tabWidget.setTabEnabled(3, True)
+            self.tabWidget.setCurrentIndex(3)
+            self.btn_calculate.setEnabled(True)
+            self.btn_reset_tasks.setEnabled(True)
+            self.num_calcTab.setText(self.project_num)
+            self.user_calcTab.setText(self.expert_name)
+            self.set_param_check(self.params, True)
+            try:
+                self.create_rows()
+            except FileNotFoundError:
+                self.tabWidget.setTabEnabled(index, True)
+                self.tabWidget.setCurrentIndex(index)
+                if self.confirm_msg("Файлы проекта не найдены! Вы хотите удалить выбранный проект из списка?"):
+                    self.delete_from_table(table)
 
     def remove_project(self):
         table = self.projects_table
         if len(self.projects_table.selectedItems()) == 0:
             QMessageBox.about(self, "Внимание!", "Не выбран проект для удаления!")
         else:
-            text = "удалить выбранный проект"
-            if self.confirm_msg(text):
-                data = [self.expert_name]
-                row = table.currentRow()
-                num = table.item(row, 1).text()
-                data.append(num)
-                date = table.item(row, 6).text()
-                data.append(date)
-                file_path = check_db.remove_project(data)
-                index = file_path.rfind('/')
-                line = file_path.replace('/', '\\')
-                dir_path = f'\\{line[:index]}'
-                dir = os.getcwd() + dir_path
-                try:
-                    os.remove(file_path)
-                    os.rmdir(dir)
-                except:
-                    pass
-            self.show_user_projects(self.tabWidget.currentIndex())
+            if self.confirm_msg("Вы уверены, что хотите удалить выбранный проект?"):
+                self.delete_from_table(table)
+
+    def delete_from_table(self, table):
+        data = [self.expert_name]
+        row = table.currentRow()
+        num = table.item(row, 1).text()
+        data.append(num)
+        date = table.item(row, 6).text()
+        data.append(date)
+        file_path = check_db.remove_project(data)
+        index = file_path.rfind('/')
+        line = file_path.replace('/', '\\')
+        dir_path = f'\\{line[:index]}'
+        dir = os.getcwd() + dir_path
+        try:
+            os.remove(file_path)
+            os.rmdir(dir)
+        except:
+            pass
+        self.show_user_projects(self.tabWidget.currentIndex())
 
     def create_dialog(self):
         if self.expert_name == '':
@@ -440,10 +474,6 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
 
     def reset_params(self):
         self.path = 'data/Param_Tasks.xlsx'
-        self.risk_data = pd.DataFrame(
-            columns=['Level', 'РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
-                     'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
-                     'РЭ-экол', 'РП-бюд', 'РП-срок', 'РИ-проект'])
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
         self.param_tabs.clear()
@@ -454,7 +484,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         messageBox = QMessageBox(self)
         messageBox.setWindowTitle("Подтверждение")
         messageBox.setIcon(QMessageBox.Question)
-        messageBox.setText(f"Вы уверены, что хотите {text}?")
+        messageBox.setText(text)
         buttonYes = messageBox.addButton("Да", QMessageBox.YesRole)
         buttonNo = messageBox.addButton("Нет", QMessageBox.NoRole)
         messageBox.setDefaultButton(buttonYes)
@@ -466,8 +496,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             return False
 
     def reset_tasks(self):
-        text = "сбросить все отметки"
-        if self.confirm_msg(text):
+        if self.confirm_msg("Вы уверены, что хотите сбросить все отметки?"):
             tab_count = self.param_tabs.count()
             for i in range(tab_count):
                 self.param_tabs.setCurrentIndex(i)
@@ -483,9 +512,8 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             self.param_tabs.setCurrentIndex(0)
 
     def set_params(self):
-        text = 'изменить параметры (текущие отметки будут сброшены)'
         if self.project_state in ['черновик', 'итог']:
-            if self.confirm_msg(text):
+            if self.confirm_msg('Вы уверены, что хотите изменить параметры (текущие отметки будут сброшены)?'):
                 self.reset_params()
                 self.get_params()
                 if len(self.params) == 0:
@@ -517,7 +545,6 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             self.params.append('CRL')
 
     def create_rows(self):
-        # QToolTip.setFont(_font)
 
         for param in self.params:
             self.data = pd.read_excel(self.path, sheet_name=param)
@@ -525,7 +552,6 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             val = self.make_level_dict(self.data)
 
             self.tw = TreeWidget()
-            self.param_tabs.setStyleSheet('''font-weight: 12px bold;''')
             self.param_tabs.addTab(self.tw, param)
             self.param_tabs.setCurrentIndex(self.params.index(param))
             self.param_tabs.setTabEnabled(self.params.index(param), True)
@@ -540,7 +566,9 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
 
                 for v in value[1:]:
                     self.combo_task = QComboBox()
+                    self.combo_task.setObjectName('combo_task')
                     self.combo_task.addItems(['Да', 'Нет', 'Не применимо'])
+                    self.combo_task.adjustSize()
                     self.combo_task.setFixedSize(110, 20)
                     self.item_1 = QTreeWidgetItem(self.item_0, ["", ""])
                     if v[2] == 0:
@@ -618,8 +646,8 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
                 if (key == 'TPRL') & (value == '0'):
                     new_text_dict['TPRL'] = 'Уровень зрелости инновационного проекта/технологии  = 0'
                 elif (key == 'TPRL') & (value == '--'):
-                    new_text_dict[
-                        'TPRL'] = 'Уровень зрелости инновационного проекта/технологии не рассчитан, т.к. не были выбраны все параметры'
+                    new_text_dict['TPRL'] = 'Уровень зрелости инновационного проекта/технологии не рассчитан, т.к. ' \
+                                            'не были выбраны все параметры'
                 elif op_data['Уровень'][rank] == int(float(value)):
                     new_text_dict[key] = op_data[key][rank]
         return new_text_dict
@@ -632,11 +660,14 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.create_table_rows(text_levels)
 
     def calculate(self):
+        self.risk_flag = True
+        self.risks_table.setVisible(False)
+        self.text_warning = ''
         self.save_data.drop(['State'], axis='columns', inplace=True)
         self.label_project_num.setText(self.project_num)
         self.label_expert_name.setText(self.expert_name)
-        self.label_project_num1.setText(self.project_num)
-        self.label_expert_name1.setText(self.expert_name)
+        self.risks_label_project_num.setText(self.project_num)
+        self.risks_label_expert_name.setText(self.expert_name)
         self.tabWidget.setTabEnabled(4, True)
         self.tabWidget.setTabEnabled(5, True)
         self.tabWidget.setCurrentIndex(4)
@@ -689,14 +720,13 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
                     first_list.append(new_list)
                 d2[key] = first_list
         self.save_data['State'] = new_state
-
-        if len(self.params) == 5:  # Оценка рисков
-            self.count_risks(self.save_data)
         for new_key, new_values in d2.items():
             l_n = []
             for new_value in new_values:
                 try:
-                    new_value = round(sum(new_value) / len(new_value), 1)
+                    new_value = sum(new_value) / len(new_value)
+                    n = Decimal(f'{new_value}')
+                    new_value = n.quantize(Decimal('1.0'), rounding='ROUND_HALF_UP')
                 except Exception:
                     new_value = 0.0
                 l_n.append(new_value)
@@ -705,16 +735,33 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             summary = 0
             for d2_value in range(len(d2_values)):
                 if d2_values[d2_value] == 1:
+                    if d2_value > 0:
+                        if d2_values[d2_value - 1] != 1:
+                            self.text_warning = 'Вы не отметили задачи предыдущих уровней.\n' \
+                                                'Риски рассчитаны неправильно!!!'
+                            self.risk_flag = False
                     summary = d2_value + 1
                 elif 0 < d2_values[d2_value] < 1:
                     if summary == d2_value:
                         summary += d2_values[d2_value]
             self.d3[d2_keys] = str(summary)
+
+        if len(self.params) == 5:  # Оценка рисков
+            self.risks_table.setVisible(True)
+            self.count_risks(self.save_data)
+        else:
+            self.text_warning = 'Комплексная оценка рисков не проводилась, т.к. не все параметры выбраны!'
+            self.risks_table.setVisible(False)
+            self.risk_flag = False
+        self.risks_warning_label.setText(self.text_warning)
+        self.btn_report_risks.setEnabled(self.risk_flag)
+
         for par in Window.parameters:
             if par not in self.d3.keys():
                 self.d3[par] = '0'
         for iter_k, iter_v in self.d3.items():
-            iter_v = round(float(iter_v), 1)
+            # iter_v = round(float(iter_v), 1)
+
             self.d3[iter_k] = str(iter_v)
         self.param_tabs.setCurrentIndex(0)
         self.frame_results.setEnabled(True)
@@ -724,10 +771,15 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.make_text()
 
     def count_risks(self, frame):
-        new_risks = {}
-        columns = ['РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
+        new_risks = self.normal_risks.copy()
+        self.risk_data = pd.DataFrame(
+            columns=['Level', 'РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
                      'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
-                     'РЭ-экол', 'РП-бюд', 'РП-срок']
+                     'РЭ-экол', 'РП-бюд', 'РП-срок', 'РИ-проект'])
+        final_risks = {}
+        columns = ['РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
+                   'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
+                   'РЭ-экол', 'РП-бюд', 'РП-срок']
         for param in self.params:
             risk_d = pd.read_excel('data/Risks.xlsx', sheet_name=param)
             self.risk_data = self.risk_data.append(risk_d)
@@ -742,20 +794,78 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             elif all_risk['State'][row] == -1:
                 for col in columns:
                     if all_risk[col][row] == 1:
-                        all_risk.at[row, col] = 0
+                        all_risk.at[row, col] = 1
+                        new_risks[col] -= 1
                 all_risk.loc[row, 'РИ-проект'] = 0
-        for key, values in self.normal_risks.items():
-            if key not in new_risks:
+                new_risks['РИ-проект'] -= 1
+        for key, values in new_risks.items():
+            if key not in final_risks:
                 if key == 'РИ-проект':
-                    value = round((1 - all_risk[all_risk['State'] != 0].shape[0] / self.normal_risks['РИ-проект']) * 100, 1)
+                    value = round((1 / new_risks[key] * all_risk[all_risk['State'] == 0].shape[0]) * 100, 1)
                 else:
-                    value = round((1-all_risk[key].sum()/values)*100, 1)
-                new_risks[key] = value
+                    value = round((1 / new_risks[key] * all_risk[all_risk[key] == 0].shape[0]) * 100, 1)
+                if value > 100:
+                    value = 100.0
+                final_risks[key] = value
+        # all_risk.to_excel(f'Data_Risk_{self.project_num}.xlsx', index=False)
+        self.create_risk_table(final_risks)
 
-        # all_risk.to_excel('Data_Risk.xlsx', index=False)
-        print(new_risks)
-        print('Done')
+    def create_risk_table(self, dict_risks):
+        risk_value = []
+        risk_group = [
+            "Р1", "Р2", "Р3", "Р4", "Р5"]
+        risk_text = [
+            "Недостижение ожидаемых (заданных) характеристик функциональности и производительности результата "
+            "инновационного проекта – продукта/технологии",
+            "Невостребованность инновационной продукции",
+            "Срыв сроков выполнения проекта и/или превышения запланированного бюджета",
+            "Неучтенные ограничения на продукт/технологию",
+            "Недостижение заданной результативности и эффективности проекта",
+        ]
 
+        rows = len(risk_group)
+        self.risks_table.setRowCount(rows)
+        self.risks_table.setHorizontalHeaderLabels(["Риск", "Наименование риска", "Вероятность", "Влияние"])
+        self.risks_table.horizontalHeaderItem(0).setTextAlignment(Qt.AlignCenter)
+        self.risks_table.horizontalHeaderItem(1).setTextAlignment(Qt.AlignCenter)
+        self.risks_table.horizontalHeaderItem(2).setTextAlignment(Qt.AlignCenter)
+        self.risks_table.horizontalHeaderItem(3).setTextAlignment(Qt.AlignCenter)
+
+        self.risks_table.setColumnWidth(0, 45)
+        self.risks_table.setColumnWidth(1, 580)
+        self.risks_table.setColumnWidth(2, 100)
+        self.risks_table.setColumnWidth(3, 80)
+        for k, v in dict_risks.items():
+            number = Decimal(f'{v}')
+            v = number.quantize(Decimal('1'), rounding='ROUND_HALF_UP')
+            risk_value.append(v)
+        for i in range(rows):
+            label_1 = QLabel(self.word_wrap(risk_group[i], 15))
+            label_1.setContentsMargins(5, 5, 5, 5)
+            label_1.setStyleSheet("font-size: 13px;")
+            label_1.setAlignment(Qt.AlignCenter)
+            label_2 = QLabel(self.word_wrap(risk_text[i], 100))
+            label_2.setContentsMargins(5, 5, 5, 5)
+            label_2.setStyleSheet("font-size: 11px;")
+            label_3 = QLabel(f'{risk_value[i]}%')
+            label_3.setContentsMargins(5, 5, 5, 5)
+            label_3.setStyleSheet("font-size: 12px;")
+            label_3.setAlignment(Qt.AlignCenter)
+            combo = comboCompanies(self)
+            # label_4 = QLabel('4')
+            # label_4.setContentsMargins(5, 5, 5, 5)
+            # label_4.setStyleSheet("font-size: 12px;")
+            # label_4.setAlignment(Qt.AlignCenter)
+            self.risks_table.setCellWidget(i, 0, label_1)
+            self.risks_table.setCellWidget(i, 1, label_2)
+            self.risks_table.setCellWidget(i, 2, label_3)
+            self.risks_table.setCellWidget(i, 3, combo)
+        self.risks_table.resizeRowsToContents()
+        self.risks_table.setEnabled(True)
+        self.risks_table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.risks_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        # all_risk.to_excel(f'Data_Risk_{self.project_num}.xlsx', index=False)
 
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
@@ -818,7 +928,6 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
                 os.mkdir(f"Projects/{self.expert_name}/Завершенные/{saved_file_name}")
             self.path = f"Projects/{self.expert_name}/Завершенные/{saved_file_name}/{new_file_name}"
             full_dir = f"Projects/{self.expert_name}/Завершенные/{saved_file_name}"
-            # new_file = open(self.path, 'w')
             writer = pd.ExcelWriter(self.path)
             for param in self.params:
                 new_save_data = self.save_data.loc[self.save_data['Parameter'].isin([param])]
@@ -838,12 +947,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.btn_save_results.setEnabled(False)
         self.check_draft.setEnabled(False)
 
-    def create_pdf2(self):
-        pass
-
-    def create_pdf(self):
-        if len(self.params) == 5:
-            self.chart.save_chart('', "chart_pdf")
+    def report_ugt(self):
         res_list = [float(self.label_trl_result.text()),
                     float(self.label_mrl_result.text()),
                     float(self.label_erl_result.text()),
@@ -861,28 +965,32 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             new_save_data.drop(['Parameter'], axis='columns', inplace=True)
             data[param] = new_save_data
         self.pdf_data = (
-        [date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]],
-        data)
-        new_pdf = ReportUgt(self.pdf_data, self.d1)
-        new_pdf.set_data()
-        try:
-            os.remove(os.getcwd() + "\\chart_pdf.png")
-        except:
-            pass
+            [date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]],
+            data
+        )
+        new_report_ugt = ReportUgt(self.pdf_data, self.d1)
+        new_report_ugt.set_data()
+
+    def report_risks(self):
+        date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
+        data = [date, self.project_num, self.expert_name]
+        new_report_risks = ReportRisks(data, self.risks_table)
 
     def show_results(self, res):
         res_list = []
         for k_res, v_res in res.items():
+            n = Decimal(f'{v_res}')
+            v = n.quantize(Decimal('1.0'), rounding='ROUND_HALF_UP')
             if k_res == 'TRL':
-                self.label_trl_result.setText(v_res)
+                self.label_trl_result.setText(f'{v}')
             elif k_res == 'MRL':
-                self.label_mrl_result.setText(v_res)
+                self.label_mrl_result.setText(f'{v}')
             elif k_res == 'ERL':
-                self.label_erl_result.setText(v_res)
+                self.label_erl_result.setText(f'{v}')
             elif k_res == 'ORL':
-                self.label_orl_result.setText(v_res)
+                self.label_orl_result.setText(f'{v}')
             elif k_res == 'CRL':
-                self.label_crl_result.setText(v_res)
+                self.label_crl_result.setText(f'{v}')
         show_res = res.copy()
         if len(self.params) < 5:
             self.tprl_average = '--'
@@ -900,7 +1008,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
                 res_list.append(float(new_v))
             self.tprl_average = float(sum(res_list) / len(res_list))
             number = Decimal(f'{self.tprl_average}')
-            self.tprl_average = number.quantize(Decimal("1.0"), rounding='ROUND_DOWN')
+            self.tprl_average = number.quantize(Decimal("1.0"), rounding='ROUND_HALF_UP')
             self.tprl_min = int(self.tprl_average)
             self.label_tprl_average_result.setText(str(self.tprl_average))
             self.label_tprl_min_result.setText(str(self.tprl_min))
@@ -910,8 +1018,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.help_dialog.show()
 
     def closeEvent(self, event):
-        text = "закрыть программу"
-        if self.confirm_msg(text):
+        if self.confirm_msg("Вы уверены, что хотите закрыть программу?"):
             event.accept()
         else:
             event.ignore()
