@@ -31,7 +31,7 @@ import pandas as pd
 from chart import Chart
 from PyQt5.QtGui import QColor, QPixmap, QFont
 from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem, QDialog, \
-    QLabel, QPushButton, QMessageBox, QTabWidget, QTableWidgetItem, QLineEdit, QComboBox, QFrame
+    QLabel, QPushButton, QMessageBox, QTabWidget, QTableWidgetItem, QLineEdit, QComboBox, QFrame, QHeaderView
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
 from report_ugt import ReportUgt
@@ -41,11 +41,18 @@ style = os.path.join(os.path.dirname(__file__), 'style.css')
 
 
 class comboCompanies(QComboBox):
+    combo_signal = pyqtSignal(str)
+
     def __init__(self, parent):
         super(comboCompanies, self).__init__(parent)
         self.setStyleSheet("font-size: 12px;")
         self.addItems(['1', '2', '3', '4', '5'])
         self.setCurrentText('1')
+        self.currentIndexChanged.connect(self.return_combodata)
+
+    def return_combodata(self):
+        index = self.currentText()
+        self.combo_signal.emit(index)
 
 
 class TreeWidget(QTreeWidget):
@@ -328,6 +335,8 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
         self.tabWidget.currentChanged.connect(self.show_user_projects)
         self.btn_report_ugt.clicked.connect(self.report_ugt)
         self.btn_report_risks.clicked.connect(self.report_risks)
+        self.combo_signal.connect(self.change_risks_impact)
+
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
         self.normal_risks = {'РТ-нир': 42, 'РТ-окр': 60, 'РТ-произв': 55, 'РТ-инт': 30, 'РТ-эксп': 28, 'РМ-зак': 29,
@@ -855,11 +864,13 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
             label_3.setContentsMargins(5, 5, 5, 5)
             label_3.setStyleSheet("font-size: 12px;")
             label_3.setAlignment(Qt.AlignCenter)
-            combo = comboCompanies(self)
+            self.combo = comboCompanies(self)
             self.risks_table.setCellWidget(i, 0, label_1)
             self.risks_table.setCellWidget(i, 1, label_2)
             self.risks_table.setCellWidget(i, 2, label_3)
-            self.risks_table.setCellWidget(i, 3, combo)
+            self.risks_table.setCellWidget(i, 3, self.combo)
+            self.combo.combo_signal[str].connect(self.change_risks_impact)
+
         self.risks_table.resizeRowsToContents()
         self.risks_table.setEnabled(True)
         self.risks_table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -887,30 +898,33 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
 
         self.risks_impact_table.setHorizontalHeaderLabels(list(column_headers.keys()))
         self.risks_impact_table.setVerticalHeaderLabels(list(row_headers.keys()))
-        # headers_style = "QHeaderView::section {border: 1px solid black; background-color: white;}"
-        # self.risks_impact_table.setStyleSheet(headers_style)
-        # self.risks_impact_table.horizontalHeader().setLineWidth(1)
-        # self.risks_impact_table.verticalHeader().setLineWidth(1)
 
+        self.risks_impact_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.risks_impact_table.horizontalHeader().setMinimumSectionSize(125)
 
         for i in range(5):
-            self.risks_impact_table.setRowHeight(i, 30)
+            self.risks_impact_table.setRowHeight(i, 40)
             for j in range(5):
-
                 row = list(row_headers.keys())[i]
                 column = list(column_headers.keys())[j]
                 k = column_headers[column] * row_headers[row]
                 self.risks_impact_table.setItem(i, j, QTableWidgetItem())
                 if 1 <= k < 5:
-                    self.risks_impact_table.item(i, j).setBackground(QColor("#06d10d")) #61ff96
-                    # self.risks_impact_table.item(i, j).setText(str(k))
+                    self.risks_impact_table.item(i, j).setBackground(QColor("#06d10d"))
                 elif 5 <= k < 10:
-                    self.risks_impact_table.item(i, j).setBackground(QColor("yellow")) #dfff61
+                    self.risks_impact_table.item(i, j).setBackground(QColor("yellow"))
                 else:
-                    self.risks_impact_table.item(i, j).setBackground(QColor("red")) #ff6161
-
-
+                    self.risks_impact_table.item(i, j).setBackground(QColor("red"))
         # all_risk.to_excel(f'Data_Risk_{self.project_num}.xlsx', index=False)
+
+    @pyqtSlot(str)
+    def change_risks_impact(self, text):
+        self.risks_impact_table.clear()
+        for i in range(5):
+            risk = self.risks_impact_table.item(i, 0).text()
+            percent = int(self.risks_impact_table.item(i, 2).text().strip("%"))
+            risk_impact = self.risks_impact_table.item(i, 3).current
+
 
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
