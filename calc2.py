@@ -338,10 +338,10 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
 
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
-        self.normal_risks = {'РТ-нир': 42, 'РТ-окр': 60, 'РТ-произв': 55, 'РТ-инт': 30, 'РТ-эксп': 28, 'РМ-зак': 29,
-                             'РМ-треб': 69, 'РМ-цен': 30, 'РМ-конк': 22, 'РМ-прод': 19, 'РО-дог': 29, 'РО-разр': 30,
-                             'РО-эксп': 15, 'РЮ-пат': 5, 'РЮ-зак': 9, 'РЭ-экол': 3, 'РП-бюд': 13, 'РП-срок': 14,
-                             'РИ-проект': 223}
+        self.normal_risks = {'Ф1': 33, 'Ф2': 62, 'Ф3': 55, 'Ф4': 30, 'Ф5': 28, 'Ф6': 29,
+                             'Ф7': 69, 'Ф8': 30, 'Ф9': 22, 'Ф10': 19, 'Ф11': 29, 'Ф12': 30,
+                             'Ф13': 15, 'Ф14': 5, 'Ф15': 9, 'Ф16': 3, 'Ф17': 13, 'Ф18': 14,
+                             'Ф19': 223}
 
     @pyqtSlot(int)
     def show_user_projects(self, index):
@@ -786,15 +786,15 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
     def count_risks(self, frame):
         new_risks = self.normal_risks.copy()
         self.risk_data = pd.DataFrame(
-            columns=['Level', 'РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
-                     'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
-                     'РЭ-экол', 'РП-бюд', 'РП-срок', 'РИ-проект'])
+            columns=['Level', 'Ф1', 'Ф2', 'Ф3', 'Ф4', 'Ф5', 'Ф6', 'Ф7',
+                     'Ф8', 'Ф9', 'Ф10', 'Ф11', 'Ф12', 'Ф13', 'Ф14', 'Ф15',
+                     'Ф16', 'Ф17', 'Ф18', 'Ф19'])
         final_risks = {}
-        columns = ['РТ-нир', 'РТ-окр', 'РТ-произв', 'РТ-инт', 'РТ-эксп', 'РМ-зак', 'РМ-треб',
-                   'РМ-цен', 'РМ-конк', 'РМ-прод', 'РО-дог', 'РО-разр', 'РО-эксп', 'РЮ-пат', 'РЮ-зак',
-                   'РЭ-экол', 'РП-бюд', 'РП-срок']
+        columns = ['Ф1', 'Ф2', 'Ф3', 'Ф4', 'Ф5', 'Ф6', 'Ф7',
+                   'Ф8', 'Ф9', 'Ф10', 'Ф11', 'Ф12', 'Ф13', 'Ф14', 'Ф15',
+                   'Ф16', 'Ф17', 'Ф18']
         for param in self.params:
-            risk_d = pd.read_excel('data/Risks.xlsx', sheet_name=param)
+            risk_d = pd.read_excel('data/Risks_new.xlsx', sheet_name=param)
             self.risk_data = self.risk_data.append(risk_d)
         self.risk_data.drop(['Level'], axis='columns', inplace=True)
         all_risk = pd.concat([frame, self.risk_data], axis=1)
@@ -809,19 +809,37 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
                     if all_risk[col][row] == 1:
                         all_risk.at[row, col] = 1
                         new_risks[col] -= 1
-                all_risk.loc[row, 'РИ-проект'] = 0
-                new_risks['РИ-проект'] -= 1
+                all_risk.loc[row, 'Ф19'] = 0
+                new_risks['Ф19'] -= 1
         for key, values in new_risks.items():
             if key not in final_risks:
-                if key == 'РИ-проект':
-                    value = round((1 / new_risks[key] * all_risk[all_risk['State'] == 0].shape[0]) * 100, 1)
+                if key == 'Ф19':
+                    value = new_risks[key] - all_risk[all_risk['State'] == 0].shape[0]
                 else:
-                    value = round((1 / new_risks[key] * all_risk[all_risk[key] == 0].shape[0]) * 100, 1)
-                if value > 100:
-                    value = 100.0
+                    value = new_risks[key] - all_risk[all_risk[key] == 0].shape[0]
+
                 final_risks[key] = value
+        risk_faktor = {}
+
+        np1 = final_risks['Ф1'] + final_risks['Ф2'] + final_risks['Ф3'] + final_risks['Ф4'] + final_risks['Ф5']
+        kp1 = new_risks['Ф1'] + new_risks['Ф2'] + new_risks['Ф3'] + new_risks['Ф4'] + new_risks['Ф5']
+        risk_faktor['P1'] = (kp1 - np1) / kp1 * 100
+
+        np2 = final_risks['Ф6'] + final_risks['Ф7'] + final_risks['Ф8'] + final_risks['Ф9'] + final_risks['Ф10']
+        kp2 = new_risks['Ф6'] + new_risks['Ф7'] + new_risks['Ф8'] + new_risks['Ф9'] + new_risks['Ф10']
+        risk_faktor['P2'] = (kp2 - np2) / kp2 * 100
+
+        np3 = final_risks['Ф11'] + final_risks['Ф12'] + final_risks['Ф13'] + final_risks['Ф17'] + final_risks['Ф18']
+        kp3 = new_risks['Ф11'] + new_risks['Ф12'] + new_risks['Ф13'] + new_risks['Ф17'] + new_risks['Ф18']
+        risk_faktor['P3'] = (kp3 - np3) / kp3 * 100
+
+        np4 = final_risks['Ф14'] + final_risks['Ф15'] + final_risks['Ф16']
+        kp4 = new_risks['Ф14'] + new_risks['Ф15'] + new_risks['Ф16']
+        risk_faktor['P4'] = (kp4 - np4) / kp4 * 100
+
+        risk_faktor['P5'] = (new_risks['Ф19'] - final_risks['Ф19']) / new_risks['Ф19'] * 100
         # all_risk.to_excel(f'Data_Risk_{self.project_num}.xlsx', index=False)
-        self.create_risk_table(final_risks)
+        self.create_risk_table(risk_faktor)
 
     def create_risk_table(self, dict_risks):
         risk_value = []
