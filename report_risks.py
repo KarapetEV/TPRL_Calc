@@ -60,8 +60,10 @@ class ReportRisks:
             self.pdf.cell(80, 8, self.data[i], '', 0, align="L")
             self.pdf.ln()
 
+        self.pdf.ln()
         self.pdf.set_font("times", size=12)
         self.pdf.cell(100, 8, self.table_title, '', 0, align="L")
+        self.pdf.ln()
 
         self.create_table()
 
@@ -88,16 +90,18 @@ class ReportRisks:
         self.pdf.ln()
         self.pdf.set_font("timesbd", size=10)
         self.pdf.cell(35, 5, table_headers[0], 1, 0, align="C")
-        self.pdf.cell(135, 5, table_headers[1], 1, 0, align="C")
+        self.pdf.cell(115, 5, table_headers[1], 1, 0, align="C")
         self.pdf.cell(25, 5, table_headers[2], 1, 0, align="C")
+        self.pdf.cell(20, 5, table_headers[3], 1, 0, align="C")
         self.pdf.ln()
 
         self.pdf.set_font("times", size=10)
         rows = self.table.rowCount()
         for i in range(rows):
             risk_group = self.word_wrap(self.table.cellWidget(i, 0).text(), 20)
-            risk_name = self.word_wrap(self.table.cellWidget(i, 1).text(), 80)
+            risk_name = self.word_wrap(self.table.cellWidget(i, 1).text(), 70)
             risk_num = self.table.cellWidget(i, 2).text()
+            risk_weight = self.table.cellWidget(i, 3).currentText()
             border_left = 'LB'
             border_right = 'RB'
             border = 'LRB'
@@ -107,11 +111,13 @@ class ReportRisks:
                 if len(risk_group) == 1:
                     risk_group = self.make_line_list(self.table.cellWidget(i, 0).text(), count)
                 risk_num = self.make_line_list(self.table.cellWidget(i, 2).text(), count)
+                risk_weight = self.make_line_list(self.table.cellWidget(i, 3).currentText(), count)
             elif 1 <= len(risk_name) <= len(risk_group):
                 count = len(risk_group)
                 if len(risk_name) == 1:
                     risk_name = self.make_line_list(self.table.cellWidget(i, 1).text(), count)
                 risk_num = self.make_line_list(self.table.cellWidget(i, 2).text(), count)
+                risk_weight = self.make_line_list(self.table.cellWidget(i, 3).currentText(), count)
             if count > 1:
                 border_left = 'L'
                 border_right = 'R'
@@ -122,8 +128,9 @@ class ReportRisks:
                     border_right = 'RB'
                     border = 'LRB'
                 self.pdf.cell(35, 5, risk_group[j], border_left, 0, align="C")
-                self.pdf.cell(135, 5, risk_name[j], border, 0, align="L")
-                self.pdf.cell(25, 5, risk_num[j], border_right, 0, align="C")
+                self.pdf.cell(115, 5, risk_name[j], border, 0, align="L")
+                self.pdf.cell(25, 5, risk_num[j], 'RB', 0, align="C")
+                self.pdf.cell(20, 5, risk_weight[j], border_right, 0, align="C")
                 self.pdf.ln()
 
     def word_wrap(self, line, x):
