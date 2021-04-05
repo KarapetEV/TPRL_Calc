@@ -970,15 +970,15 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
 
     def check_risk(self, x, y):
         coordinates = [5-x]
-        if 0 <= y <= 20:
+        if 0 <= y < 5:
             coordinates.append(0)
-        elif 21 <= y <= 40:
+        elif 5 <= y <= 25:
             coordinates.append(1)
-        elif 41 <= y <= 60:
+        elif 26 <= y <= 50:
             coordinates.append(2)
-        elif 61 <= y <= 80:
+        elif 51 <= y <= 75:
             coordinates.append(3)
-        elif 81 <= y <= 100:
+        elif y > 75:
             coordinates.append(4)
 
         return coordinates
