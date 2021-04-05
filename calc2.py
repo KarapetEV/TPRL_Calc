@@ -952,7 +952,7 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
                                                                               ''')
 
     @pyqtSlot()
-    def fill_risks_impact_table(self):
+    def fill_risks_impact_table(self):  # метод заполнения матрицы рисков
         self.clear_risks_impact_table()
         for i in range(5):
             risk = self.risks_table.cellWidget(i, 0).text()
@@ -963,13 +963,13 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
             risks_text = (cell_text + f", {risk}").strip(", ")
             self.risks_impact_table.cellWidget(coords[0], coords[1]).setText(risks_text)
 
-    def clear_risks_impact_table(self):
+    def clear_risks_impact_table(self):  # метод очистки матрицы
         for i in range(5):
             for j in range(5):
                 self.risks_impact_table.cellWidget(i, j).setText("")
 
     def check_risk(self, x, y):
-        coordinates = [5-x]
+        coordinates = [5 - x]
         if 0 <= y < 5:
             coordinates.append(0)
         elif 5 <= y <= 25:
@@ -982,8 +982,6 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
             coordinates.append(4)
 
         return coordinates
-
-
 
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
@@ -1083,7 +1081,8 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
             new_save_data.drop(['Parameter'], axis='columns', inplace=True)
             data[param] = new_save_data
         self.pdf_data = (
-            [date, self.project_num, self.expert_name, self.params, results, [self.tprl_min, self.label_main_tprl.text()]],
+            [date, self.project_num, self.expert_name, self.params, results,
+             [self.tprl_min, self.label_main_tprl.text()]],
             data
         )
         new_report_ugt = ReportUgt(self.pdf_data, self.d1)
