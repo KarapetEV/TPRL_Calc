@@ -918,7 +918,7 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
         self.risks_impact_table.setVerticalHeaderLabels(list(row_headers.keys()))
 
         self.risks_impact_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-        self.risks_impact_table.horizontalHeader().setMinimumSectionSize(125)
+        self.risks_impact_table.horizontalHeader().setMinimumSectionSize(120)
 
         for i in range(5):
             self.risks_impact_table.setRowHeight(i, 40)

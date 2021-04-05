@@ -605,9 +605,21 @@ class Ui_AppWindow(object):
         self.line_horizontal2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_horizontal2.setObjectName("line_horizontal2")
 
-        # таблица рисков с вероятностью и весом
+        # -------------таблица рисков с вероятностью и весом----------
+
+        # заголовки осей матрицы
+        self.risk_title = QtWidgets.QLabel(self.frame_risks)
+        self.risk_title.setGeometry(380, 290, 129, 15)
+        self.risk_title.setObjectName("risk_title")
+        self.risk_title.setPixmap(QtGui.QPixmap("img/risk.png"))
+        self.risk_weight_title = QtWidgets.QLabel(self.frame_risks)
+        self.risk_weight_title.setGeometry(25, 380, 15, 89)
+        self.risk_weight_title.setObjectName("risk_weight_title")
+        self.risk_weight_title.setPixmap(QtGui.QPixmap("img/risk_weight.png"))
+
+        # матрица рисков
         self.risks_impact_table = QtWidgets.QTableWidget(self.frame_risks)
-        self.risks_impact_table.setGeometry(QtCore.QRect(20, 300, 779, 225))
+        self.risks_impact_table.setGeometry(QtCore.QRect(45, 310, 754, 225))
         self.risks_impact_table.setContentsMargins(2, 2, 2, 2)
         self.risks_impact_table.setObjectName('risks_impact_table')
         self.risks_impact_table.setColumnCount(5)

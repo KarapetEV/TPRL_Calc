@@ -215,13 +215,6 @@ QLabel	{
 	padding: 0px 0px 0px 0px;
 }
 
-QHeaderView1::section	{
-	background-color: #82898E;
-	font-size: 14px;
-	font-weight: bold;
-	color: #ffffff;
-}
-
 #risks_impact_table {
     gridline-color: black;
 }
