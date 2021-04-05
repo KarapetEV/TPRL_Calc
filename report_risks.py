@@ -51,6 +51,7 @@ class ReportRisks:
         self.pdf.ln()
         self.pdf.ln()
         self.pdf.ln()
+        self.pdf.ln()
 
         for i in range(len(self.text)):
             text = self.text[i]
@@ -60,7 +61,6 @@ class ReportRisks:
             self.pdf.cell(80, 8, self.data[i], '', 0, align="L")
             self.pdf.ln()
 
-        self.pdf.ln()
         self.pdf.set_font("times", size=12)
         self.pdf.cell(100, 8, self.table_title, '', 0, align="L")
         self.pdf.ln()
@@ -84,22 +84,35 @@ class ReportRisks:
     def create_table(self):
         table_headers = []
         columns = self.table.columnCount()
+        text = ""
         for i in range(columns):
-            table_headers.append(self.table.horizontalHeaderItem(i).text())
-
+            if i == 2:
+                text = "реализации"
+            else:
+                text = ""
+            table_headers.append([self.table.horizontalHeaderItem(i).text(), text])
         self.pdf.ln()
         self.pdf.set_font("timesbd", size=10)
-        self.pdf.cell(35, 5, table_headers[0], 1, 0, align="C")
-        self.pdf.cell(115, 5, table_headers[1], 1, 0, align="C")
-        self.pdf.cell(25, 5, table_headers[2], 1, 0, align="C")
-        self.pdf.cell(20, 5, table_headers[3], 1, 0, align="C")
-        self.pdf.ln()
+        for i in range(2):
+            if i == 0:
+                border_left = 'LT'
+                border_right = 'TR'
+                border = 'LTR'
+            else:
+                border_left = 'LB'
+                border_right = 'RB'
+                border = 'LRB'
+            self.pdf.cell(15, 5, table_headers[0][i], border_left, 0, align="C")
+            self.pdf.cell(135, 5, table_headers[1][i], border, 0, align="C")
+            self.pdf.cell(25, 5, table_headers[2][i], border_right, 0, align="C")
+            self.pdf.cell(20, 5, table_headers[3][i], border_right, 0, align="C")
+            self.pdf.ln()
 
         self.pdf.set_font("times", size=10)
         rows = self.table.rowCount()
         for i in range(rows):
             risk_group = self.word_wrap(self.table.cellWidget(i, 0).text(), 20)
-            risk_name = self.word_wrap(self.table.cellWidget(i, 1).text(), 70)
+            risk_name = self.word_wrap(self.table.cellWidget(i, 1).text(), 80)
             risk_num = self.table.cellWidget(i, 2).text()
             risk_weight = self.table.cellWidget(i, 3).currentText()
             border_left = 'LB'
@@ -127,9 +140,9 @@ class ReportRisks:
                     border_left = 'LB'
                     border_right = 'RB'
                     border = 'LRB'
-                self.pdf.cell(35, 5, risk_group[j], border_left, 0, align="C")
-                self.pdf.cell(115, 5, risk_name[j], border, 0, align="L")
-                self.pdf.cell(25, 5, risk_num[j], 'RB', 0, align="C")
+                self.pdf.cell(15, 5, risk_group[j], border_left, 0, align="C")
+                self.pdf.cell(135, 5, risk_name[j], border, 0, align="L")
+                self.pdf.cell(25, 5, risk_num[j], border_right, 0, align="C")
                 self.pdf.cell(20, 5, risk_weight[j], border_right, 0, align="C")
                 self.pdf.ln()
 
