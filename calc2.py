@@ -40,7 +40,7 @@ from report_risks import ReportRisks
 style = os.path.join(os.path.dirname(__file__), 'style.css')
 
 
-class comboCompanies(QComboBox):
+class comboCompanies(QComboBox):                                # комбобоксы в таблице рисков
     combo_signal = pyqtSignal()
 
     def __init__(self, parent):
@@ -50,12 +50,8 @@ class comboCompanies(QComboBox):
         self.setCurrentText('1')
         self.currentIndexChanged.connect(self.combo_signal.emit)
 
-    # def return_combodata(self):
-    #     index = self.currentText()
-    #     self.combo_signal.emit()
 
-
-class TreeWidget(QTreeWidget):
+class TreeWidget(QTreeWidget):                                  # задачи по параметрам
     def __init__(self, parent=None):
         super(TreeWidget, self).__init__(parent)
 
