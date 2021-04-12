@@ -903,11 +903,11 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
             "Очень высокая": 5,
         }
         row_headers = {
-            "Очень высокий уровень": 5,
-            "Высокий уровень": 4,
-            "Средний уровень": 3,
-            "Низкий уровень": 2,
-            "Очень низкий уровень": 1,
+            "Очень высокое": 5,
+            "Высокое": 4,
+            "Среднее": 3,
+            "Низкое": 2,
+            "Очень низкое": 1,
         }
 
         self.risks_impact_table.setHorizontalHeaderLabels(list(column_headers.keys()))
@@ -934,7 +934,7 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
                                                                               font-weight: bold; 
                                                                               background-color: #06d10d;
                                                                               ''')
-                elif 5 <= k < 10:
+                elif 5 <= k <= 10:
                     self.risks_impact_table.cellWidget(i, j).setStyleSheet('''
                                                                               font-size: 13px bold; 
                                                                               font-weight: bold; 
