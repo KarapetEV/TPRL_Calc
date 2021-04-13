@@ -832,21 +832,20 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
         np4 = final_risks['Ф14'] + final_risks['Ф15'] + final_risks['Ф16']
         kp4 = new_risks['Ф14'] + new_risks['Ф15'] + new_risks['Ф16']
         risk_faktor['P4'] = (kp4 - np4) / kp4 * 100
-
-        risk_faktor['P5'] = (new_risks['Ф19'] - final_risks['Ф19']) / new_risks['Ф19'] * 100
+        print(risk_faktor)
+        # risk_faktor['P5'] = (new_risks['Ф19'] - final_risks['Ф19']) / new_risks['Ф19'] * 100
         # all_risk.to_excel(f'Data_Risk_{self.project_num}.xlsx', index=False)
         self.create_risk_table(risk_faktor)
 
     def create_risk_table(self, dict_risks):
         risk_value = []
-        risk_group = ["Р1", "Р2", "Р3", "Р4", "Р5"]
+        risk_group = ["Р1", "Р2", "Р3", "Р4"]
         risk_text = [
-            "Недостижение ожидаемых (заданных) характеристик функциональности и производительности результата "
+            "Риск недостижения ожидаемых (заданных) характеристик функциональности и производительности результата "
             "инновационного проекта – продукта/технологии",
-            "Невостребованность инновационной продукции",
-            "Срыв сроков выполнения проекта и/или превышения запланированного бюджета",
-            "Неучтенные ограничения на продукт/технологию",
-            "Недостижение заданной результативности и эффективности проекта",
+            "Риск невостребованности инновационной продукции",
+            "Риск срыва сроков выполнения проекта и/или превышения запланированного бюджета",
+            "Риск неучтенных ограничений на продукт/технологию",
         ]
 
         rows = len(risk_group)
@@ -950,7 +949,7 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
     @pyqtSlot()
     def fill_risks_impact_table(self):  # метод заполнения матрицы рисков
         self.clear_risks_impact_table()
-        for i in range(5):
+        for i in range(4):
             risk = self.risks_table.cellWidget(i, 0).text()
             percent = int(self.risks_table.cellWidget(i, 2).text().strip("%"))
             risk_impact = int(self.risks_table.cellWidget(i, 3).currentText())
