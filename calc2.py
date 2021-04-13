@@ -832,9 +832,7 @@ class Window(QWidget, calc2_gui.Ui_AppWindow):
         np4 = final_risks['Ф14'] + final_risks['Ф15'] + final_risks['Ф16']
         kp4 = new_risks['Ф14'] + new_risks['Ф15'] + new_risks['Ф16']
         risk_faktor['P4'] = (kp4 - np4) / kp4 * 100
-        print(risk_faktor)
-        # risk_faktor['P5'] = (new_risks['Ф19'] - final_risks['Ф19']) / new_risks['Ф19'] * 100
-        # all_risk.to_excel(f'Data_Risk_{self.project_num}.xlsx', index=False)
+
         self.create_risk_table(risk_faktor)
 
     def create_risk_table(self, dict_risks):
