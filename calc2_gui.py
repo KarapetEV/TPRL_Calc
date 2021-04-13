@@ -619,7 +619,7 @@ class Ui_AppWindow(object):
 
         # матрица рисков
         self.risks_impact_table = QtWidgets.QTableWidget(self.frame_risks)
-        self.risks_impact_table.setGeometry(QtCore.QRect(45, 280, 754, 225))
+        self.risks_impact_table.setGeometry(QtCore.QRect(45, 280, 736, 225))
         self.risks_impact_table.setContentsMargins(2, 2, 2, 2)
         self.risks_impact_table.setObjectName('risks_impact_table')
         self.risks_impact_table.setColumnCount(5)
