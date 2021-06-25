@@ -35,6 +35,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem,
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
 from report_ugt import ReportUgt
+
 from report_risks import ReportRisks
 
 style = os.path.join(os.path.dirname(__file__), 'style.css')
@@ -931,25 +932,43 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             self.risk_param_tabs.setCurrentIndex(self.params.index(param))
             self.risk_param_tabs.setTabEnabled(self.params.index(param), True)
 
-            lvl = round(int(self.d3[param]))
-            print(lvl)
+            # lvl = float(self.d3[param])
+            # print(int(lvl))
             data = pd.read_excel(self.path, sheet_name=param)
             data['Parameter'] = param
             val = self.make_level_dict(data)
             # for key, value in val.items():
             #     print(key, value)
             # print("*"*20)
+            # print(self.d1[param])
+            # print("-" * 30)
+            self.create_risks_param_table(param)
 
-            self.create_risks_param_table(self.risk_param_tab)
-
-    def create_risks_param_table(self, table):
+    def create_risks_param_table(self, param):
         # table.setContentsMargins(2, 2, 2, 2)
         # table.horizontalHeader().setVisible(True)
         # table.verticalHeader().setVisible(False)
         # table.setColumnCount(4)
         # table.setStyleSheet(self.headers_style)
         # table.setSelectionMode(QTableWidget.NoSelection)
-        pass
+        new_dict = {}
+        dict_values = []
+        lvl = int(float(self.d3[param]))
+        dict_values.append(lvl + 1)
+        param_list = self.d1[param][lvl]
+        count = 0
+        total = len(param_list)
+        for el in param_list:
+            if el == 1:
+                count += 1
+            elif el == -1:
+                total -= 1
+        param_i = 1 - (count / total)
+        dict_values.append(param_i)
+        new_dict[param] = dict_values
+        print(new_dict)
+
+
 
     def show_help(self):
         self.help_dialog = HelpDialog(self)
