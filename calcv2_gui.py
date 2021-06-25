@@ -545,11 +545,11 @@ class Ui_AppWindow(object):
         self.frame_risks.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_risks.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_risks.setObjectName("frame_risks")
-        # лейблы
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setWeight(75)
+        # # лейблы
+        # font = QtGui.QFont()
+        # font.setPointSize(12)
+        # font.setBold(True)
+        # font.setWeight(75)
         self.risks_labelProject = QtWidgets.QLabel(self.frame_risks)
         self.risks_labelProject.setGeometry(QtCore.QRect(10, 10, 135, 30))
         self.risks_labelProject.setFont(font)
@@ -577,50 +577,63 @@ class Ui_AppWindow(object):
         self.risks_label_expert_name.setAlignment(QtCore.Qt.AlignVCenter)
         self.risks_label_expert_name.setObjectName("risks_label_expert_name")
 
-        self.risks_warning_label = QtWidgets.QLabel(self.frame_risks)
-        self.risks_warning_label.setGeometry(QtCore.QRect(400, 20, 400, 50))
-        # font.setPointSize(14)
-        # self.risks_warning_label.setFont(font)
-        self.risks_warning_label.setStyleSheet("""font-color: red;
-                                                            font-size: 14px;""")
-        self.risks_warning_label.setWordWrap(True)
-        self.risks_warning_label.setAlignment(QtCore.Qt.AlignCenter)
-        self.risks_warning_label.setObjectName("risks_warning_label")
+        
 
-        # таблица рисков
-        self.risks_table = QtWidgets.QTableWidget(self.frame_risks)
-        self.risks_table.setGeometry(QtCore.QRect(5, 90, 805, 175))
-        self.risks_table.setContentsMargins(2, 2, 2, 2)
-        self.risks_table.setObjectName('risks_table')
-        self.risks_table.horizontalHeader().setVisible(True)
-        self.risks_table.verticalHeader().setVisible(False)
-        self.risks_table.setColumnCount(4)
-        self.risks_table.setStyleSheet(headers_style)
-        self.risks_table.setSelectionMode(QtWidgets.QTableWidget.NoSelection)
-
-        # разделение таблиц
-        self.line_horizontal2 = QtWidgets.QFrame(self.frame_risks)
-        self.line_horizontal2.setGeometry(QtCore.QRect(0, 267, 820, 2))
-        self.line_horizontal2.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_horizontal2.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_horizontal2.setObjectName("line_horizontal2")
-
-        # таблица рисков с вероятностью и весом
-        self.risks_impact_table = QtWidgets.QTableWidget(self.frame_risks)
-        self.risks_impact_table.setGeometry(QtCore.QRect(50, 275, 750, 250))
-        self.risks_impact_table.setContentsMargins(2, 2, 2, 2)
-        self.risks_impact_table.setObjectName('risks_impact_table')
-        self.risks_impact_table.setColumnCount(5)
-        self.risks_impact_table.setRowCount(5)
-        self.risks_impact_table.horizontalHeader().setVisible(True)
-        self.risks_impact_table.verticalHeader().setVisible(True)
-        self.risks_impact_table.setSelectionMode(QtWidgets.QTableWidget.NoSelection)
-        # self.risks_impact_table.setStyleSheet("border: 1px solid grey;")
+        #
+        # self.risks_warning_label = QtWidgets.QLabel(self.frame_risks)
+        # self.risks_warning_label.setGeometry(QtCore.QRect(400, 20, 400, 50))
+        # self.risks_warning_label.setStyleSheet("""font-color: red;
+        #                                                     font-size: 14px;""")
+        # self.risks_warning_label.setWordWrap(True)
+        # self.risks_warning_label.setAlignment(QtCore.Qt.AlignCenter)
+        # self.risks_warning_label.setObjectName("risks_warning_label")
+        #
+        # # таблица рисков
+        # self.risks_table = QtWidgets.QTableWidget(self.frame_risks)
+        # self.risks_table.setGeometry(QtCore.QRect(5, 90, 805, 145))
+        # self.risks_table.setContentsMargins(2, 2, 2, 2)
+        # self.risks_table.setObjectName('risks_table')
+        # self.risks_table.horizontalHeader().setVisible(True)
+        # self.risks_table.verticalHeader().setVisible(False)
+        # self.risks_table.setColumnCount(4)
+        # self.risks_table.setStyleSheet(headers_style)
+        # self.risks_table.setSelectionMode(QtWidgets.QTableWidget.NoSelection)
+        #
+        # # разделение таблиц
+        # self.line_horizontal2 = QtWidgets.QFrame(self.frame_risks)
+        # self.line_horizontal2.setGeometry(QtCore.QRect(0, 237, 820, 2))
+        # self.line_horizontal2.setFrameShape(QtWidgets.QFrame.HLine)
+        # self.line_horizontal2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        # self.line_horizontal2.setObjectName("line_horizontal2")
+        #
+        # # -------------таблица рисков с вероятностью и весом----------
+        #
+        # # заголовки осей матрицы
+        # self.risk_title = QtWidgets.QLabel(self.frame_risks)
+        # self.risk_title.setGeometry(380, 260, 129, 15)
+        # self.risk_title.setObjectName("risk_title")
+        # self.risk_title.setPixmap(QtGui.QPixmap("img/risk.png"))
+        # self.risk_weight_title = QtWidgets.QLabel(self.frame_risks)
+        # self.risk_weight_title.setGeometry(25, 350, 15, 89)
+        # self.risk_weight_title.setObjectName("risk_weight_title")
+        # self.risk_weight_title.setPixmap(QtGui.QPixmap("img/risk_weight.png"))
+        #
+        # # матрица рисков
+        # self.risks_impact_table = QtWidgets.QTableWidget(self.frame_risks)
+        # self.risks_impact_table.setGeometry(QtCore.QRect(45, 280, 736, 225))
+        # self.risks_impact_table.setContentsMargins(2, 2, 2, 2)
+        # self.risks_impact_table.setObjectName('risks_impact_table')
+        # self.risks_impact_table.setColumnCount(5)
+        # self.risks_impact_table.setRowCount(5)
+        # self.risks_impact_table.horizontalHeader().setVisible(True)
+        # self.risks_impact_table.verticalHeader().setVisible(True)
+        # self.risks_impact_table.setSelectionMode(QtWidgets.QTableWidget.NoSelection)
 
         # кнопка формирования заключения по рискам
         self.btn_report_risks = QtWidgets.QPushButton(self.frame_risks)
         self.btn_report_risks.setGeometry(QtCore.QRect(310, 545, 180, 30))
         self.btn_report_risks.setObjectName("btn_report_risks")
+        self.btn_report_risks.setEnabled(False)
 
         self.tabWidget.raise_()
         self.labelCalc.raise_()
