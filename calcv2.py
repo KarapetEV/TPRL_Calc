@@ -765,6 +765,8 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         # self.risks_warning_label.setText(self.text_warning)
         # self.btn_report_risks.setEnabled(self.risk_flag)
 
+        self.show_risks()
+
         for par in Window.parameters:
             if par not in self.d3.keys():
                 self.d3[par] = '0'
@@ -778,203 +780,6 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         if len(self.params) == 5:
             self.chart = Chart(self.d3, self.lay)
         self.make_text()
-
-    # def count_risks(self, frame):
-    #     new_risks = self.normal_risks.copy()
-    #     self.risk_data = pd.DataFrame(
-    #         columns=['Level', 'Ф1', 'Ф2', 'Ф3', 'Ф4', 'Ф5', 'Ф6', 'Ф7',
-    #                  'Ф8', 'Ф9', 'Ф10', 'Ф11', 'Ф12', 'Ф13', 'Ф14', 'Ф15',
-    #                  'Ф16', 'Ф17', 'Ф18', 'Ф19'])
-    #     final_risks = {}
-    #     columns = ['Ф1', 'Ф2', 'Ф3', 'Ф4', 'Ф5', 'Ф6', 'Ф7',
-    #                'Ф8', 'Ф9', 'Ф10', 'Ф11', 'Ф12', 'Ф13', 'Ф14', 'Ф15',
-    #                'Ф16', 'Ф17', 'Ф18']
-    #     for param in self.params:
-    #         risk_d = pd.read_excel('data/Risks_new.xlsx', sheet_name=param)
-    #         self.risk_data = self.risk_data.append(risk_d)
-    #     self.risk_data.drop(['Level'], axis='columns', inplace=True)
-    #     all_risk = pd.concat([frame, self.risk_data], axis=1)
-    #     all_risk.reset_index(inplace=True)
-    #     for row in all_risk.index:
-    #         if all_risk['State'][row] == 0:
-    #             for col in columns:
-    #                 if all_risk[col][row] == 1:
-    #                     all_risk.at[row, col] = 0
-    #         elif all_risk['State'][row] == -1:
-    #             for col in columns:
-    #                 if all_risk[col][row] == 1:
-    #                     all_risk.at[row, col] = 1
-    #                     new_risks[col] -= 1
-    #             all_risk.loc[row, 'Ф19'] = 0
-    #             new_risks['Ф19'] -= 1
-    #     for key, values in new_risks.items():
-    #         if key not in final_risks:
-    #             if key == 'Ф19':
-    #                 value = new_risks[key] - all_risk[all_risk['State'] == 0].shape[0]
-    #             else:
-    #                 value = new_risks[key] - all_risk[all_risk[key] == 0].shape[0]
-    #
-    #             final_risks[key] = value
-    #     risk_faktor = {}
-    #
-    #     np1 = final_risks['Ф1'] + final_risks['Ф2'] + final_risks['Ф3'] + final_risks['Ф4'] + final_risks['Ф5']
-    #     kp1 = new_risks['Ф1'] + new_risks['Ф2'] + new_risks['Ф3'] + new_risks['Ф4'] + new_risks['Ф5']
-    #     risk_faktor['P1'] = (kp1 - np1) / kp1 * 100
-    #
-    #     np2 = final_risks['Ф6'] + final_risks['Ф7'] + final_risks['Ф8'] + final_risks['Ф9'] + final_risks['Ф10']
-    #     kp2 = new_risks['Ф6'] + new_risks['Ф7'] + new_risks['Ф8'] + new_risks['Ф9'] + new_risks['Ф10']
-    #     risk_faktor['P2'] = (kp2 - np2) / kp2 * 100
-    #
-    #     np3 = final_risks['Ф11'] + final_risks['Ф12'] + final_risks['Ф13'] + final_risks['Ф17'] + final_risks['Ф18']
-    #     kp3 = new_risks['Ф11'] + new_risks['Ф12'] + new_risks['Ф13'] + new_risks['Ф17'] + new_risks['Ф18']
-    #     risk_faktor['P3'] = (kp3 - np3) / kp3 * 100
-    #
-    #     np4 = final_risks['Ф14'] + final_risks['Ф15'] + final_risks['Ф16']
-    #     kp4 = new_risks['Ф14'] + new_risks['Ф15'] + new_risks['Ф16']
-    #     risk_faktor['P4'] = (kp4 - np4) / kp4 * 100
-    #
-    #     self.create_risk_table(risk_faktor)
-    #
-    # def create_risk_table(self, dict_risks):
-    #     risk_value = []
-    #     risk_group = ["Р1", "Р2", "Р3", "Р4"]
-    #     risk_text = [
-    #         "Риск недостижения ожидаемых (заданных) характеристик функциональности и производительности результата "
-    #         "инновационного проекта – продукта/технологии",
-    #         "Риск невостребованности инновационной продукции",
-    #         "Риск срыва сроков выполнения проекта и/или превышения запланированного бюджета",
-    #         "Риск неучтенных ограничений на продукт/технологию",
-    #     ]
-    #
-    #     rows = len(risk_group)
-    #     self.risks_table.setRowCount(rows)
-    #     self.risks_table.setHorizontalHeaderLabels(["Риск", "Наименование риска", "Вероятность", "Влияние"])
-    #     self.risks_table.horizontalHeaderItem(0).setTextAlignment(Qt.AlignCenter)
-    #     self.risks_table.horizontalHeaderItem(1).setTextAlignment(Qt.AlignCenter)
-    #     self.risks_table.horizontalHeaderItem(2).setTextAlignment(Qt.AlignCenter)
-    #     self.risks_table.horizontalHeaderItem(3).setTextAlignment(Qt.AlignCenter)
-    #
-    #     self.risks_table.setColumnWidth(0, 45)
-    #     self.risks_table.setColumnWidth(1, 578)
-    #     self.risks_table.setColumnWidth(2, 100)
-    #     self.risks_table.setColumnWidth(3, 80)
-    #     for k, v in dict_risks.items():
-    #         number = Decimal(f'{v}')
-    #         v = number.quantize(Decimal('1'), rounding='ROUND_HALF_UP')
-    #         risk_value.append(v)
-    #     for i in range(rows):
-    #         label_1 = QLabel(self.word_wrap(risk_group[i], 15))
-    #         label_1.setContentsMargins(5, 5, 5, 5)
-    #         label_1.setStyleSheet("font-size: 13px;")
-    #         label_1.setAlignment(Qt.AlignCenter)
-    #         label_2 = QLabel(self.word_wrap(risk_text[i], 100))
-    #         label_2.setContentsMargins(5, 5, 5, 5)
-    #         label_2.setStyleSheet("font-size: 11px;")
-    #         label_3 = QLabel(f'{risk_value[i]}%')
-    #         label_3.setContentsMargins(5, 5, 5, 5)
-    #         label_3.setStyleSheet("font-size: 12px;")
-    #         label_3.setAlignment(Qt.AlignCenter)
-    #         self.combo = comboCompanies(self)
-    #         self.risks_table.setCellWidget(i, 0, label_1)
-    #         self.risks_table.setCellWidget(i, 1, label_2)
-    #         self.risks_table.setCellWidget(i, 2, label_3)
-    #         self.risks_table.setCellWidget(i, 3, self.combo)
-    #         self.combo.combo_signal.connect(self.fill_risks_impact_table)
-    #
-    #     self.risks_table.resizeRowsToContents()
-    #     self.risks_table.setEnabled(True)
-    #     self.risks_table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-    #     self.risks_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-    #
-    #     self.create_risks_impact_table()
-    #     self.fill_risks_impact_table()
-    #
-    # # таблица рисков и их влияния
-    # def create_risks_impact_table(self):
-    #
-    #     column_headers = {
-    #         "Очень низкая": 1,
-    #         "Низкая": 2,
-    #         "Средняя": 3,
-    #         "Высокая": 4,
-    #         "Очень высокая": 5,
-    #     }
-    #     row_headers = {
-    #         "Очень высокое": 5,
-    #         "Высокое": 4,
-    #         "Среднее": 3,
-    #         "Низкое": 2,
-    #         "Очень низкое": 1,
-    #     }
-    #
-    #     self.risks_impact_table.setHorizontalHeaderLabels(list(column_headers.keys()))
-    #     self.risks_impact_table.setVerticalHeaderLabels(list(row_headers.keys()))
-    #
-    #     self.risks_impact_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-    #     self.risks_impact_table.horizontalHeader().setMinimumSectionSize(127)
-    #
-    #     for i in range(5):
-    #         self.risks_impact_table.setRowHeight(i, 40)
-    #         for j in range(5):
-    #             row = list(row_headers.keys())[i]
-    #             column = list(column_headers.keys())[j]
-    #             k = column_headers[column] * row_headers[row]
-    #
-    #             label = QLabel("")
-    #             label.setAlignment(Qt.AlignCenter)
-    #
-    #             self.risks_impact_table.setCellWidget(i, j, label)
-    #
-    #             if 1 <= k < 5:
-    #                 self.risks_impact_table.cellWidget(i, j).setStyleSheet('''
-    #                                                                           font-size: 13px;
-    #                                                                           font-weight: bold;
-    #                                                                           background-color: #06d10d;
-    #                                                                           ''')
-    #             elif 5 <= k <= 10:
-    #                 self.risks_impact_table.cellWidget(i, j).setStyleSheet('''
-    #                                                                           font-size: 13px bold;
-    #                                                                           font-weight: bold;
-    #                                                                           background-color: yellow;
-    #                                                                           ''')
-    #             else:
-    #                 self.risks_impact_table.cellWidget(i, j).setStyleSheet('''
-    #                                                                           font-size: 13px bold;
-    #                                                                           font-weight: bold;
-    #                                                                           background-color: red;
-    #                                                                           ''')
-    #
-    # @pyqtSlot()
-    # def fill_risks_impact_table(self):  # метод заполнения матрицы рисков
-    #     self.clear_risks_impact_table()
-    #     for i in range(4):
-    #         risk = self.risks_table.cellWidget(i, 0).text()
-    #         percent = int(self.risks_table.cellWidget(i, 2).text().strip("%"))
-    #         risk_impact = int(self.risks_table.cellWidget(i, 3).currentText())
-    #         coords = self.check_risk(risk_impact, percent)
-    #         cell_text = self.risks_impact_table.cellWidget(coords[0], coords[1]).text()
-    #         risks_text = (cell_text + f", {risk}").strip(", ")
-    #         self.risks_impact_table.cellWidget(coords[0], coords[1]).setText(risks_text)
-    #
-    # def clear_risks_impact_table(self):  # метод очистки матрицы
-    #     for i in range(5):
-    #         for j in range(5):
-    #             self.risks_impact_table.cellWidget(i, j).setText("")
-    #
-    # def check_risk(self, x, y):
-    #     coordinates = [5 - x]
-    #     if 0 <= y < 5:
-    #         coordinates.append(0)
-    #     elif 5 <= y <= 25:
-    #         coordinates.append(1)
-    #     elif 26 <= y <= 50:
-    #         coordinates.append(2)
-    #     elif 51 <= y <= 75:
-    #         coordinates.append(3)
-    #     elif y > 75:
-    #         coordinates.append(4)
-    #
-    #     return coordinates
 
     def save_results(self):
         # ---------------Формируем dataframe с результатами------------------------
@@ -1081,11 +886,6 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         new_report_ugt = ReportUgt(self.pdf_data, self.d1)
         new_report_ugt.set_data()
 
-    # def report_risks(self):
-    #     date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
-    #     data = [date, self.project_num, self.expert_name]
-        # new_report_risks = ReportRisks(data, self.risks_table)
-
     def show_results(self, res):
         res_list = []
         for k_res, v_res in res.items():
@@ -1122,6 +922,13 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             self.tprl_min = int(self.tprl_average)
             self.label_tprl_average_result.setText(str(self.tprl_average))
             self.label_tprl_min_result.setText(str(self.tprl_min))
+
+    def show_risks(self):
+        for param in self.params:
+            self.risk_param_tab = QWidget()
+            self.risk_param_tabs.addTab(self.risk_param_tab, param)
+            self.risk_param_tabs.setCurrentIndex(self.params.index(param))
+            self.risk_param_tabs.setTabEnabled(self.params.index(param), True)
 
     def show_help(self):
         self.help_dialog = HelpDialog(self)
