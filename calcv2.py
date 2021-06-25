@@ -924,11 +924,13 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             self.label_tprl_min_result.setText(str(self.tprl_min))
 
     def show_risks(self):
+        self.risk_param_tabs.clear()
         for param in self.params:
             self.risk_param_tab = QWidget()
             self.risk_param_tabs.addTab(self.risk_param_tab, param)
             self.risk_param_tabs.setCurrentIndex(self.params.index(param))
             self.risk_param_tabs.setTabEnabled(self.params.index(param), True)
+
 
     def show_help(self):
         self.help_dialog = HelpDialog(self)
