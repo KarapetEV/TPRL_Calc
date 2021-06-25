@@ -30,8 +30,8 @@ import numpy as np
 import pandas as pd
 from chart import Chart
 from PyQt5.QtGui import QColor, QPixmap, QFont
-from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem, QDialog, \
-    QLabel, QPushButton, QMessageBox, QTabWidget, QTableWidgetItem, QLineEdit, QComboBox, QFrame, QHeaderView
+from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem, QDialog, QLabel, QPushButton, \
+    QMessageBox, QTabWidget, QTableWidget, QTableWidgetItem, QLineEdit, QComboBox, QFrame, QHeaderView
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
 from report_ugt import ReportUgt
@@ -926,11 +926,30 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
     def show_risks(self):
         self.risk_param_tabs.clear()
         for param in self.params:
-            self.risk_param_tab = QWidget()
+            self.risk_param_tab = QTableWidget()
             self.risk_param_tabs.addTab(self.risk_param_tab, param)
             self.risk_param_tabs.setCurrentIndex(self.params.index(param))
             self.risk_param_tabs.setTabEnabled(self.params.index(param), True)
 
+            lvl = round(int(self.d3[param]))
+            print(lvl)
+            data = pd.read_excel(self.path, sheet_name=param)
+            data['Parameter'] = param
+            val = self.make_level_dict(data)
+            # for key, value in val.items():
+            #     print(key, value)
+            # print("*"*20)
+
+            self.create_risks_param_table(self.risk_param_tab)
+
+    def create_risks_param_table(self, table):
+        # table.setContentsMargins(2, 2, 2, 2)
+        # table.horizontalHeader().setVisible(True)
+        # table.verticalHeader().setVisible(False)
+        # table.setColumnCount(4)
+        # table.setStyleSheet(self.headers_style)
+        # table.setSelectionMode(QTableWidget.NoSelection)
+        pass
 
     def show_help(self):
         self.help_dialog = HelpDialog(self)

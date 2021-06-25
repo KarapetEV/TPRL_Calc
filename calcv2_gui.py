@@ -112,7 +112,7 @@ class Ui_AppWindow(object):
         self.btn_new_project.setObjectName("btn_new_project")
 
         # -----------------------Стиль заголовков таблицы-------------------------------
-        headers_style = "QHeaderView::section {background-color: #82898E; font-size: 14px; " \
+        self.headers_style = "QHeaderView::section {background-color: #82898E; font-size: 14px; " \
                         "font-weight: bold; color: #ffffff;}"
 
         # -----------------------Вкладка проектов (черновики)---------------------------
@@ -146,7 +146,7 @@ class Ui_AppWindow(object):
         self.projects_table.setColumnCount(7)
         self.projects_table.setRowCount(0)
         self.projects_table.verticalHeader().setVisible(False)
-        self.projects_table.setStyleSheet(headers_style)
+        self.projects_table.setStyleSheet(self.headers_style)
         # Заголовки таблицы черновиков
         item = QtWidgets.QTableWidgetItem()
         item.setTextAlignment(QtCore.Qt.AlignCenter)
@@ -203,7 +203,7 @@ class Ui_AppWindow(object):
         self.projects_table2.setColumnCount(7)
         self.projects_table2.setRowCount(0)
         self.projects_table2.verticalHeader().setVisible(False)
-        self.projects_table2.setStyleSheet(headers_style)
+        self.projects_table2.setStyleSheet(self.headers_style)
         # Заголовки таблицы завершенных проектов
         item = QtWidgets.QTableWidgetItem()
         item.setTextAlignment(QtCore.Qt.AlignCenter)
@@ -521,7 +521,7 @@ class Ui_AppWindow(object):
         self.table_tprl_results.setObjectName('table_tprl_results')
         self.table_tprl_results.horizontalHeader().setVisible(False)
         self.table_tprl_results.verticalHeader().setVisible(False)
-        self.table_tprl_results.setStyleSheet(headers_style)
+        self.table_tprl_results.setStyleSheet(self.headers_style)
         # -------------------------Draft_CheckBox-------------------------
         self.check_draft = QtWidgets.QCheckBox(self.frame_tprl_results)
         self.check_draft.setGeometry(QtCore.QRect(335, 310, 180, 30))
