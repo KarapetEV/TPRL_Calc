@@ -929,49 +929,80 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
     def show_risks(self):
         self.risk_param_tabs.clear()
         for param in self.params:
-            self.risk_param_tab = QTableWidget()
+            self.risk_param_tab = QWidget()
             self.risk_param_tabs.addTab(self.risk_param_tab, param)
             self.risk_param_tabs.setCurrentIndex(self.params.index(param))
             self.risk_param_tabs.setTabEnabled(self.params.index(param), True)
-
-            # lvl = float(self.d3[param])
-            # print(int(lvl))
-            data = pd.read_excel(self.path, sheet_name=param)
-            data['Parameter'] = param
-            val = self.make_level_dict(data)
-            # for key, value in val.items():
-            #     print(key, value)
-            # print("*"*20)
-            # print(self.d1[param])
-            # print("-" * 30)
-            self.create_risks_param_table(param)
+            param_risks_dict = self.get_task_results(param)
+            self.create_param_risks_table(param_risks_dict[param])
         self.risk_param_tabs.setCurrentIndex(0)
+        self.create_result_risks_table()
 
-    def create_risks_param_table(self, param):
+    def get_task_results(self, param):
+        lvl = int(float(self.d3[param]))
+        new_result = {}
+        self.param_tabs.setCurrentIndex(self.params.index(param))
+        tree = self.param_tabs.currentWidget()
+        root = tree.invisibleRootItem()
+        level = root.child(lvl)
+        lvl_result = f"{level.text(0)}. {level.text(1)}"
+        l1 = []
+        for kid in range(level.childCount()):
+            child = level.child(kid)
+            text = child.text(1).split("\n")
+            text = " ".join(text)
+            el = tree.itemWidget(child, 0)
+            combo_text = el.currentText()
+            l1.append([text, combo_text])
+        l2 = [lvl_result, l1]
+        new_result[param] = l2
+        return new_result
+
+    def create_param_risks_table(self, param_dict):
         # table.setContentsMargins(2, 2, 2, 2)
         # table.horizontalHeader().setVisible(True)
         # table.verticalHeader().setVisible(False)
         # table.setColumnCount(4)
         # table.setStyleSheet(self.headers_style)
         # table.setSelectionMode(QTableWidget.NoSelection)
-        new_dict = {}
-        dict_values = []
-        lvl = int(float(self.d3[param]))
-        dict_values.append(lvl + 1)
-        param_list = self.d1[param][lvl]
-        count = 0
-        total = len(param_list)
-        for el in param_list:
-            if el == 1:
-                count += 1
-            elif el == -1:
-                total -= 1
-        param_i = 1 - (count / total)
-        dict_values.append(param_i)
-        new_dict[param] = dict_values
-        print(new_dict)
+        lvl_txt = param_dict[0]
+        # new_dict = {}
+        # dict_values = []
+        # lvl = int(float(self.d3[param]))
+        # dict_values.append(lvl + 1)
+        # param_list = self.d1[param][lvl]
+        # count = 0
+        # total = len(param_list)
+        # for el in param_list:
+        #     if el == 1:
+        #         count += 1
+        #     elif el == -1:
+        #         total -= 1
+        # param_i = 1 - (count / total)
+        # dict_values.append(param_i)
+        # new_dict[param] = dict_values
+        # print("-"*20)
+        # print(val[lvl+1])
+        # lvl_text = val[lvl+1]
+        # self.task_lvl_text.setText(f"Уровень {lvl}. {lvl_text}")
 
+    def create_result_risks_table(self):
+        pass
 
+    def set_task_lvl_label(self, text):
+        font = QFont()
+        font.setPointSize(12)
+        font.setBold(False)
+        font.setUnderline(True)
+        self.task_lvl_text = QLabel()
+        self.task_lvl_text.move(0, 80)
+        self.task_lvl_text.setFont(font)
+        self.task_lvl_text.setWordWrap(True)
+        self.task_lvl_text.setMaximumWidth(800)
+        self.task_lvl_text.setMaximumHeight(40)
+        self.task_lvl_text.setText(text)
+        self.task_lvl_text.setAlignment(Qt.AlignVCenter)
+        self.task_lvl_text.setObjectName("task_lvl_text")
 
     def show_help(self):
         self.help_dialog = HelpDialog(self)

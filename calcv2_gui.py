@@ -561,7 +561,8 @@ class Ui_AppWindow(object):
         self.risks_label_expert.setFont(font)
         self.risks_label_expert.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.risks_label_expert.setObjectName("risks_label_expert")
-
+        font = QtGui.QFont()
+        font.setPointSize(12)
         font.setBold(False)
         font.setUnderline(True)
         self.risks_label_project_num = QtWidgets.QLabel(self.frame_risks)
