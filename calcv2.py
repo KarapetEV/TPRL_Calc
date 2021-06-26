@@ -717,7 +717,9 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
                     self.d1[param] = l2
                 else:
                     self.d1[param].append(l1)
-
+            '''На этом этапе собран словарь d1 по всем выбранным/загруженным параметрам, типа 
+            {'TRL': [[1, 1, 1], [1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0]], 
+            'MRL': [[1, 1, 1], [1, 1, 1], [1, 1, 1, 1], [1, 1,'''
             for key, values in self.d1.items():
                 first_list = []
                 for value in values:
@@ -943,6 +945,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             # print(self.d1[param])
             # print("-" * 30)
             self.create_risks_param_table(param)
+        self.risk_param_tabs.setCurrentIndex(0)
 
     def create_risks_param_table(self, param):
         # table.setContentsMargins(2, 2, 2, 2)
