@@ -31,7 +31,7 @@ import pandas as pd
 from chart import Chart
 from PyQt5.QtGui import QColor, QPixmap, QFont
 from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem, QDialog, QLabel, QPushButton, \
-    QMessageBox, QTabWidget, QTableWidget, QTableWidgetItem, QLineEdit, QComboBox, QFrame, QHeaderView
+    QMessageBox, QTabWidget, QTableWidget, QTableWidgetItem, QLineEdit, QComboBox, QFrame, QHeaderView, QAbstractItemView
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
 from report_ugt import ReportUgt
@@ -934,7 +934,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             self.risk_param_tabs.setTabEnabled(self.params.index(param), True)
             self.frame_param_risks = QFrame(self.risk_param_tab)
             self.frame_param_risks.move(0, 0)
-            self.frame_param_risks.setMaximumSize(820, 300)
+            self.frame_param_risks.setMaximumSize(820, 330)
             self.frame_param_risks.setFrameShape(QFrame.StyledPanel)
             self.frame_param_risks.setFrameShadow(QFrame.Raised)
             param_risks_values = self.get_task_results(param)[param]
@@ -976,48 +976,87 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.lvl_text_label.setText(lvl_txt)
 
         self.param_risks_table = QTableWidget(frame)
-        self.param_risks_table.setGeometry(QRect(5, 40, 805, 250))
+        self.param_risks_table.move(5, 40)
+        self.param_risks_table.setMinimumWidth(805)
+        self.param_risks_table.setMinimumHeight(330)
         self.param_risks_table.setContentsMargins(0, 0, 0, 0)
         self.param_risks_table.horizontalHeader().setVisible(True)
         self.param_risks_table.verticalHeader().setVisible(False)
+        self.param_risks_table.setSelectionMode(QAbstractItemView.NoSelection)
+        self.param_risks_table.setFocusPolicy(Qt.NoFocus)
         self.param_risks_table.setColumnCount(3)
-        self.param_risks_table.setStyleSheet("QHeaderView::section {border: 1px solid grey}")
-        columns = [["Задача", 580],
+        columns = [["Задача", 610],
                    ["Прогноз\nсвоевременного\nисполнения задачи", 110],
-                   ["Вероятность\nреализации\nриска, %", 110]]
+                   ["Вероятность\nреализации\nриска, %", 80]]
         for i in range(3):
             item = QTableWidgetItem()
             item.setTextAlignment(Qt.AlignCenter)
             self.param_risks_table.setColumnWidth(i, columns[i][1])
             self.param_risks_table.setHorizontalHeaderItem(i, item)
             item.setText(columns[i][0])
+        # header = self.param_risks_table.horizontalHeader()
+        # header.setFrameStyle(QFrame.Box | QFrame.Plain)
+        # header.setLineWidth(1)
+        # self.param_risks_table.setHorizontalHeader(header)
+        self.param_risks_table.setStyleSheet("QHeaderView::section {background-color: #82898E; color: #ffffff;}")
         data = param_risks_values[1]
         rows_count = len(data)
-        # self.param_risks_table.setSpan(0, 2, 1, rows_count)
+        self.param_risks_table.setRowCount(rows_count)
         for row in range(rows_count):
-            label = QLabel(self.word_wrap(data[0][0], 580))
-            label.setContentsMargins(1, 1, 1, 1)
-            label.setAlignment(Qt.AlignLeft)
-            self.param_risks_table.setCellWidget(row, 0, label)
-            if data[0][1] == "Да":
+            task_text = self.word_wrap(data[row][0], 580)
+            item = QTableWidgetItem()
+            item.setTextAlignment(Qt.AlignLeft)
+            item.setText(task_text)
+            self.param_risks_table.setItem(row, 0, item)
+            if data[row][1] == "Да":
                 item = QTableWidgetItem()
                 item.setTextAlignment(Qt.AlignCenter)
                 item.setText("1")
                 self.param_risks_table.setItem(row, 1, item)
-            elif data[0][1] == "Не применимо":
+            elif data[row][1] == "Не применимо":
                 text = QTableWidgetItem()
                 text.setTextAlignment(Qt.AlignCenter)
                 text.setText(data[1])
                 self.param_risks_table.setCellWidget(row, 1, text)
-            elif data[0][1] == "Нет":
+            elif data[row][1] == "Нет":
                 self.risk_edit = QLineEdit()
                 self.risk_edit.setMaxLength(4)
+                self.risk_edit.setAlignment(Qt.AlignCenter)
+                self.risk_edit.setStyleSheet("border: 1px solid red; color: red;")
+                self.risk_edit.setText("0.0")
                 self.param_risks_table.setCellWidget(row, 1, self.risk_edit)
-                self.risk_edit.textChanged.connect(self.risk_realization)
-        self.param_risks_table.setEnabled(True)
+                self.risk_edit.textChanged.connect(lambda table=self.param_risks_table, widget=self.risk_edit: self.forecast_changed(table, widget))
 
-    def risk_realization(self):
-        pass
+        # self.param_risks_table.rowSpan(0, 2)
+        self.param_risks_table.setSpan(0, 2, rows_count, 1)
+        self.param_risks_table.resizeRowsToContents()
+        self.risk_realization(self.param_risks_table)
+
+    @pyqtSlot()
+    def forecast_changed(self, table, widget):
+        risk_table = table
+        try:
+            task_forecast = float(widget.text())
+            if task_forecast > 0:
+                widget.setStyleSheet("border: none; color: black;")
+        except Exception:
+            pass
+        self.risk_realization(risk_table)
+
+    def risk_realization(self, table):
+        count = 0
+        rows = table.rowCount()
+        for row in range(rows):
+            try:
+                num = float(table.item(row, 1).text())
+            except AttributeError:
+                num = float(table.cellWidget(row, 1).text())
+            count *= num
+        result = (1 - (count)) * 100
+        item = QTableWidgetItem()
+        item.setTextAlignment(Qt.AlignCenter)
+        item.setText(f"{result}%")
+        table.setItem(0, 2, item)
 
         # new_dict = {}
         # dict_values = []
