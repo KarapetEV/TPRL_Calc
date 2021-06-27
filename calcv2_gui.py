@@ -582,7 +582,6 @@ class Ui_AppWindow(object):
         self.risk_param_tabs = QtWidgets.QTabWidget(self.frame_risks)
         self.risk_param_tabs.setEnabled(True)
         self.risk_param_tabs.setGeometry(0, 40, 820, 330)
-        # self.risk_param_tabs.setGeometry(QtCore.QRect(0, 80, 815, 380))
         self.risk_param_tabs.setObjectName("risk_param_tabs")
 
         self.btn_report_risks = QtWidgets.QPushButton(self.frame_risks)

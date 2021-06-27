@@ -31,7 +31,7 @@ import pandas as pd
 from chart import Chart
 from PyQt5.QtGui import QColor, QPixmap, QFont
 from PyQt5.QtWidgets import QApplication, QWidget, QTreeWidget, QTreeWidgetItem, QDialog, QLabel, QPushButton, \
-    QMessageBox, QTabWidget, QTableWidget, QTableWidgetItem, QLineEdit, QComboBox, QFrame, QHeaderView, QAbstractItemView
+    QMessageBox, QTabWidget, QTableWidget, QTableWidgetItem, QLineEdit, QComboBox, QFrame, QDoubleSpinBox, QAbstractItemView
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QRect
 from splash import Splash
 from report_ugt import ReportUgt
@@ -994,10 +994,6 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             self.param_risks_table.setColumnWidth(i, columns[i][1])
             self.param_risks_table.setHorizontalHeaderItem(i, item)
             item.setText(columns[i][0])
-        # header = self.param_risks_table.horizontalHeader()
-        # header.setFrameStyle(QFrame.Box | QFrame.Plain)
-        # header.setLineWidth(1)
-        # self.param_risks_table.setHorizontalHeader(header)
         self.param_risks_table.setStyleSheet("QHeaderView::section {background-color: #82898E; color: #ffffff;}")
         data = param_risks_values[1]
         rows_count = len(data)
@@ -1019,64 +1015,44 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
                 text.setText(data[1])
                 self.param_risks_table.setCellWidget(row, 1, text)
             elif data[row][1] == "Нет":
-                self.risk_edit = QLineEdit()
-                self.risk_edit.setMaxLength(4)
-                self.risk_edit.setAlignment(Qt.AlignCenter)
-                self.risk_edit.setStyleSheet("border: 1px solid red; color: red;")
-                self.risk_edit.setText("0.0")
-                self.param_risks_table.setCellWidget(row, 1, self.risk_edit)
-                self.risk_edit.textChanged.connect(lambda table=self.param_risks_table, widget=self.risk_edit: self.forecast_changed(table, widget))
-
-        # self.param_risks_table.rowSpan(0, 2)
+                self.risk_spin = QDoubleSpinBox()
+                self.risk_spin.setMinimum(0)
+                self.risk_spin.setMaximum(0.99)
+                self.risk_spin.setSingleStep(0.01)
+                # self.risk_spin.setStyleSheet("border: 1px solid black; color: black;")
+                self.param_risks_table.setCellWidget(row, 1, self.risk_spin)
+                self.risk_spin.valueChanged.connect(self.risk_realization)
         self.param_risks_table.setSpan(0, 2, rows_count, 1)
         self.param_risks_table.resizeRowsToContents()
-        self.risk_realization(self.param_risks_table)
+        self.risk_realization()
 
     @pyqtSlot()
-    def forecast_changed(self, table, widget):
-        risk_table = table
-        try:
-            task_forecast = float(widget.text())
-            if task_forecast > 0:
-                widget.setStyleSheet("border: none; color: black;")
-        except Exception:
-            pass
-        self.risk_realization(risk_table)
-
-    def risk_realization(self, table):
-        count = 0
+    def risk_realization(self):
+        table = None
+        tab = self.risk_param_tabs.currentWidget()
+        frame = tab.children()[0]
+        widgets = frame.children()
+        for el in widgets:
+            if isinstance(el, QTableWidget):
+                table = el
+                break
+        count = 1
         rows = table.rowCount()
         for row in range(rows):
             try:
                 num = float(table.item(row, 1).text())
             except AttributeError:
-                num = float(table.cellWidget(row, 1).text())
+                num = float(table.cellWidget(row, 1).value())
+                # if num > 0:
+                #     table.cellWidget(row, 1).setStyleSheet("border: none; color: black;")
+                # else:
+                #     table.cellWidget(row, 1).setStyleSheet("border: 1px solid red; color: red;")
             count *= num
-        result = (1 - (count)) * 100
+        result = round(((1 - (count)) * 100), 1)
         item = QTableWidgetItem()
         item.setTextAlignment(Qt.AlignCenter)
         item.setText(f"{result}%")
         table.setItem(0, 2, item)
-
-        # new_dict = {}
-        # dict_values = []
-        # lvl = int(float(self.d3[param]))
-        # dict_values.append(lvl + 1)
-        # param_list = self.d1[param][lvl]
-        # count = 0
-        # total = len(param_list)
-        # for el in param_list:
-        #     if el == 1:
-        #         count += 1
-        #     elif el == -1:
-        #         total -= 1
-        # param_i = 1 - (count / total)
-        # dict_values.append(param_i)
-        # new_dict[param] = dict_values
-        # print("-"*20)
-        # print(val[lvl+1])
-        # lvl_text = val[lvl+1]
-        # self.task_lvl_text.setText(f"Уровень {lvl}. {lvl_text}")
 
     def create_result_risks_table(self):
         pass
