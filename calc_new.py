@@ -948,7 +948,10 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.param_tabs.setCurrentIndex(self.params.index(param))
         tree = self.param_tabs.currentWidget()
         root = tree.invisibleRootItem()
-        level = root.child(lvl)
+        if lvl == 9:
+            level = root.child(lvl - 1)
+        else:
+            level = root.child(lvl)
         lvl_result = f"{level.text(0)}. {level.text(1)}"
         l1 = []
         for kid in range(level.childCount()):
