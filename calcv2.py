@@ -934,7 +934,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             self.risk_param_tabs.setTabEnabled(self.params.index(param), True)
             self.frame_param_risks = QFrame(self.risk_param_tab)
             self.frame_param_risks.move(0, 0)
-            self.frame_param_risks.setMaximumSize(820, 330)
+            self.frame_param_risks.setMaximumSize(820, 450)
             self.frame_param_risks.setFrameShape(QFrame.StyledPanel)
             self.frame_param_risks.setFrameShadow(QFrame.Raised)
             param_risks_values = self.get_task_results(param)[param]
@@ -949,7 +949,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         tree = self.param_tabs.currentWidget()
         root = tree.invisibleRootItem()
         if lvl == 9:
-            level = root.child(lvl-1)
+            level = root.child(lvl - 1)
         else:
             level = root.child(lvl)
         lvl_result = f"{level.text(0)}. {level.text(1)}"
@@ -981,14 +981,15 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         self.param_risks_table = QTableWidget(frame)
         self.param_risks_table.move(5, 40)
         self.param_risks_table.setMinimumWidth(805)
-        self.param_risks_table.setMinimumHeight(330)
+        self.param_risks_table.setMinimumHeight(400)
         self.param_risks_table.setContentsMargins(0, 0, 0, 0)
         self.param_risks_table.horizontalHeader().setVisible(True)
         self.param_risks_table.verticalHeader().setVisible(False)
         self.param_risks_table.setSelectionMode(QAbstractItemView.NoSelection)
         self.param_risks_table.setFocusPolicy(Qt.NoFocus)
+        self.param_risks_table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.param_risks_table.setColumnCount(3)
-        columns = [["Задача", 610],
+        columns = [["Задача", 590],
                    ["Прогноз\nсвоевременного\nисполнения задачи", 110],
                    ["Вероятность\nреализации\nриска, %", 80]]
         for i in range(3):
@@ -1002,6 +1003,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
         rows_count = len(data)
         self.param_risks_table.setRowCount(rows_count)
         for row in range(rows_count):
+            self.param_risks_table.setRowHeight(row, 45)
             task_text = self.word_wrap(data[row][0], 580)
             item = QTableWidgetItem()
             item.setTextAlignment(Qt.AlignLeft)
@@ -1015,8 +1017,8 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
             elif data[row][1] == "Не применимо":
                 text = QTableWidgetItem()
                 text.setTextAlignment(Qt.AlignCenter)
-                text.setText(data[1])
-                self.param_risks_table.setCellWidget(row, 1, text)
+                text.setText(data[row][1])
+                self.param_risks_table.setItem(row, 1, text)
             elif data[row][1] == "Нет":
                 self.risk_spin = QDoubleSpinBox()
                 self.risk_spin.setMinimum(0)
@@ -1026,7 +1028,7 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
                 self.param_risks_table.setCellWidget(row, 1, self.risk_spin)
                 self.risk_spin.valueChanged.connect(self.risk_realization)
         self.param_risks_table.setSpan(0, 2, rows_count, 1)
-        self.param_risks_table.resizeRowsToContents()
+        # self.param_risks_table.resizeRowsToContents()
         self.risk_realization()
 
     @pyqtSlot()
@@ -1046,6 +1048,8 @@ class Window(QWidget, calcv2_gui.Ui_AppWindow):
                 num = float(table.item(row, 1).text())
             except AttributeError:
                 num = float(table.cellWidget(row, 1).value())
+            except ValueError:
+                pass
                 # if num > 0:
                 #     table.cellWidget(row, 1).setStyleSheet("border: none; color: black;")
                 # else:

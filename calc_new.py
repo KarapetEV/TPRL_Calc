@@ -981,14 +981,15 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.param_risks_table = QTableWidget(frame)
         self.param_risks_table.move(5, 40)
         self.param_risks_table.setMinimumWidth(805)
-        self.param_risks_table.setMinimumHeight(450)
+        self.param_risks_table.setMinimumHeight(400)
         self.param_risks_table.setContentsMargins(0, 0, 0, 0)
         self.param_risks_table.horizontalHeader().setVisible(True)
         self.param_risks_table.verticalHeader().setVisible(False)
         self.param_risks_table.setSelectionMode(QAbstractItemView.NoSelection)
         self.param_risks_table.setFocusPolicy(Qt.NoFocus)
+        self.param_risks_table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.param_risks_table.setColumnCount(3)
-        columns = [["Задача", 610],
+        columns = [["Задача", 590],
                    ["Прогноз\nсвоевременного\nисполнения задачи", 110],
                    ["Вероятность\nреализации\nриска, %", 80]]
         for i in range(3):
@@ -1016,8 +1017,8 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
             elif data[row][1] == "Не применимо":
                 text = QTableWidgetItem()
                 text.setTextAlignment(Qt.AlignCenter)
-                text.setText(data[1])
-                self.param_risks_table.setCellWidget(row, 1, text)
+                text.setText(data[row][1])
+                self.param_risks_table.setItem(row, 1, text)
             elif data[row][1] == "Нет":
                 self.risk_spin = QDoubleSpinBox()
                 self.risk_spin.setMinimum(0)
@@ -1047,6 +1048,8 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                 num = float(table.item(row, 1).text())
             except AttributeError:
                 num = float(table.cellWidget(row, 1).value())
+            except ValueError:
+                pass
                 # if num > 0:
                 #     table.cellWidget(row, 1).setStyleSheet("border: none; color: black;")
                 # else:
