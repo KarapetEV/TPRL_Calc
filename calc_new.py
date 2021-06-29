@@ -1033,7 +1033,6 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
     @pyqtSlot()
     def risk_realization(self):
         table = None
-        num = 0
         tab = self.risk_param_tabs.currentWidget()
         frame = tab.children()[0]
         widgets = frame.children()
@@ -1046,11 +1045,12 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         for row in range(rows):
             try:
                 num = float(table.item(row, 1).text())
+                count *= num
             except AttributeError:
                 num = float(table.cellWidget(row, 1).value())
+                count *= num
             except ValueError:
                 pass
-            count *= num
         result = round(((1 - (count)) * 100), 1)
         item = QTableWidgetItem()
         item.setTextAlignment(Qt.AlignCenter)
