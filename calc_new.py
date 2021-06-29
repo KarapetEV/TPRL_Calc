@@ -981,7 +981,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.param_risks_table = QTableWidget(frame)
         self.param_risks_table.move(5, 40)
         self.param_risks_table.setMinimumWidth(805)
-        self.param_risks_table.setMinimumHeight(400)
+        self.param_risks_table.setMinimumHeight(350)
         self.param_risks_table.setContentsMargins(0, 0, 0, 0)
         self.param_risks_table.horizontalHeader().setVisible(True)
         self.param_risks_table.verticalHeader().setVisible(False)
@@ -1028,12 +1028,12 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                 self.param_risks_table.setCellWidget(row, 1, self.risk_spin)
                 self.risk_spin.valueChanged.connect(self.risk_realization)
         self.param_risks_table.setSpan(0, 2, rows_count, 1)
-        # self.param_risks_table.resizeRowsToContents()
         self.risk_realization()
 
     @pyqtSlot()
     def risk_realization(self):
         table = None
+        num = 0
         tab = self.risk_param_tabs.currentWidget()
         frame = tab.children()[0]
         widgets = frame.children()
@@ -1050,10 +1050,6 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                 num = float(table.cellWidget(row, 1).value())
             except ValueError:
                 pass
-                # if num > 0:
-                #     table.cellWidget(row, 1).setStyleSheet("border: none; color: black;")
-                # else:
-                #     table.cellWidget(row, 1).setStyleSheet("border: 1px solid red; color: red;")
             count *= num
         result = round(((1 - (count)) * 100), 1)
         item = QTableWidgetItem()
