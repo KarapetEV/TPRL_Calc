@@ -716,9 +716,6 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                     self.d1[param] = l2
                 else:
                     self.d1[param].append(l1)
-            '''На этом этапе собран словарь d1 по всем выбранным/загруженным параметрам, типа 
-            {'TRL': [[1, 1, 1], [1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0]], 
-            'MRL': [[1, 1, 1], [1, 1, 1], [1, 1, 1, 1], [1, 1,'''
             for key, values in self.d1.items():
                 first_list = []
                 for value in values:
@@ -934,7 +931,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
             self.risk_param_tabs.setTabEnabled(self.params.index(param), True)
             self.frame_param_risks = QFrame(self.risk_param_tab)
             self.frame_param_risks.move(0, 0)
-            self.frame_param_risks.setMaximumSize(820, 450)
+            self.frame_param_risks.setFixedSize(820, 450)
             self.frame_param_risks.setFrameShape(QFrame.StyledPanel)
             self.frame_param_risks.setFrameShadow(QFrame.Raised)
             param_risks_values = self.get_task_results(param)[param]
@@ -981,17 +978,17 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.param_risks_table = QTableWidget(frame)
         self.param_risks_table.move(5, 40)
         self.param_risks_table.setMinimumWidth(805)
-        self.param_risks_table.setMinimumHeight(350)
+        self.param_risks_table.setFixedHeight(350)
         self.param_risks_table.setContentsMargins(0, 0, 0, 0)
         self.param_risks_table.horizontalHeader().setVisible(True)
         self.param_risks_table.verticalHeader().setVisible(False)
         self.param_risks_table.setSelectionMode(QAbstractItemView.NoSelection)
         self.param_risks_table.setFocusPolicy(Qt.NoFocus)
-        self.param_risks_table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.param_risks_table.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.param_risks_table.setColumnCount(3)
         columns = [["Задача", 590],
                    ["Прогноз\nсвоевременного\nисполнения задачи", 110],
-                   ["Вероятность\nреализации\nриска, %", 80]]
+                   ["Вероятность\nреализации\nриска, %", 85]]
         for i in range(3):
             item = QTableWidgetItem()
             item.setTextAlignment(Qt.AlignCenter)
@@ -1002,8 +999,10 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         data = param_risks_values[1]
         rows_count = len(data)
         self.param_risks_table.setRowCount(rows_count)
+        n = 0
+        total = rows_count
         for row in range(rows_count):
-            self.param_risks_table.setRowHeight(row, 45)
+            self.param_risks_table.setRowHeight(row, 60)
             task_text = self.word_wrap(data[row][0], 580)
             item = QTableWidgetItem()
             item.setTextAlignment(Qt.AlignLeft)
@@ -1014,21 +1013,38 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                 item.setTextAlignment(Qt.AlignCenter)
                 item.setText("1")
                 self.param_risks_table.setItem(row, 1, item)
+                n += 1
             elif data[row][1] == "Не применимо":
                 text = QTableWidgetItem()
                 text.setTextAlignment(Qt.AlignCenter)
                 text.setText(data[row][1])
                 self.param_risks_table.setItem(row, 1, text)
+                total -= 1
             elif data[row][1] == "Нет":
                 self.risk_spin = QDoubleSpinBox()
                 self.risk_spin.setMinimum(0)
                 self.risk_spin.setMaximum(0.99)
                 self.risk_spin.setSingleStep(0.01)
-                # self.risk_spin.setStyleSheet("border: 1px solid black; color: black;")
                 self.param_risks_table.setCellWidget(row, 1, self.risk_spin)
                 self.risk_spin.valueChanged.connect(self.risk_realization)
+        font.setPointSize(12)
+        self.param_risk_label = QLabel(frame)
+        self.param_risk_label.setGeometry(QRect(5, 400, 800, 30))
+        self.param_risk_label.setFont(font)
+        self.param_risk_label.setWordWrap(True)
+        self.param_risk_label.setAlignment(Qt.AlignLeft)
+        self.param_risk_label.setObjectName("param_risk_label")
+        self.param_risk_label.setStyleSheet("color: red")
+        self.param_risk_label.setText("")
         self.param_risks_table.setSpan(0, 2, rows_count, 1)
         self.risk_realization()
+        param_i = 1 - (n / total)
+        param_r = float(self.param_risks_table.item(0, 2).text().rstrip("%")) / 100
+        param_ir = round((param_i * param_r), 2)
+        lvl = lvl_txt[8]
+        param_name = self.risk_param_tabs.tabText(self.risk_param_tabs.currentIndex())
+        self.param_risk_label.setText(f"Итоговая оценка риска уровня готовности {lvl} "
+                                      f"по параметру {param_name}: {param_ir}")
 
     @pyqtSlot()
     def risk_realization(self):
@@ -1042,20 +1058,32 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                 break
         count = 1
         rows = table.rowCount()
+        n = 0                   # число выполненных задач
+        total = rows            # общее число задач за вычетом "не применимо"
         for row in range(rows):
             try:
                 num = float(table.item(row, 1).text())
                 count *= num
+                n += 1
             except AttributeError:
                 num = float(table.cellWidget(row, 1).value())
                 count *= num
             except ValueError:
-                pass
-        result = round(((1 - (count)) * 100), 1)
+                total -= 1
+        risk = 1 - count
+        result = round((risk * 100), 1)
         item = QTableWidgetItem()
         item.setTextAlignment(Qt.AlignCenter)
         item.setText(f"{result}%")
         table.setItem(0, 2, item)
+
+        param_i = 1 - (n / total)
+        param_r = risk
+        param_ir = round((param_i * param_r), 2)
+        lvl = widgets[0].text()[8]
+        param_name = self.risk_param_tabs.tabText(self.risk_param_tabs.currentIndex())
+        result_risk_param_text = f"Итоговая оценка риска уровня готовности {lvl} по параметру {param_name}: {param_ir}"
+        widgets[2].setText(result_risk_param_text)
 
     def create_result_risks_table(self):
         pass
