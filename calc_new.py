@@ -1028,6 +1028,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                 self.param_risks_table.setCellWidget(row, 1, self.risk_spin)
                 self.risk_spin.valueChanged.connect(self.risk_realization)
         font.setPointSize(12)
+        font.setBold(False)
         self.param_risk_label = QLabel(frame)
         self.param_risk_label.setGeometry(QRect(5, 400, 800, 30))
         self.param_risk_label.setFont(font)
