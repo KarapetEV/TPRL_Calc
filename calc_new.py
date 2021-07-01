@@ -340,22 +340,22 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                             "Очень высокая": "Уровень зрелости может быть не достигнут (высокая вероятность принятия"
                                             " решения о прекращении проекта, потребность во внешнем дополнительном "
                                             "финансировании, невозможность вывода продукта на рынок, "
-                                            "необеспеченность технологической готовности продукта и т.д.)",
+                                            "необеспеченность технологической готовности продукта и т.д.).",
                             "Высокая": "Существенное негативное влияние на достижение уровня зрелости (решение о "
                                         "переходе проекта на следующий уровень может быть принято только с учётом "
                                         "существенных затрат или мер, по всем параметрам готовности отмечаются риски "
-                                        "снижения планового показателя уровня «средний» и выше)",
+                                        "снижения планового показателя уровня «средний» и выше).",
                             "Средняя":	"Негативное влияние на достижение отдельных параметров готовности продукта / "
                                         "технологии (обеспечение готовности проекта по отдельным параметрам "
                                         "возможно только при условии принятия мер поддержки, что не оказывает "
-                                        "критичного влияния на уровень зрелости в целом)",
+                                        "критичного влияния на уровень зрелости в целом).",
                             "Низкая":	"Прогнозная зрелость продукта / технологии снижается несущественно "
                                         "(расчётные показатели готовности по всем парамерам незначительно ниже "
-                                        "плановых, принятие мер корректировки не носит критичный характер)",
+                                        "плановых, принятие мер корректировки не носит критичный характер).",
                             "Очень низкая":	"Снижение прогнозной зрелости продукта / технологии находится в "
                                             "пределах допустимого отклонения (корректирующие меры принимаются в "
                                             "пределах стандартных контрольных процедур бизнес-процесса, "
-                                            "предусмотренных нормативно-методической документацией)",
+                                            "предусмотренных нормативно-методической документацией).",
                                 }
 
     @pyqtSlot(int)
@@ -950,7 +950,6 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
             param_risks_values = self.get_task_results(param)[param]
             self.create_param_risks_table(self.frame_param_risks, param_risks_values)
         self.risk_param_tabs.setCurrentIndex(0)
-        self.create_result_risks_table()
 
     def get_task_results(self, param):
         lvl = int(float(self.d3[param]))
@@ -1098,10 +1097,8 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         param_name = self.risk_param_tabs.tabText(self.risk_param_tabs.currentIndex())
         result_risk_param_text = f"Итоговая оценка риска уровня готовности {lvl} по параметру {param_name}: {param_ir}"
         widgets[2].setText(result_risk_param_text)
-        self.tprl_risk += param_ir
-
-    def create_result_risks_table(self):
-        pass
+        # self.tprl_risk += param_ir
+        # self.tprl_risk = round(self.tprl_risk, 2)
 
     def set_task_lvl_label(self, text):
         font = QFont()
@@ -1123,8 +1120,19 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         data = [date, self.project_num, self.expert_name]
         final_tprl_risk = self.count_tprl_risk()
         new_report_risks = ReportRisks(data, self.risk_param_tabs, final_tprl_risk)
+        self.risk_param_tabs.setCurrentIndex(0)
 
     def count_tprl_risk(self):
+        tabs_count = self.risk_param_tabs.count()
+        for i in range(tabs_count):
+            self.risk_param_tabs.setCurrentIndex(i)
+            tab = self.risk_param_tabs.currentWidget()
+            frame = tab.children()[0]
+            widgets = frame.children()
+            label = widgets[2].text()
+            text = label.split(":")[1].lstrip(" ")
+            param_ir = float(text)
+            self.tprl_risk += param_ir
         keys = list(self.tprl_risk_desc.keys())
         key = ""
         if self.tprl_risk >= 3.76:
@@ -1137,7 +1145,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
             key = keys[3]
         elif 0.01 <= self.tprl_risk <= 0.25:
             key = keys[4]
-        return [key, self.tprl_risk_desc[key]]
+        return [round(self.tprl_risk, 2), key, self.tprl_risk_desc[key]]
 
     def show_help(self):
         self.help_dialog = HelpDialog(self)

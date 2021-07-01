@@ -37,6 +37,8 @@ class ReportRisks:
                      '4.    Тип параметра: '
                      ]
         self.table_title = '5.    Оценка рисков уровней готовности по параметрам:'
+        self.final_tprl_risk_text = f'6.    Итоговая оценка риска достижения заданного уровня зрелости ' \
+                                    f'продукта/технологии по совокупности всех параметров: '
         self.sign = '7.    Подпись эксперта: ________________________'
 
         self.data.append(self.get_tab_names())
@@ -73,7 +75,6 @@ class ReportRisks:
 
         self.pdf.ln()
         self.pdf.ln()
-        self.pdf.ln()
         self.pdf.set_font("times", size=13)
         self.pdf.cell(200, 8, txt=self.sign, ln=1, align="L")
 
@@ -105,105 +106,80 @@ class ReportRisks:
             tab = self.tab.currentWidget()
             frame = tab.children()[0]
             widgets = frame.children()
+            result_param_risk = widgets[2].text()
+            self.pdf.ln()
+            self.pdf.set_font("timesbd", 'U', size=13)
+            self.pdf.cell(200, 5, txt=result_param_risk, ln=1, align="L")
             param_lvl = widgets[0].text()
             param_lvl.replace("\n", " ")
             param_lvl = self.word_wrap(param_lvl, 100)
             self.pdf.ln()
+            self.pdf.set_font("times", size=12)
             for j in range(len(param_lvl)):
                 self.pdf.cell(200, 5, txt=param_lvl[j], ln=1, align="C")
-        task_head = self.make_line_list(risks_table_headers[0], 3)
-        forecast_head = self.word_wrap(risks_table_headers[1], 20)
-        risk_head = self.word_wrap(risks_table_headers[2], 15)
-        self.pdf.ln()
-        for i in range(3):
-            if i == 0:
-                border_left = 'LT'
-                border_right = 'TR'
-                border = 'LTR'
-            elif i == 1:
-                border_left = 'L'
-                border_right = 'R'
-                border = 'LR'
-            else:
-                border_left = 'LB'
-                border_right = 'RB'
-                border = 'LRB'
-            self.pdf.cell(120, 5, task_head[i], border_left, 0, align="C")
-            self.pdf.cell(40, 5, forecast_head[i], border, 0, align="C")
-            self.pdf.cell(35, 5, risk_head[i], border_right, 0, align="C")
+            task_head = self.make_line_list(risks_table_headers[0], 3)
+            forecast_head = self.word_wrap(risks_table_headers[1], 20)
+            risk_realization_head = self.word_wrap(risks_table_headers[2], 15)
+            for i in range(3):
+                if i == 0:
+                    border_left = 'LT'
+                    border_right = 'TR'
+                    border = 'LTR'
+                elif i == 1:
+                    border_left = 'L'
+                    border_right = 'R'
+                    border = 'LR'
+                else:
+                    border_left = 'LB'
+                    border_right = 'RB'
+                    border = 'LRB'
+                self.pdf.cell(135, 5, task_head[i], border_left, 0, align="C")
+                self.pdf.cell(35, 5, forecast_head[i], border, 0, align="C")
+                self.pdf.cell(25, 5, risk_realization_head[i], border_right, 0, align="C")
+                self.pdf.ln()
+            table = widgets[1]
+            rows = table.rowCount()
+            self.pdf.set_font("times", size=11)
+            for row in range(rows):
+                task = self.word_wrap(table.item(row, 0).text(), 70)
+                count = len(task)
+                # forecast_line = ""
+                try:
+                    forecast_line = table.item(row, 1).text()
+                except AttributeError:
+                    forecast_line = table.cellWidget(row, 1).text()
+                forecast = self.make_line_list(forecast_line, count)
+                risk_realization = []
+                if row == 0:
+                    risk_realization = self.make_line_list(table.item(0, 2).text(), count)
+                else:
+                    risk_realization = self.make_line_list("", count)
+                for i in range(count):
+                    border_right = 'R'
+                    if i == (count - 1):
+                        border_left = 'LB'
+                        border = 'LRB'
+                        if row == (rows - 1):
+                            border_right = 'RB'
+                    else:
+                        border_left = 'L'
+                        border_right = 'R'
+                        border = 'LR'
+                    self.pdf.cell(135, 5, task[i], border_left, 0, align="L")
+                    self.pdf.cell(35, 5, forecast[i], border, 0, align="C")
+                    self.pdf.cell(25, 5, risk_realization[i], border_right, 0, align="C")
+                    self.pdf.ln()
             self.pdf.ln()
         self.pdf.ln()
         self.pdf.ln()
-    # def create_table(self):
-    #     risks_table_headers = ["Наименование риска",
-    #                            "Номер риска",
-    #                            "Вероятность реализации риска инновационного проекта, %",
-    #                            "Уровень влияния риска"]
-    #
-    #     risk_name_head = self.make_line_list(risks_table_headers[0], 3)
-    #     risk_num_head = self.word_wrap(risks_table_headers[2], 25)
-    #     risk_weight_head = self.word_wrap(risks_table_headers[3], 10)
-    #     risk_group_list = risks_table_headers[1].split(' ')
-    #     risk_group_head = [risk_group_list[0], risk_group_list[1], ""]
-    #
-    #     self.pdf.ln()
-    #     self.pdf.set_font("timesbd", size=13)
-    #     for i in range(3):
-    #         if i == 0:
-    #             border_left = 'LT'
-    #             border_right = 'TR'
-    #             border = 'LTR'
-    #         elif i == 1:
-    #             border_left = 'L'
-    #             border_right = 'R'
-    #             border = 'LR'
-    #         else:
-    #             border_left = 'LB'
-    #             border_right = 'RB'
-    #             border = 'LRB'
-    #         self.pdf.cell(80, 5, risk_name_head[i], border_left, 0, align="C")
-    #         self.pdf.cell(25, 5, risk_group_head[i], border, 0, align="C")
-    #         self.pdf.cell(55, 5, risk_num_head[i], border_right, 0, align="C")
-    #         self.pdf.cell(25, 5, risk_weight_head[i], border_right, 0, align="C")
-    #         self.pdf.ln()
-    #
-    #     self.pdf.set_font("times", size=13)
-    #     rows = self.table.rowCount()
-    #     for i in range(rows):
-    #         risk_group = self.word_wrap(self.table.cellWidget(i, 0).text(), 20)
-    #         risk_name = self.word_wrap(self.table.cellWidget(i, 1).text(), 35)
-    #         risk_num = self.table.cellWidget(i, 2).text()
-    #         risk_weight = self.table.cellWidget(i, 3).currentText()
-    #         border_left = 'LB'
-    #         border_right = 'RB'
-    #         border = 'LRB'
-    #         count = 1
-    #         if 1 <= len(risk_group) <= len(risk_name):
-    #             count = len(risk_name)
-    #             if len(risk_group) == 1:
-    #                 risk_group = self.make_line_list(self.table.cellWidget(i, 0).text(), count)
-    #             risk_num = self.make_line_list(self.table.cellWidget(i, 2).text(), count)
-    #             risk_weight = self.make_line_list(self.table.cellWidget(i, 3).currentText(), count)
-    #         elif 1 <= len(risk_name) <= len(risk_group):
-    #             count = len(risk_group)
-    #             if len(risk_name) == 1:
-    #                 risk_name = self.make_line_list(self.table.cellWidget(i, 1).text(), count)
-    #             risk_num = self.make_line_list(self.table.cellWidget(i, 2).text(), count)
-    #             risk_weight = self.make_line_list(self.table.cellWidget(i, 3).currentText(), count)
-    #         if count > 1:
-    #             border_left = 'L'
-    #             border_right = 'R'
-    #             border = 'LR'
-    #         for j in range(count):
-    #             if j == count - 1:
-    #                 border_left = 'LB'
-    #                 border_right = 'RB'
-    #                 border = 'LRB'
-    #             self.pdf.cell(80, 5, risk_name[j], border_left, 0, align="L")
-    #             self.pdf.cell(25, 5, risk_group[j], border, 0, align="C")
-    #             self.pdf.cell(55, 5, risk_num[j], border_right, 0, align="C")
-    #             self.pdf.cell(25, 5, risk_weight[j], border_right, 0, align="C")
-    #             self.pdf.ln()
+        self.set_final_tprl_risk_text()
+
+    def set_final_tprl_risk_text(self):
+        self.pdf.set_font("times", size=13)
+        risk_text = f"{self.final_tprl_risk_text}{self.tprl_risk_list[0]} - {self.tprl_risk_list[1]}."
+        text_list = [risk_text, self.tprl_risk_list[2]]
+        for i in range(2):
+            self.pdf.multi_cell(200, 5, text_list[i], 0, align="L")
 
     def word_wrap(self, line, x):
         if '\n' in line:
