@@ -331,14 +331,32 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.btn_new_project.clicked.connect(self.create_dialog)
         self.tabWidget.currentChanged.connect(self.show_user_projects)
         self.btn_report_ugt.clicked.connect(self.report_ugt)
-        # self.btn_report_risks.clicked.connect(self.report_risks)
+        self.btn_report_risks.clicked.connect(self.report_risks)
 
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
-        # self.normal_risks = {'Ф1': 33, 'Ф2': 62, 'Ф3': 55, 'Ф4': 30, 'Ф5': 28, 'Ф6': 29,
-        #                      'Ф7': 69, 'Ф8': 30, 'Ф9': 22, 'Ф10': 19, 'Ф11': 29, 'Ф12': 30,
-        #                      'Ф13': 15, 'Ф14': 5, 'Ф15': 9, 'Ф16': 3, 'Ф17': 13, 'Ф18': 14,
-        #                      'Ф19': 223}
+        self.tprl_risk = 0
+        self.tprl_risk_desc = {
+                            "Очень высокая": "Уровень зрелости может быть не достигнут (высокая вероятность принятия"
+                                            " решения о прекращении проекта, потребность во внешнем дополнительном "
+                                            "финансировании, невозможность вывода продукта на рынок, "
+                                            "необеспеченность технологической готовности продукта и т.д.)",
+                            "Высокая": "Существенное негативное влияние на достижение уровня зрелости (решение о "
+                                        "переходе проекта на следующий уровень может быть принято только с учётом "
+                                        "существенных затрат или мер, по всем параметрам готовности отмечаются риски "
+                                        "снижения планового показателя уровня «средний» и выше)",
+                            "Средняя":	"Негативное влияние на достижение отдельных параметров готовности продукта / "
+                                        "технологии (обеспечение готовности проекта по отдельным параметрам "
+                                        "возможно только при условии принятия мер поддержки, что не оказывает "
+                                        "критичного влияния на уровень зрелости в целом)",
+                            "Низкая":	"Прогнозная зрелость продукта / технологии снижается несущественно "
+                                        "(расчётные показатели готовности по всем парамерам незначительно ниже "
+                                        "плановых, принятие мер корректировки не носит критичный характер)",
+                            "Очень низкая":	"Снижение прогнозной зрелости продукта / технологии находится в "
+                                            "пределах допустимого отклонения (корректирующие меры принимаются в "
+                                            "пределах стандартных контрольных процедур бизнес-процесса, "
+                                            "предусмотренных нормативно-методической документацией)",
+                                }
 
     @pyqtSlot(int)
     def show_user_projects(self, index):
@@ -489,6 +507,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.param_tabs.clear()
         self.params = []
         self.rad = []
+        self.tprl_risk = 0
 
     def confirm_msg(self, text):
         messageBox = QMessageBox(self)
@@ -754,16 +773,6 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                         summary += d2_values[d2_value]
             self.d3[d2_keys] = str(summary)
 
-        # if len(self.params) == 5:  # Оценка рисков
-        #     self.risks_table.setVisible(True)
-        #     self.count_risks(self.save_data)
-        # else:
-        #     self.text_warning = 'Комплексная оценка рисков не проводилась, т.к. не все параметры выбраны!'
-        #     self.risks_table.setVisible(False)
-        #     self.risk_flag = False
-        # self.risks_warning_label.setText(self.text_warning)
-        # self.btn_report_risks.setEnabled(self.risk_flag)
-
         self.show_risks()
 
         for par in Window.parameters:
@@ -777,7 +786,10 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.frame_results.setEnabled(True)
         self.show_results(self.d3)
         if len(self.params) == 5:
+            self.frame_graph.setVisible(True)
             self.chart = Chart(self.d3, self.lay)
+        else:
+            self.frame_graph.setVisible(False)
         self.make_text()
 
     def save_results(self):
@@ -848,7 +860,8 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                 new_save_data.to_excel(writer, sheet_name=param, index=False)
                 writer.save()
             writer.close()
-            self.chart.save_chart(full_dir, project_dir)
+            if len(self.params) == 5:
+                self.chart.save_chart(full_dir, project_dir)
 
         # сохранение проекта в БД
         params = ' '.join(self.params)
@@ -1085,6 +1098,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         param_name = self.risk_param_tabs.tabText(self.risk_param_tabs.currentIndex())
         result_risk_param_text = f"Итоговая оценка риска уровня готовности {lvl} по параметру {param_name}: {param_ir}"
         widgets[2].setText(result_risk_param_text)
+        self.tprl_risk += param_ir
 
     def create_result_risks_table(self):
         pass
@@ -1103,6 +1117,27 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.task_lvl_text.setText(text)
         self.task_lvl_text.setAlignment(Qt.AlignVCenter)
         self.task_lvl_text.setObjectName("task_lvl_text")
+
+    def report_risks(self):
+        date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
+        data = [date, self.project_num, self.expert_name]
+        final_tprl_risk = self.count_tprl_risk()
+        new_report_risks = ReportRisks(data, self.risk_param_tabs, final_tprl_risk)
+
+    def count_tprl_risk(self):
+        keys = list(self.tprl_risk_desc.keys())
+        key = ""
+        if self.tprl_risk >= 3.76:
+            key = keys[0]
+        elif 2.51 <= self.tprl_risk <= 3.75:
+            key = keys[1]
+        elif 1.26 <= self.tprl_risk <= 2.50:
+            key = keys[2]
+        elif 0.26 <= self.tprl_risk <= 1.25:
+            key = keys[3]
+        elif 0.01 <= self.tprl_risk <= 0.25:
+            key = keys[4]
+        return [key, self.tprl_risk_desc[key]]
 
     def show_help(self):
         self.help_dialog = HelpDialog(self)

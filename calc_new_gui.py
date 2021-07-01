@@ -587,7 +587,7 @@ class Ui_AppWindow(object):
         self.btn_report_risks = QtWidgets.QPushButton(self.frame_risks)
         self.btn_report_risks.setGeometry(QtCore.QRect(310, 545, 180, 30))
         self.btn_report_risks.setObjectName("btn_report_risks")
-        self.btn_report_risks.setEnabled(False)
+        self.btn_report_risks.setEnabled(True)
 
         self.tabWidget.raise_()
         self.labelCalc.raise_()
