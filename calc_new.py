@@ -1097,8 +1097,6 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         param_name = self.risk_param_tabs.tabText(self.risk_param_tabs.currentIndex())
         result_risk_param_text = f"Итоговая оценка риска уровня готовности {lvl} по параметру {param_name}: {param_ir}"
         widgets[2].setText(result_risk_param_text)
-        # self.tprl_risk += param_ir
-        # self.tprl_risk = round(self.tprl_risk, 2)
 
     def set_task_lvl_label(self, text):
         font = QFont()
@@ -1124,28 +1122,33 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
 
     def count_tprl_risk(self):
         tabs_count = self.risk_param_tabs.count()
-        for i in range(tabs_count):
-            self.risk_param_tabs.setCurrentIndex(i)
-            tab = self.risk_param_tabs.currentWidget()
-            frame = tab.children()[0]
-            widgets = frame.children()
-            label = widgets[2].text()
-            text = label.split(":")[1].lstrip(" ")
-            param_ir = float(text)
-            self.tprl_risk += param_ir
-        keys = list(self.tprl_risk_desc.keys())
-        key = ""
-        if self.tprl_risk >= 3.76:
-            key = keys[0]
-        elif 2.51 <= self.tprl_risk <= 3.75:
-            key = keys[1]
-        elif 1.26 <= self.tprl_risk <= 2.50:
-            key = keys[2]
-        elif 0.26 <= self.tprl_risk <= 1.25:
-            key = keys[3]
-        elif 0.01 <= self.tprl_risk <= 0.25:
-            key = keys[4]
-        return [round(self.tprl_risk, 2), key, self.tprl_risk_desc[key]]
+        result = []
+        if tabs_count == 5:
+            for i in range(tabs_count):
+                self.risk_param_tabs.setCurrentIndex(i)
+                tab = self.risk_param_tabs.currentWidget()
+                frame = tab.children()[0]
+                widgets = frame.children()
+                label = widgets[2].text()
+                text = label.split(":")[1].lstrip(" ")
+                param_ir = float(text)
+                self.tprl_risk += param_ir
+            keys = list(self.tprl_risk_desc.keys())
+            key = ""
+            if self.tprl_risk >= 3.76:
+                key = keys[0]
+            elif 2.51 <= self.tprl_risk <= 3.75:
+                key = keys[1]
+            elif 1.26 <= self.tprl_risk <= 2.50:
+                key = keys[2]
+            elif 0.26 <= self.tprl_risk <= 1.25:
+                key = keys[3]
+            elif 0.01 <= self.tprl_risk <= 0.25:
+                key = keys[4]
+            result = [round(self.tprl_risk, 2), key, self.tprl_risk_desc[key]]
+        else:
+            result = []
+        return result
 
     def show_help(self):
         self.help_dialog = HelpDialog(self)

@@ -37,8 +37,8 @@ class ReportRisks:
                      '4.    Тип параметра: '
                      ]
         self.table_title = '5.    Оценка рисков уровней готовности по параметрам:'
-        self.final_tprl_risk_text = f'6.    Итоговая оценка риска достижения заданного уровня зрелости ' \
-                                    f'продукта/технологии по совокупности всех параметров: '
+        self.final_tprl_risk_text = '6.    Итоговая оценка риска достижения заданного уровня зрелости ' \
+                                    'продукта/технологии по совокупности всех параметров'
         self.sign = '7.    Подпись эксперта: ________________________'
 
         self.data.append(self.get_tab_names())
@@ -172,14 +172,18 @@ class ReportRisks:
             self.pdf.ln()
         self.pdf.ln()
         self.pdf.ln()
-        self.set_final_tprl_risk_text()
+        self.set_final_tprl_risk_text(count)
 
-    def set_final_tprl_risk_text(self):
+    def set_final_tprl_risk_text(self, count):
         self.pdf.set_font("times", size=13)
-        risk_text = f"{self.final_tprl_risk_text}{self.tprl_risk_list[0]} - {self.tprl_risk_list[1]}."
-        text_list = [risk_text, self.tprl_risk_list[2]]
-        for i in range(2):
-            self.pdf.multi_cell(200, 5, text_list[i], 0, align="L")
+        if len(self.tprl_risk_list) > 0:
+            risk_text = f"{self.final_tprl_risk_text}: {self.tprl_risk_list[0]} - {self.tprl_risk_list[1]}."
+            text_list = [risk_text, self.tprl_risk_list[2]]
+            for i in range(2):
+                self.pdf.multi_cell(200, 5, text_list[i], 0, align="L")
+        else:
+            text = f"{self.final_tprl_risk_text} не рассчитана."
+            self.pdf.multi_cell(200, 5, text, 0, align="L")
 
     def word_wrap(self, line, x):
         if '\n' in line:
