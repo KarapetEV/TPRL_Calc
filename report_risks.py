@@ -27,6 +27,7 @@ class ReportRisks:
         self.pdf = None
         self.data = data
         self.tab = tab
+        self.file_count = 1
         self.tprl_risk_list = tprl_risk_list
         self.title = ["Экспертное заключение № ____",
                        "по оценке рисков реализации и финансирования",
@@ -80,11 +81,21 @@ class ReportRisks:
 
         path_list = self.get_path()
         file_path = path_list[0] + path_list[1]
-        self.pdf.output(file_path, "F")
+
+        self.save_report(file_path)
+
         os.chdir(path_list[0])
         open_path = os.getcwd() + f"\\{path_list[1]}"
         os.startfile(open_path)
         self.remove_pkl()
+
+    def save_report(self, path):
+        try:
+            self.pdf.output(path, "F")
+        except PermissionError:
+            path = f"{path}_{self.file_count}"
+            self.pdf.output(path, "F")
+            self.file_count += 1
 
     def get_tab_names(self):
         tabs = []

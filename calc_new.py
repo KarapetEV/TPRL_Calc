@@ -316,6 +316,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.newproject_data = tuple()
         self.saveproject_data = tuple()
         self.risk_flag = True
+        self.risk_report = None
 
         self.btn_set_params.clicked.connect(self.set_params)
         self.btn_calculate.clicked.connect(self.calculate)
@@ -1123,11 +1124,11 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.task_lvl_text.setObjectName("task_lvl_text")
 
     def report_risks(self):
-        self.btn_report_risks.setEnabled(False)
+        # self.btn_report_risks.setEnabled(False)
         date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         data = [date, self.project_num, self.expert_name]
         final_tprl_risk = self.count_tprl_risk()
-        new_report_risks = ReportRisks(data, self.risk_param_tabs, final_tprl_risk)
+        self.risk_report = ReportRisks(data, self.risk_param_tabs, final_tprl_risk)
         self.risk_param_tabs.setCurrentIndex(0)
 
     def count_tprl_risk(self):
