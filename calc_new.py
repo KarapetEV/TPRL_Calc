@@ -878,6 +878,8 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
 
     def report_ugt(self):
         self.btn_report_ugt.setEnabled(False)
+        if len(self.params) == 5:
+            self.chart.save_chart('', "chart_pdf")
         res_list = [float(self.label_trl_result.text()),
                     float(self.label_mrl_result.text()),
                     float(self.label_erl_result.text()),
@@ -901,6 +903,10 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         )
         new_report_ugt = ReportUgt(self.pdf_data, self.d1)
         new_report_ugt.set_data()
+        try:
+            os.remove(os.getcwd() + "\\chart_pdf.png")
+        except FileNotFoundError:
+            pass
 
     def show_results(self, res):
         res_list = []
