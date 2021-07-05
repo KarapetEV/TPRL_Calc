@@ -1061,9 +1061,9 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
             # self.param_risk_label.setText(f"Итоговая оценка риска уровня готовности {lvl} "
             #                               f"по параметру {param_name}: {param_ir}")
         except ZeroDivisionError:
-            QMessageBox.warning(self, 'Предупреждение', '<strong>Расчет рисков не произведен!</strong>\n\n'
-                                                        'Причина: во всех задачах максимального уровня выбран параметр '
-                                                        '"не применимо".')
+            QMessageBox.warning(self, 'Предупреждение', '<strong>Расчет рисков не произведен!</strong>'
+                                                        '<br><br>Причина: во всех задачах максимального уровня выбран '
+                                                        'параметр "не применимо".')
             self.tabWidget.setTabEnabled(5, False)
 
     @pyqtSlot()
