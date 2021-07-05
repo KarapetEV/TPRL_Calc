@@ -1053,13 +1053,6 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
 
         try:
             self.risk_realization()
-            # param_i = 1 - (n / total)
-            # param_r = float(self.param_risks_table.item(0, 2).text().rstrip("%")) / 100
-            # param_ir = round((param_i * param_r), 2)
-            # lvl = lvl_txt[8]
-            # param_name = self.risk_param_tabs.tabText(self.risk_param_tabs.currentIndex())
-            # self.param_risk_label.setText(f"Итоговая оценка риска уровня готовности {lvl} "
-            #                               f"по параметру {param_name}: {param_ir}")
         except ZeroDivisionError:
             QMessageBox.warning(self, 'Предупреждение', '<strong>Расчет рисков не произведен!</strong>'
                                                         '<br><br>Причина: во всех задачах максимального уровня выбран '
