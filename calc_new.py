@@ -689,6 +689,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.create_table_rows(text_levels)
 
     def calculate(self):
+        self.tprl_risk = 0
         self.risk_flag = True
         self.text_warning = ''
         self.save_data.drop(['State'], axis='columns', inplace=True)
@@ -702,6 +703,8 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.check_draft.setEnabled(True)
         self.check_draft.setChecked(False)
         self.btn_save_results.setEnabled(True)
+        self.btn_report_ugt.setEnabled(True)
+        self.btn_report_risks.setEnabled(True)
         self.d1 = {}
         d2 = {}
         self.d3 = {}
@@ -874,6 +877,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.check_draft.setEnabled(False)
 
     def report_ugt(self):
+        self.btn_report_ugt.setEnabled(False)
         res_list = [float(self.label_trl_result.text()),
                     float(self.label_mrl_result.text()),
                     float(self.label_erl_result.text()),
@@ -1113,6 +1117,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.task_lvl_text.setObjectName("task_lvl_text")
 
     def report_risks(self):
+        self.btn_report_risks.setEnabled(False)
         date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         data = [date, self.project_num, self.expert_name]
         final_tprl_risk = self.count_tprl_risk()
