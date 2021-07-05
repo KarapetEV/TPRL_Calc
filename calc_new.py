@@ -1050,14 +1050,21 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.param_risk_label.setStyleSheet("color: red")
         self.param_risk_label.setText("")
         self.param_risks_table.setSpan(0, 2, rows_count, 1)
-        self.risk_realization()
-        param_i = 1 - (n / total)
-        param_r = float(self.param_risks_table.item(0, 2).text().rstrip("%")) / 100
-        param_ir = round((param_i * param_r), 2)
-        lvl = lvl_txt[8]
-        param_name = self.risk_param_tabs.tabText(self.risk_param_tabs.currentIndex())
-        self.param_risk_label.setText(f"Итоговая оценка риска уровня готовности {lvl} "
-                                      f"по параметру {param_name}: {param_ir}")
+
+        try:
+            self.risk_realization()
+            # param_i = 1 - (n / total)
+            # param_r = float(self.param_risks_table.item(0, 2).text().rstrip("%")) / 100
+            # param_ir = round((param_i * param_r), 2)
+            # lvl = lvl_txt[8]
+            # param_name = self.risk_param_tabs.tabText(self.risk_param_tabs.currentIndex())
+            # self.param_risk_label.setText(f"Итоговая оценка риска уровня готовности {lvl} "
+            #                               f"по параметру {param_name}: {param_ir}")
+        except ZeroDivisionError:
+            QMessageBox.warning(self, 'Предупреждение', '<strong>Расчет рисков не произведен!</strong>\n\n'
+                                                        'Причина: во всех задачах максимального уровня выбран параметр '
+                                                        '"не применимо".')
+            self.tabWidget.setTabEnabled(5, False)
 
     @pyqtSlot()
     def risk_realization(self):
@@ -1089,7 +1096,6 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         item.setTextAlignment(Qt.AlignCenter)
         item.setText(f"{result}%")
         table.setItem(0, 2, item)
-
         param_i = 1 - (n / total)
         param_r = risk
         param_ir = round((param_i * param_r), 2)
