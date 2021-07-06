@@ -166,12 +166,10 @@ class HelpDialog(QDialog):
         self.btn_manual.clicked.connect(self.open_manual)
 
     def open_methodology(self):
-        # open_path = os.getcwd() + "\\data\\methodology.pdf"
         open_path = os.getcwd() + "/data/methodology.pdf"
         os.startfile(open_path)
 
     def open_manual(self):
-        # open_path = os.getcwd() + "\\data\\manual.pdf"
         open_path = os.getcwd() + "/data/manual.pdf"
         os.startfile(open_path)
 
