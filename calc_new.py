@@ -690,7 +690,6 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.create_table_rows(text_levels)
 
     def calculate(self):
-        self.tprl_risk = 0
         self.risk_flag = True
         self.text_warning = ''
         self.save_data.drop(['State'], axis='columns', inplace=True)
@@ -1124,7 +1123,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.task_lvl_text.setObjectName("task_lvl_text")
 
     def report_risks(self):
-        # self.btn_report_risks.setEnabled(False)
+        self.tprl_risk = 0
         date = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         data = [date, self.project_num, self.expert_name]
         final_tprl_risk = self.count_tprl_risk()

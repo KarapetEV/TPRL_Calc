@@ -21,13 +21,13 @@
 from fpdf import FPDF
 import os
 
+file_count = 1
 
 class ReportRisks:
     def __init__(self, data, tab, tprl_risk_list):
         self.pdf = None
         self.data = data
         self.tab = tab
-        self.file_count = 1
         self.tprl_risk_list = tprl_risk_list
         self.title = ["Экспертное заключение № ____",
                        "по оценке рисков реализации и финансирования",
@@ -84,18 +84,24 @@ class ReportRisks:
 
         self.save_report(file_path)
 
-        os.chdir(path_list[0])
-        open_path = os.getcwd() + f"\\{path_list[1]}"
-        os.startfile(open_path)
         self.remove_pkl()
 
     def save_report(self, path):
+        global file_count
+
+        file = os.path.basename(path)
+        file_name = os.path.splitext(file)[0]
         try:
             self.pdf.output(path, "F")
+            file_count = 1
         except PermissionError:
-            path = f"{path}_{self.file_count}"
+            new_file = f"{file_name} ({file_count})"
+            file_count += 1
+            path = path.replace(file_name, new_file)
             self.pdf.output(path, "F")
-            self.file_count += 1
+        finally:
+            open_path = os.path.normpath(os.getcwd() + f"/{path}")
+            os.startfile(open_path)
 
     def get_tab_names(self):
         tabs = []
@@ -223,7 +229,7 @@ class ReportRisks:
         return result
 
     def remove_pkl(self):
-        os.chdir("../../..")
+        # os.chdir("../../..")
         dir = os.getcwd() + "\\fonts\\times\\"
         files = os.listdir(dir)
         for file in files:
