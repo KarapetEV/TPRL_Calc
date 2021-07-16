@@ -72,7 +72,7 @@ class TreeWidget(QTreeWidget):                                  # задачи �
             item.setExpanded(True)
 
 
-class HelpDialog(QDialog):
+class HelpDialog(QDialog):                                      # окно помощи
 
     def __init__(self, parent=None):
         # Создание окна "Помощь"
@@ -209,7 +209,7 @@ class HelpDialog(QDialog):
         os.startfile(open_path)
 
 
-class Login(QDialog, login.Ui_Login):
+class Login(QDialog, login.Ui_Login):                           # окно выбора пользователя
     switch_register = pyqtSignal()
     switch_mainwindow = pyqtSignal(str)
 
@@ -242,7 +242,7 @@ class Login(QDialog, login.Ui_Login):
         self.lineEdit_password.setText("")
 
 
-class Register(QDialog, register.Ui_Register):
+class Register(QDialog, register.Ui_Register):                  # окно регистрации пользователя
     mysignal = pyqtSignal(str)
     switch_login = pyqtSignal()
 
@@ -288,7 +288,7 @@ class Register(QDialog, register.Ui_Register):
         QMessageBox.about(self, 'Ошибка', value)
 
 
-class Window(QWidget, calc_new_gui.Ui_AppWindow):
+class Window(QWidget, calc_new_gui.Ui_AppWindow):               # основное окно программы
     switch_login = pyqtSignal()
 
     parameters = ['TRL', 'MRL', 'ERL', 'ORL', 'CRL']
@@ -358,7 +358,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                                 }
 
     @pyqtSlot(int)
-    def show_user_projects(self, index):
+    def show_user_projects(self, index):                        # метод вывода во вкладках таблиц сохраненных проектов
         if index == 1:
             drafts = check_db.load_project(self.expert_name, 'черновик')
             self.create_table(self.projects_table, drafts)
@@ -368,7 +368,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         else:
             pass
 
-    def create_table(self, tab_widget, data):
+    def create_table(self, tab_widget, data):                   # метод создания таблицы сохраненных проектов
         tab_widget.setSortingEnabled(False)
         tab_widget.setRowCount(len(data))
         for i in range(len(data)):
@@ -390,10 +390,10 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         tab_widget.setColumnWidth(3, 200)
         tab_widget.setSortingEnabled(True)
 
-    def change_user(self):
+    def change_user(self):                                      # метод вызова окна выбора пользователя
         self.switch_login.emit()
 
-    def start_project(self, num):
+    def start_project(self, num):                               # метод начала нового проекта
         self.project_num = num
         self.set_param_check(self.parameters, False)
         self.reset_params()
@@ -409,7 +409,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.num_calcTab.setText(self.project_num)
         self.user_calcTab.setText(self.expert_name)
 
-    def load_project_data(self):
+    def load_project_data(self):                                # метод загрузки сохраненного проекта
         table = None
         if self.tabWidget.currentIndex() == 1:
             table = self.projects_table
@@ -448,7 +448,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                 if self.confirm_msg("Файлы проекта не найдены! Вы хотите удалить выбранный проект из списка?"):
                     self.delete_from_table(table)
 
-    def remove_project(self):
+    def remove_project(self):                                   # метод вызова функции удаления проекта
         table = self.projects_table
         if len(self.projects_table.selectedItems()) == 0:
             QMessageBox.about(self, "Внимание!", "Не выбран проект для удаления!")
@@ -456,7 +456,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
             if self.confirm_msg("Вы уверены, что хотите удалить выбранный проект?"):
                 self.delete_from_table(table)
 
-    def delete_from_table(self, table):
+    def delete_from_table(self, table):                         # метод удаления проекта из таблицы и файлов проекта
         data = [self.expert_name]
         row = table.currentRow()
         num = table.item(row, 1).text()
@@ -475,14 +475,14 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
             pass
         self.show_user_projects(self.tabWidget.currentIndex())
 
-    def create_dialog(self):
+    def create_dialog(self):                                    # метод вывода диалога при выборе пользователя
         if self.expert_name == '':
             QMessageBox.about(self, "Внимание!", "Не выбран пользователь!")
             self.switch_login.emit()
         else:
             self.check_enterdata()
 
-    def check_enterdata(self):
+    def check_enterdata(self):                                  # метод проверки заполнения полей нового проекта
         full_info = True
         for item in self.tab_new_project.children():
             if isinstance(item, QLineEdit) and item.text() == '':
@@ -493,13 +493,13 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
             project_num = self.enter_project_num.text()
             self.start_project(project_num)
 
-    def set_param_check(self, params, bool):
+    def set_param_check(self, params, bool):                    # метод выбора параметров
         for el in self.group_params.children():
             for param in params:
                 if param.lower() in el.objectName().title().lower():
                     el.setChecked(bool)
 
-    def reset_params(self):
+    def reset_params(self):                                     # метод сброса всех установок
         self.path = 'data/Param_Tasks.xlsx'
         self.save_data = pd.DataFrame(
             columns=['Level', 'Pars_Name', 'Task', 'Task_Comments', 'Original_Task', 'State', 'Parameter'])
@@ -508,7 +508,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.rad = []
         self.tprl_risk = 0
 
-    def confirm_msg(self, text):
+    def confirm_msg(self, text):                                # метод вывода диалога для подтверждения операций
         messageBox = QMessageBox(self)
         messageBox.setWindowTitle("Подтверждение")
         messageBox.setIcon(QMessageBox.Question)
@@ -523,7 +523,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         elif messageBox.clickedButton() == buttonNo:
             return False
 
-    def reset_tasks(self):
+    def reset_tasks(self):                                      # метод сброса всех задач
         if self.confirm_msg("Вы уверены, что хотите сбросить все отметки?"):
             tab_count = self.param_tabs.count()
             for i in range(tab_count):
@@ -539,7 +539,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                             el.setCurrentText('Нет')
             self.param_tabs.setCurrentIndex(0)
 
-    def set_params(self):
+    def set_params(self):                                       # метод установки выбранных параметров
         if self.project_state in ['черновик', 'итог']:
             if self.confirm_msg('Вы уверены, что хотите изменить параметры (текущие отметки будут сброшены)?'):
                 self.reset_params()
@@ -560,7 +560,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                 self.btn_calculate.setEnabled(True)
                 self.btn_reset_tasks.setEnabled(True)
 
-    def get_params(self):
+    def get_params(self):                                       # метод сбора информации о выбранных параметрах
         if self.check_trl.isChecked():
             self.params.append('TRL')
         if self.check_mrl.isChecked():
@@ -572,7 +572,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         if self.check_crl.isChecked():
             self.params.append('CRL')
 
-    def create_rows(self):
+    def create_rows(self):                                      # метод создания таблицы с задачами и вариантами ответов
 
         for param in self.params:
             self.data = pd.read_excel(self.path, sheet_name=param)
@@ -614,7 +614,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
             self.save_data = self.save_data.append(self.data)
         self.param_tabs.setCurrentIndex(0)
 
-    def word_wrap(self, line, x):
+    def word_wrap(self, line, x):                               # метод для переноса строк в таблице задач
         start = 0
         if len(line) > x:
             while len(line) > (start + x):
@@ -623,7 +623,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
                 start = index
         return line
 
-    def make_level_dict(self, df):
+    def make_level_dict(self, df):                              # метод создания словаря задач
         dict_levels = {}
         for row in range(df['Level'].shape[0]):
             if df['Level'][row] not in dict_levels:
@@ -687,7 +687,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         text_levels = self.make_text_dict(op_data, text_dict)
         self.create_table_rows(text_levels)
 
-    def calculate(self):
+    def calculate(self):                                        # метод всех расчетов, включает формирования графика
         self.risk_flag = True
         self.text_warning = ''
         self.save_data.drop(['State'], axis='columns', inplace=True)
@@ -793,7 +793,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
             self.frame_graph.setVisible(False)
         self.make_text()
 
-    def save_results(self):
+    def save_results(self):                                     # метод сохранения результатов расчета
         # ---------------Формируем dataframe с результатами------------------------
         now = datetime.datetime.now()
         date = now.strftime("%d.%m.%Y %H:%M")
@@ -874,7 +874,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):
         self.btn_save_results.setEnabled(False)
         self.check_draft.setEnabled(False)
 
-    def report_ugt(self):
+    def report_ugt(self):                                       # метод создания заключения эксперта по оценке УГТ
         self.btn_report_ugt.setEnabled(False)
         if len(self.params) == 5:
             self.chart.save_chart('', "chart_pdf")
