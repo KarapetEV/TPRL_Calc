@@ -601,8 +601,8 @@ class Ui_AppWindow(object):
         AppWindow.setWindowTitle(_translate("AppWindow", "TPRL Calculator"))
         self.labelCalc.setText(_translate("AppWindow",
                                           "Расчёт оценки зрелости инновационного продукта/технологии к внедрению в ОАО "
-                                          "«РЖД» и оценки уровня рисков реализации и финансирования инновационных "
-                                          "проектов в ОАО «РЖД»"))
+                                          "«РЖД» и рисков недостижения уровня готовности инновационных проектов "
+                                          "в ОАО «РЖД» с их применением через соответствующие уровни готовности"))
         self.btn_help.setText(_translate("AppWindow", "Справка"))
         self.btn_change_user.setText(_translate("AppWindow", "Сменить пользователя"))
         self.btn_change_user1.setText(_translate("AppWindow", "Сменить пользователя"))

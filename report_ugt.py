@@ -37,14 +37,13 @@ class ReportUgt:
         self.tprl_name = f"Уровень {self.tprl}. {self.data[0][5][1]}"
         self.title = ["Экспертное заключение № ____",
                        "по оценке информации о результатах",
-                       "инновационного проекта в области железнодорожного транспорта"]
+                       "проекта для различных параметров"]
         self.text = ['1.    Дата проведения экспертного оценивания: ',
                      '2.    Идентификационный номер проекта: ',
                      '3.    ФИО эксперта: ',
                      '4.    Тип параметра: ']
-        self.tprl_text = '5.    Комплексная оценка уровня готовности проекта/технологии: '
-        self.table_header = '6.    Статус выполнения оцениваемого уровня и его подуровней '
-        self.sign = '7.    Подпись эксперта: ________________________'
+        self.table_header = '5.    Статус выполнения оцениваемого уровня и его подуровней '
+        self.sign = '6.    Подпись эксперта: ________________________'
 
     def set_data(self):
         new_data = []
@@ -97,8 +96,7 @@ class ReportUgt:
             self.pdf.set_font("times", 'U', size=12)
             self.pdf.cell(80, 8, data[i], '', 0, align="L")
             self.pdf.ln()
-        self.pdf.set_font("times", size=12)
-        self.pdf.cell(100, 8, self.tprl_text, ln=1, align="L")
+        self.pdf.ln()
         self.pdf.set_font("times", 'U', size=12)
         tprl_name_list = self.word_wrap(self.tprl_name, 95)
         for i in range(len(tprl_name_list)):
