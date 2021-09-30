@@ -600,9 +600,9 @@ class Ui_AppWindow(object):
         _translate = QtCore.QCoreApplication.translate
         AppWindow.setWindowTitle(_translate("AppWindow", "TPRL Calculator"))
         self.labelCalc.setText(_translate("AppWindow",
-                                          "Расчёт оценки зрелости инновационного продукта/технологии к внедрению в ОАО "
+                                          "Расчёт оценки зрелости инновационного продукта/технологии к внедрению в <br>ОАО "
                                           "«РЖД» и рисков недостижения уровня готовности инновационных проектов "
-                                          "в ОАО «РЖД» с их применением через соответствующие уровни готовности"))
+                                          "в <br>ОАО «РЖД» с их применением через соответствующие уровни готовности"))
         self.btn_help.setText(_translate("AppWindow", "Справка"))
         self.btn_change_user.setText(_translate("AppWindow", "Сменить пользователя"))
         self.btn_change_user1.setText(_translate("AppWindow", "Сменить пользователя"))
