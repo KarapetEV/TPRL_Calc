@@ -40,7 +40,7 @@ class Ui_AppWindow(object):
         self.labelCalc = QtWidgets.QLabel(self.frame_title)
         self.labelCalc.setGeometry(QtCore.QRect(100, 0, 720, 70))
         font = QtGui.QFont()
-        font.setPointSize(13)
+        font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
         self.labelCalc.setFont(font)
