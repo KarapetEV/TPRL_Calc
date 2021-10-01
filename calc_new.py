@@ -1184,6 +1184,7 @@ class Controller:
         self.show_login_page()
 
     def show_login_page(self):
+        check_db.create_db()
         self.login = Login()
         self.login.switch_register.connect(self.show_register_page)
         self.login.switch_mainwindow[str].connect(self.show_mainwindow)

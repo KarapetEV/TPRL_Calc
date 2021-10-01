@@ -21,6 +21,35 @@
 import sqlite3
 
 
+def create_db():
+    con = sqlite3.connect("data/data.db")
+    cur = con.cursor()
+
+    cur.execute('CREATE TABLE IF NOT EXISTS "projects" ('
+                '"user_id"	INTEGER,'
+                '"project_num"	TEXT,'
+                '"date"	TEXT,'
+                '"theme"	TEXT,'
+                '"initiator"	TEXT,'
+                '"customer"	TEXT,'
+                '"save_date"	TEXT,'
+                '"state"	TEXT,'
+                '"path"	TEXT,'
+                '"params"	TEXT,'
+                'FOREIGN KEY("user_id") REFERENCES "users"("user_id")'
+                ')')
+
+    cur.execute('CREATE TABLE IF NOT EXISTS "users" ('
+                '"user_id"	INTEGER,'
+                '"name"	TEXT NOT NULL UNIQUE,'
+                '"password"	TEXT NOT NULL,'
+                'PRIMARY KEY("user_id" AUTOINCREMENT)'
+                ')')
+    con.commit()
+    cur.close()
+    con.close()
+
+
 def create_user_list():
     con = sqlite3.connect("data/data.db")
     cur = con.cursor()
