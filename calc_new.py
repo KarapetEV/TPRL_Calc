@@ -1102,7 +1102,7 @@ class Window(QWidget, calc_new_gui.Ui_AppWindow):               # основно
         param_ir = round((param_i * param_r), 2)
         lvl = widgets[0].text()[8]
         param_name = self.risk_param_tabs.tabText(self.risk_param_tabs.currentIndex())
-        result_risk_param_text = f"Итоговая оценка риска уровня готовности {lvl} по параметру {param_name}: {param_ir}"
+        result_risk_param_text = f"Итоговая оценка риска недостижения уровня готовности {lvl} по параметру {param_name}: {param_ir}"
         widgets[2].setText(result_risk_param_text)
 
     def set_task_lvl_label(self, text):
